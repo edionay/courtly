@@ -19,6 +19,9 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 - Store booking start and end instants in UTC. Court opening hours are local times in the facility timezone. The interface displays times in the facility timezone and identifies that timezone explicitly.
 - API booking timestamps use ISO 8601 with an explicit offset. Availability dates and admin report dates are interpreted in the facility timezone. Responses expose UTC instants and the facility timezone. Cancellation compares instants on the server.
 - Preserve incremental, reviewable work through branches and PRs; never commit directly to `main`.
+- Branch names describe only the feature or work in lowercase kebab-case, with no AI or agent references or prefixes.
+- Commits follow Google-style `<type>: <imperative English summary>` formatting, without a parenthesized scope; for example, `feat: add booking creation`.
+- Commit messages and PR titles and bodies contain no AI attribution, generated-by notices, agent signatures, or agent co-author trailers. The challenge's separate AI-usage disclosure requirement for the submission decisions remains applicable.
 - The final execution plan and referenced repository specifications must be sufficient to continue in another chat or agent without this conversation.
 - The candidate writes the README, as required by the challenge. AI may help discuss decisions and review candidate-authored text.
 

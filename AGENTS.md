@@ -7,7 +7,10 @@
 - Read `docs/decisions.md` for approved decisions and unresolved questions. Proposed decisions are not approved requirements.
 - Focus on the happy path. Discuss additional edge-case behavior before implementing it.
 - Keep unit and integration tests focused, meaningful, and simple to configure. Backend tests must cover concurrency prevention, cancellation timing, and opening hours.
-- Never commit directly to `main`. Use a `codex/` branch and a pull request for review and merge.
+- Never commit directly to `main`. Use a feature branch and a pull request for review and merge.
+- Branch names must describe only the feature or work being delivered, in lowercase kebab-case, without AI or agent references or prefixes. Examples: `planning`, `booking-creation`, `court-management`.
+- Follow the Google-style commit format without a parenthesized scope: `<type>: <imperative English summary>`. Examples: `feat: add booking creation`, `fix: enforce cancellation window`, `docs: record project decisions`. Use `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert` as appropriate.
+- Commit messages and PR titles and bodies must not include AI attribution, agent signatures, generated-by notices, or agent co-author trailers. This does not remove the challenge's separate requirement to disclose AI usage in the submission decisions.
 - The repository currently has no initial commit. Establishing the base branch and first PR remains a planning item; do not silently bypass the PR rule.
 - Keep these instructions and the planning documents current as decisions change.
 - The execution plan must be self-contained: include requirements, approved decisions, API contracts, incremental deliverables, acceptance criteria, dependencies, and enough context for another chat or agent.
