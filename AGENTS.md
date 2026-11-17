@@ -14,6 +14,7 @@
 - Commit messages and PR titles and bodies must not include AI attribution, agent signatures, generated-by notices, or agent co-author trailers. This does not remove the challenge's separate requirement to disclose AI usage in the submission decisions.
 - The repository currently has no initial commit. Establishing the base branch and first PR remains a planning item; do not silently bypass the PR rule.
 - Keep these instructions and the planning documents current as decisions change.
+- Keep API documentation current and available through Swagger UI at `/api/docs`, with the OpenAPI document at `/api/openapi.json`. Every API change must update its documentation in the same PR. Document all endpoints, authentication and roles, request and response schemas, examples, expected errors, and applicable business and timezone rules. Verify affected operations through Swagger before considering the delivery complete. Choose the documentation tooling during planning; do not add comment-heavy documentation or unnecessary infrastructure.
 - The execution plan must be self-contained: include requirements, approved decisions, API contracts, incremental deliverables, acceptance criteria, dependencies, and enough context for another chat or agent.
 - Implementation is intended to be delegated to subagents using Luna. Confirm model availability before delegation; do not silently substitute another model.
 - The challenge requires the candidate to write the README. Help with discussion and review, but leave README authorship to the candidate.

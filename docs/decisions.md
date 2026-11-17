@@ -20,6 +20,7 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 - Model a minimal `Facility` with `id`, `name`, and an IANA `timezone`. Seed one facility and reference it from courts through `facilityId`. Facility CRUD and timezone editing are outside the core scope.
 - Store booking start and end instants in UTC. Court opening hours are local times in the facility timezone. The interface displays times in the facility timezone and identifies that timezone explicitly.
 - API booking timestamps use ISO 8601 with an explicit offset. Availability dates and admin report dates are interpreted in the facility timezone. Responses expose UTC instants and the facility timezone. Cancellation compares instants on the server.
+- API documentation must always match the implementation and be available in Swagger UI at `/api/docs`, with the OpenAPI document at `/api/openapi.json`, when the application starts through Docker Compose. Document every endpoint, authentication and roles, request and response schemas, examples, expected errors, and relevant booking and timezone semantics. API documentation updates belong in the same PR as the behavior change and are part of each delivery's acceptance criteria. Swagger must support exercising the documented operations using the chosen authentication mechanism. Implementation tooling remains to be selected; prefer sharing validation and documentation schemas where practical without adding unnecessary complexity.
 - Preserve incremental, reviewable work through branches and PRs; never commit directly to `main`.
 - Branch names describe only the feature or work in lowercase kebab-case, with no AI or agent references or prefixes.
 - Commits follow Google-style `<type>: <imperative English summary>` formatting, without a parenthesized scope; for example, `feat: add booking creation`.
@@ -31,7 +32,7 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 
 - Select the seeded facility timezone; `Europe/Lisbon` was suggested but has not been approved.
 - Finalize booking, availability, opening-hours, cancellation-boundary, and admin-revenue behavior against the complete brief.
-- Define authentication, API contracts and Swagger documentation, UI flows, and minimal testing infrastructure.
+- Define authentication, API contracts, Swagger generation tooling, UI flows, and minimal testing infrastructure.
 - Pin compatible PostgreSQL and Prisma versions and validate custom migration and exclusion-constraint error handling before defining implementation tasks.
 - Define incremental PR deliverables, acceptance criteria, and repository bootstrap given the absence of an initial commit.
 - Prepare self-contained subagent task context and confirm availability of the requested Luna model before implementation delegation.
