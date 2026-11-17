@@ -5,6 +5,7 @@
 - Keep the implementation small and focused on the challenge's mandatory requirements. Do not add optional bonuses.
 - Before making assumptions, consult `docs/challenge.md` once the challenge has been transcribed. Until then, the challenge brief is not yet available locally: ask for the brief when necessary rather than inventing requirements.
 - Read `docs/decisions.md` for approved decisions and unresolved questions. Proposed decisions are not approved requirements.
+- Use PostgreSQL with Prisma. Earlier MongoDB/Mongoose and occupied-slot-array proposals are superseded. Keep snake_case within database artifacts and use camelCase throughout TypeScript and API JSON through Prisma's mapping configuration. Preserve database-level overlap protection in versioned migrations.
 - Focus on the happy path. Discuss additional edge-case behavior before implementing it.
 - Keep unit and integration tests focused, meaningful, and simple to configure. Backend tests must cover concurrency prevention, cancellation timing, and opening hours.
 - Never commit directly to `main`. Use a feature branch and a pull request for review and merge.
