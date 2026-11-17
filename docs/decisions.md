@@ -11,6 +11,8 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 ## Approved decisions
 
 - Frontend: React. Backend: Express. Database: PostgreSQL with Prisma. This replaces the earlier MongoDB and Mongoose choice; no application implementation or data migration exists yet.
+- Use tsoa with Express. Typed controllers and decorators are the source for generated Express routes, input validation, and OpenAPI. This replaces the proposed Zod plus OpenAPI generation approach. Keep business rules in services and persistence in Prisma; do not expose Prisma models directly as API contracts.
+- Run tsoa generation automatically before development startup and production compilation, and regenerate after controller or contract changes during development. Include generation in the Docker build and verification workflow. Treat generated routes and specifications as build artifacts and never edit them manually. Explicitly maintain response and error declarations, authentication metadata, examples, and business-rule descriptions; tsoa cannot infer all runtime behavior. Verify critical response contracts through the existing integration tests without introducing a separate elaborate testing system.
 - Use snake_case for database tables and columns and camelCase for TypeScript properties and API JSON fields. Configure the mapping in Prisma so database naming does not propagate into application or domain code. Pin the Prisma version and confirm its mapping and migration APIs during implementation planning.
 - All code, interface text, and repository documentation will be in English. Planning conversations may be in Portuguese.
 - Implement mandatory requirements only. No optional bonus is planned.
@@ -20,7 +22,7 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 - Model a minimal `Facility` with `id`, `name`, and an IANA `timezone`. Seed one facility and reference it from courts through `facilityId`. Facility CRUD and timezone editing are outside the core scope.
 - Store booking start and end instants in UTC. Court opening hours are local times in the facility timezone. The interface displays times in the facility timezone and identifies that timezone explicitly.
 - API booking timestamps use ISO 8601 with an explicit offset. Availability dates and admin report dates are interpreted in the facility timezone. Responses expose UTC instants and the facility timezone. Cancellation compares instants on the server.
-- API documentation must always match the implementation and be available in Swagger UI at `/api/docs`, with the OpenAPI document at `/api/openapi.json`, when the application starts through Docker Compose. Document every endpoint, authentication and roles, request and response schemas, examples, expected errors, and relevant booking and timezone semantics. API documentation updates belong in the same PR as the behavior change and are part of each delivery's acceptance criteria. Swagger must support exercising the documented operations using the chosen authentication mechanism. Implementation tooling remains to be selected; prefer sharing validation and documentation schemas where practical without adding unnecessary complexity.
+- API documentation must always match the implementation and be available in Swagger UI at `/api/docs`, with the tsoa-generated OpenAPI document at `/api/openapi.json`, when the application starts through Docker Compose. Document every endpoint, authentication and roles, request and response schemas, examples, expected errors, and relevant booking and timezone semantics. API documentation updates belong in the same PR as the behavior change and are part of each delivery's acceptance criteria. Swagger must support exercising the documented operations using the chosen authentication mechanism.
 - Preserve incremental, reviewable work through branches and PRs; never commit directly to `main`.
 - Branch names describe only the feature or work in lowercase kebab-case, with no AI or agent references or prefixes.
 - Commits follow Google-style `<type>: <imperative English summary>` formatting, without a parenthesized scope; for example, `feat: add booking creation`.
@@ -32,13 +34,16 @@ The complete brief still needs to be transcribed into `docs/challenge.md`. It re
 
 - Select the seeded facility timezone; `Europe/Lisbon` was suggested but has not been approved.
 - Finalize booking, availability, opening-hours, cancellation-boundary, and admin-revenue behavior against the complete brief.
-- Define authentication, API contracts, Swagger generation tooling, UI flows, and minimal testing infrastructure.
+- Define authentication, API contracts, UI flows, and minimal testing infrastructure. Pin compatible tsoa, Express, and TypeScript versions and confirm generation and development-watch commands.
 - Pin compatible PostgreSQL and Prisma versions and validate custom migration and exclusion-constraint error handling before defining implementation tasks.
 - Define incremental PR deliverables, acceptance criteria, and repository bootstrap given the absence of an initial commit.
 - Prepare self-contained subagent task context and confirm availability of the requested Luna model before implementation delegation.
 
 ## Technical references
 
+- tsoa setup and generation: https://tsoa-community.github.io/docs/getting-started.html
+- tsoa authentication integration: https://tsoa-community.github.io/docs/authentication.html
+- tsoa validation error handling: https://tsoa-community.github.io/docs/error-handling.html
 - PostgreSQL range exclusion constraints: https://www.postgresql.org/docs/current/rangetypes.html#RANGETYPES-CONSTRAINT
 - Prisma database support and version-specific documentation: https://www.prisma.io/docs/orm/supported-databases
 - Prisma ORM v7 database mapping: https://www.prisma.io/docs/orm/v7/prisma-schema/data-model/database-mapping
