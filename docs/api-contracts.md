@@ -190,6 +190,12 @@ Do not include raw `startsAt`, `endsAt`, or numeric price fields in this present
 
 The client renders `court.name` and `display` values directly. It uses `id` for actions, `status` for machine-readable state, and `canCancel` to decide whether cancellation is offered. It does not calculate cancellation deadlines.
 
+## My bookings
+
+Approved endpoint: `GET /api/bookings/me`, authenticated with JWT and without a request body. Derive the owner from validated authentication; do not accept another user ID to choose whose bookings are returned.
+
+Return HTTP 200 with `{ "items": [...] }`. Each item uses the approved booking presentation representation, with `canCancel` calculated for the requesting user. Include upcoming, past, and cancelled bookings. Sort by start instant descending on the backend, not by formatted date strings. When no bookings exist, return `{ "items": [] }` with HTTP 200.
+
 ## Cancellation eligibility
 
 `canCancel` is true only when the requesting user owns the booking, its status is confirmed, and its start instant is at least two hours after the server's current instant. Exactly two hours is eligible.
