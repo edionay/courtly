@@ -11,6 +11,7 @@ The existing Express backend prepares client-facing representations; do not add 
 - Do not make the client reconstruct instants, prices, or status codes from formatted labels.
 - Keep UTC instants and contracted monetary values in backend persistence even when presentation responses omit them.
 - Facility owns the timezone. A timezone label in `display` is derived presentation context, not a Booking column.
+- Format displayed time intervals as `HH:mm – HH:mm`, with one space on each side of the en dash, including `display.openingHours` and `display.timeRange`. Preserve raw time and timestamp formats.
 
 ### Rules for placing fields
 
@@ -129,7 +130,7 @@ Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPric
   "closesAt": "23:00",
   "display": {
     "hourlyPrice": "$50.00",
-    "openingHours": "08:00–23:00",
+    "openingHours": "08:00 – 23:00",
     "timezone": "São Paulo time"
   }
 }
@@ -154,7 +155,7 @@ Availability response example:
       "startsAt": "2026-11-20T13:00:00Z",
       "status": "available",
       "display": {
-        "timeRange": "10:00–11:00"
+        "timeRange": "10:00 – 11:00"
       }
     }
   ]
@@ -178,7 +179,7 @@ Use the same booking representation for single-booking responses and items in th
   "canCancel": true,
   "display": {
     "date": "Nov 20, 2026",
-    "timeRange": "10:00–12:00",
+    "timeRange": "10:00 – 12:00",
     "timezone": "São Paulo time",
     "status": "Confirmed",
     "totalPrice": "$100.00"
@@ -255,7 +256,7 @@ Return HTTP 201 Created with the booking presentation representation. For a two-
   "canCancel": true,
   "display": {
     "date": "Nov 20, 2026",
-    "timeRange": "13:00–15:00",
+    "timeRange": "13:00 – 15:00",
     "timezone": "São Paulo time",
     "status": "Confirmed",
     "totalPrice": "$100.00"
