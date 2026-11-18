@@ -285,7 +285,7 @@ Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
 - List that day's confirmed and cancelled bookings across all courts, including deactivated courts, ordered by start instant.
 - Include court and user names for presentation.
 - Compute expected revenue from contracted totals of confirmed bookings only. Completed time periods remain included; cancelled bookings contribute nothing.
-- Prepare date, time, timezone, status, and monetary labels in the backend. Do not require the frontend to sum prices or format instants.
+- Prepare date, time, and monetary labels in the backend. Do not require the frontend to sum prices or format instants. Do not expose a timezone field or label in the daily-report response, including its root `display`; the facility timezone remains an internal input to day boundaries and formatting.
 - This is the mandatory day view, not an export feature or a separate reporting system.
 - Report booking items expose machine-readable `status` only, without `display.status`. The frontend uses `status` for its status presentation. This report-specific decision does not remove the separately approved `display.status` from personal booking representations.
 
