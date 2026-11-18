@@ -144,7 +144,9 @@ Authenticate and authorize first, then find the court or return HTTP 404. Valida
 
 Opening and closing times represent recurring facility-local wall-clock times, not UTC instants. Keep values such as `08:00` unchanged in the court's opening-hours rule. On each availability request, combine the selected calendar date, local opening/closing times, and the facility's IANA timezone to calculate that day's absolute slot instants. For example, on November 20, 2026, 08:00 in `America/Sao_Paulo` produces the first slot start `2026-11-20T11:00:00Z`. Do not preconvert recurring opening hours to UTC or persist generated slots. When validating a booking, interpret its absolute interval in the facility timezone and check it against the local opening interval.
 
-Availability response example:
+The availability request contract is approved: `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD` requires authentication and no request body. `courtId` identifies the court. `date` is required and must be a valid calendar date in the exact `YYYY-MM-DD` format, interpreted in the facility timezone rather than the browser timezone. Missing or invalid dates return HTTP 422 through the shared validation contract; a nonexistent court returns HTTP 404. Generate slots using the selected date, court opening hours, and existing bookings. Inactive-court response behavior still requires a decision before implementation.
+
+Availability response example (the accessible separation of time labels is being revised next):
 
 ```json
 {
