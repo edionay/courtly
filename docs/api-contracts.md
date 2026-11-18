@@ -23,6 +23,13 @@ The existing Express backend prepares client-facing representations; do not add 
 
 These rules are approved development guidance. They do not imply new endpoints or a universal response wrapper.
 
+## Authentication behavior in progress
+
+- Use JWT bearer tokens stored in sessionStorage with a one-hour lifetime. Preserve the token across page reloads and send it in `Authorization: Bearer <token>`. Do not implement refresh tokens or automatic renewal. Login and session-restoration response details remain to be finalized.
+- Future improvement, outside the current delivery: use an HttpOnly cookie for the JWT with suitable SameSite/Secure settings and CSRF protection. The brief does not mandate this storage strategy. sessionStorage is the approved current trade-off, not protection against token theft through XSS.
+- A protected operation returning HTTP 401 leads to a dedicated authentication-error page with an explicit login navigation option. Do not automatically redirect to login. Invalid login credentials are shown on the login form rather than sending the user through an authentication-error navigation loop.
+- Logout removes the token from sessionStorage and clears local user state. Issued JWTs remain valid until expiration; token revocation and a backend logout endpoint are outside the current bearer-token flow.
+
 ## Booking presentation
 
 Use the same booking representation for single-booking responses and items in the user's booking list:
