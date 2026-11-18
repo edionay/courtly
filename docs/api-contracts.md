@@ -1,6 +1,6 @@
 # API contracts in progress
 
-This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, authentication details, complete error responses, and some response shapes still require finalization.
+This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, authentication response details, endpoint-specific error codes, and some response shapes still require finalization.
 
 ## Presentation policy
 
@@ -29,6 +29,46 @@ These rules are approved development guidance. They do not imply new endpoints o
 - Future improvement, outside the current delivery: use an HttpOnly cookie for the JWT with suitable SameSite/Secure settings and CSRF protection. The brief does not mandate this storage strategy. sessionStorage is the approved current trade-off, not protection against token theft through XSS.
 - A protected operation returning HTTP 401 leads to a dedicated authentication-error page with an explicit login navigation option. Do not automatically redirect to login. Invalid login credentials are shown on the login form rather than sending the user through an authentication-error navigation loop.
 - Logout removes the token from sessionStorage and clears local user state. Issued JWTs remain valid until expiration; token revocation and a backend logout endpoint are outside the current bearer-token flow.
+
+## Error contract
+
+All API errors use a machine-readable `code` and an English `message` ready for display. Do not place error messages inside a `display` wrapper. The client must not parse messages to determine behavior.
+
+```json
+{
+  "code": "BOOKING_CONFLICT",
+  "message": "This time slot is no longer available."
+}
+```
+
+For errors associated with individual input fields, add `fields` containing `field` and `message`. Omit `fields` when there are no field-specific errors.
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Check the highlighted fields.",
+  "fields": [
+    {
+      "field": "durationHours",
+      "message": "Choose a duration of 1 or 2 hours."
+    }
+  ]
+}
+```
+
+Approved HTTP status mapping:
+
+- 400: malformed JSON.
+- 401: incorrect login credentials or a missing, invalid, or expired token.
+- 403: insufficient role permissions or attempting to cancel another user's booking.
+- 404: court or booking not found.
+- 409: booking overlap, an inactive court blocking a new booking, or a closed cancellation window.
+- 422: invalid input fields, a booking in the past, or a booking outside court opening hours.
+- 500: unexpected failure; return a generic message and keep technical details in backend logs.
+
+Display form errors and booking conflicts within the current screen. A 401 from a protected operation opens the authentication-error page with an explicit login navigation option; invalid credentials stay on the login form. This contract does not define page navigation for the remaining error statuses.
+
+Normalize tsoa validation errors and handled database/domain errors into this format through the backend error handler. Document applicable errors in OpenAPI in the same PR as each endpoint. Do not expose stack traces, SQL, or credentials in responses. Specific codes other than the illustrated `BOOKING_CONFLICT` and `VALIDATION_ERROR` will be named when completing endpoint contracts.
 
 ## Booking presentation
 
@@ -77,7 +117,7 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 }
 ```
 
-The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply those values. Complete endpoint and error contracts remain to be finalized.
+The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply those values. Complete endpoint paths and endpoint-specific error codes remain to be finalized; use the shared error contract above.
 
 ## Daily bookings report
 
