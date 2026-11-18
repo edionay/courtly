@@ -214,7 +214,32 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 
 `startsAt` identifies an absolute instant and must include `Z` or an explicit numeric offset; reject timestamps without an offset. Respect the supplied instant instead of replacing its timezone while preserving the wall-clock numbers. For example, `2026-11-20T16:00:00Z` and `2026-11-20T13:00:00-03:00` represent the same 13:00 start in the facility's timezone. `2026-11-20T13:00:00Z` instead represents 10:00 locally. Explain this distinction with examples in Swagger.
 
-The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Response validation is the next contract discussion; endpoint-specific error codes remain to be finalized using the shared error contract above.
+The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Endpoint-specific error codes remain to be finalized using the shared error contract above.
+
+### Approved creation response
+
+Return HTTP 201 Created with the booking presentation representation. For a two-hour request beginning at `2026-11-20T16:00:00Z` and a contracted hourly price of 5000 cents:
+
+```json
+{
+  "id": "booking-123",
+  "court": {
+    "id": "court-1",
+    "name": "Court 1"
+  },
+  "status": "confirmed",
+  "canCancel": true,
+  "display": {
+    "date": "Nov 20, 2026",
+    "timeRange": "13:00–15:00",
+    "timezone": "São Paulo time",
+    "status": "Confirmed",
+    "totalPrice": "$100.00"
+  }
+}
+```
+
+`canCancel` is computed at response time using the agreed ownership, confirmed-status, and inclusive two-hour rule. A valid booking created less than two hours before its start returns `canCancel: false`; do not assume a newly created booking is always cancellable. Creation returns one booking, without a collection wrapper or redundant raw instants/prices.
 
 ## Daily bookings report
 
