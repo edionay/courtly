@@ -210,7 +210,7 @@ This replaces the proposed `POST /api/bookings/{bookingId}/cancel`. Use the same
 
 For a valid cancellation, return HTTP 200 with the shared booking presentation representation, updated to `status: "cancelled"`, `canCancel: false`, and `display.status: "Cancelled"`. Preserve the booking and contracted price in history; release its interval for new bookings through the existing confirmed-only exclusion constraint.
 
-Ownership and the inclusive two-hour window are enforced by the backend regardless of any previous `canCancel` value. The shared HTTP/error contract applies. The suggested HTTP 200 behavior for an already-cancelled booking is not yet approved; settle this separately before implementation.
+Validate authentication and ownership first. If the booking is already cancelled, return HTTP 200 with its current cancelled representation without changing it, even if its original start is now inside the cancellation window or in the past. This is an approved idempotent retry, not a new cancellation. For a confirmed booking, enforce the inclusive two-hour window regardless of any previous `canCancel` value. The shared HTTP/error contract applies.
 
 ### Cancellation eligibility
 
