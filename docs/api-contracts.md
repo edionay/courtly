@@ -280,7 +280,8 @@ Return HTTP 201 Created with the booking presentation representation. For a two-
 Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
 
 - Require an authenticated administrator. URL structure does not replace role enforcement.
-- Interpret the requested calendar day in `America/Sao_Paulo`.
+- The approved request has no body and requires `date` as a valid calendar date in exact `YYYY-MM-DD` format. Missing or invalid dates return HTTP 422. An authenticated non-administrator receives HTTP 403; authentication errors follow the shared 401 contract.
+- Read the timezone from the single seeded Facility, currently `America/Sao_Paulo`; do not hardcode it in report logic or accept a client-provided timezone. Calculate the selected local day's midnight and the following local day's midnight in that timezone, then convert both boundaries to UTC. Include bookings whose start is at or after the first boundary and before the second. This is consistent with the approved same-day, non-overnight schedule. Derive report display labels using the same facility timezone.
 - List that day's confirmed and cancelled bookings across all courts, including deactivated courts, ordered by start instant.
 - Include court and user names for presentation.
 - Compute expected revenue from contracted totals of confirmed bookings only. Completed time periods remain included; cancelled bookings contribute nothing.
