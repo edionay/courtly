@@ -245,6 +245,8 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 
 `startsAt` identifies an absolute instant and must include `Z` or an explicit numeric offset; reject timestamps without an offset. Respect the supplied instant instead of replacing its timezone while preserving the wall-clock numbers. For example, `2026-11-20T16:00:00Z` and `2026-11-20T13:00:00-03:00` represent the same 13:00 start in the facility's timezone. `2026-11-20T13:00:00Z` instead represents 10:00 locally. Explain this distinction with examples in Swagger.
 
+The supplied start must align with a whole-hour slot boundary in the facility timezone: local minutes, seconds, and fractional seconds must be zero. Reject a nonaligned start with HTTP 422; never round or silently change it. Use `code: "VALIDATION_ERROR"`, `message: "Check the highlighted fields."`, and `fields: [{ field: "startsAt", message: "Choose a start time on the hour." }]`. For example, `2026-11-20T13:30:00Z` is invalid for this facility. Enforce this on direct API requests as well as frontend requests. Slot alignment does not replace the other checks for opening hours, duration, past starts, court activity, and overlap.
+
 The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Endpoint-specific error codes remain to be finalized using the shared error contract above.
 
 ### Approved creation response
