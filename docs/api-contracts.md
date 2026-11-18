@@ -11,7 +11,7 @@ The existing Express backend prepares client-facing representations; do not add 
 - Do not make the client reconstruct instants, prices, or status codes from formatted labels.
 - Keep UTC instants and contracted monetary values in backend persistence even when presentation responses omit them.
 - Facility owns the timezone. A timezone label in `display` is derived presentation context, not a Booking column.
-- Court opening-hour presentation reuses the existing `opensAt` and `closesAt` fields. Do not return duplicate display fields or a combined opening-hours string. The client composes a spaced visual separator and accessible `until` text, hiding the visual separator from assistive technology and the accessible separator from visual presentation. This is presentation composition from values already needed by the client, not timezone conversion or parsing formatted labels. Slot and booking range accessibility contracts still require a separate review; do not assume their responses already expose both raw endpoints.
+- Court opening-hour presentation reuses the existing `opensAt` and `closesAt` fields. Do not return duplicate display fields or a combined opening-hours string. The client composes a spaced visual separator and accessible `until` text, hiding the visual separator from assistive technology and the accessible separator from visual presentation. This is presentation composition from values already needed by the client, not timezone conversion or parsing formatted labels. Slots use separate local `display.startsAt` and `display.endsAt` values as approved below. Booking range accessibility still requires a separate review; do not assume booking responses expose both raw endpoints.
 
 ### Rules for placing fields
 
@@ -106,7 +106,7 @@ Approved HTTP status mapping:
 - 400: malformed JSON.
 - 401: incorrect login credentials or a missing, invalid, or expired token.
 - 403: insufficient role permissions or attempting to cancel another user's booking.
-- 404: court or booking not found.
+- 404: court or booking not found, or availability requested for an inactive court.
 - 409: booking overlap, an inactive court blocking a new booking, or a closed cancellation window.
 - 422: invalid input fields, a booking in the past, or a booking outside court opening hours.
 - 500: unexpected failure; return a generic message and keep technical details in backend logs.
@@ -144,7 +144,7 @@ Authenticate and authorize first, then find the court or return HTTP 404. Valida
 
 Opening and closing times represent recurring facility-local wall-clock times, not UTC instants. Keep values such as `08:00` unchanged in the court's opening-hours rule. On each availability request, combine the selected calendar date, local opening/closing times, and the facility's IANA timezone to calculate that day's absolute slot instants. For example, on November 20, 2026, 08:00 in `America/Sao_Paulo` produces the first slot start `2026-11-20T11:00:00Z`. Do not preconvert recurring opening hours to UTC or persist generated slots. When validating a booking, interpret its absolute interval in the facility timezone and check it against the local opening interval.
 
-The availability request contract is approved: `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD` requires authentication and no request body. `courtId` identifies the court. `date` is required and must be a valid calendar date in the exact `YYYY-MM-DD` format, interpreted in the facility timezone rather than the browser timezone. Missing or invalid dates return HTTP 422 through the shared validation contract; a nonexistent court returns HTTP 404. Do not default an omitted date to today; that alternative was explicitly rejected. Generate slots using the selected date, court opening hours, and existing bookings. Inactive-court response behavior still requires a decision before implementation.
+The availability request contract is approved: `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD` requires authentication and no request body. `courtId` identifies the court. `date` is required and must be a valid calendar date in the exact `YYYY-MM-DD` format, interpreted in the facility timezone rather than the browser timezone. Missing or invalid dates return HTTP 422 through the shared validation contract. Availability is exposed only for active courts: a nonexistent or inactive court returns HTTP 404 with `code: "COURT_NOT_FOUND"` and `message: "Court not found or unavailable for booking."` This does not delete or hide its booking history or prevent administrator court management. A new booking attempt against an inactive court still returns HTTP 409 under the booking contract. Do not default an omitted date to today; that alternative was explicitly rejected. Generate slots using the selected date, court opening hours, and existing bookings.
 
 Approved availability response: HTTP 200 with `courtId`, the requested `date`, shared `display.date` and `display.timezone`, and chronologically ordered `slots`. An empty result returns `slots: []` with HTTP 200.
 
