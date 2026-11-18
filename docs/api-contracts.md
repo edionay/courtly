@@ -136,6 +136,8 @@ Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPric
 
 Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{courtId}`, and `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD`. Users list active courts; administrators list all courts and exclusively create/edit them. The backend associates each court with the seeded facility; no client-supplied facility ID is needed. Deactivate through PATCH with `isActive: false`.
 
+The `GET /api/courts` collection contract is approved: require authentication, accept no request body, and return HTTP 200 with `{ "items": [...] }`, using the court representation above. Return only active courts to users and both active and inactive courts to administrators. Order by court name ascending on the backend. Do not add pagination for this delivery. Empty results return `{ "items": [] }` with HTTP 200.
+
 Opening and closing times represent recurring facility-local wall-clock times, not UTC instants. Keep values such as `08:00` unchanged in the court's opening-hours rule. On each availability request, combine the selected calendar date, local opening/closing times, and the facility's IANA timezone to calculate that day's absolute slot instants. For example, on November 20, 2026, 08:00 in `America/Sao_Paulo` produces the first slot start `2026-11-20T11:00:00Z`. Do not preconvert recurring opening hours to UTC or persist generated slots. When validating a booking, interpret its absolute interval in the facility timezone and check it against the local opening interval.
 
 Availability response example:
