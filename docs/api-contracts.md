@@ -198,7 +198,9 @@ This field is a presentation hint evaluated when the response is produced. On ca
 
 ## Booking creation data
 
-Availability must retain a machine-readable UTC `startsAt` on each slot, alongside its presentation values. Creating a booking uses the selected instant, rather than parsing its label:
+Approved request: `POST /api/bookings`, authenticated with the selected JWT bearer flow.
+
+Availability must retain a machine-readable UTC `startsAt` on each slot, alongside its presentation values. The backend calculates the instant using the facility's local opening hours and timezone. The client sends the selected slot's `startsAt` unchanged, rather than generating a timestamp or parsing its display label:
 
 ```json
 {
@@ -208,7 +210,11 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 }
 ```
 
-The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply those values. Complete endpoint paths and endpoint-specific error codes remain to be finalized; use the shared error contract above.
+`durationHours` is 1 or 2. A two-hour booking occupies two consecutive hourly slots as one reservation, not two independent bookings. Slots are calculated availability objects, not persisted entities with IDs.
+
+`startsAt` identifies an absolute instant and must include `Z` or an explicit numeric offset; reject timestamps without an offset. Respect the supplied instant instead of replacing its timezone while preserving the wall-clock numbers. For example, `2026-11-20T16:00:00Z` and `2026-11-20T13:00:00-03:00` represent the same 13:00 start in the facility's timezone. `2026-11-20T13:00:00Z` instead represents 10:00 locally. Explain this distinction with examples in Swagger.
+
+The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Response validation is the next contract discussion; endpoint-specific error codes remain to be finalized using the shared error contract above.
 
 ## Daily bookings report
 
