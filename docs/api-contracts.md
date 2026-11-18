@@ -114,6 +114,53 @@ Display form errors and booking conflicts within the current screen. A 401 from 
 
 Normalize tsoa validation errors and handled database/domain errors into this format through the backend error handler. Document applicable errors in OpenAPI in the same PR as each endpoint. Do not expose stack traces, SQL, or credentials in responses. Specific codes other than the illustrated `BOOKING_CONFLICT` and `VALIDATION_ERROR` will be named when completing endpoint contracts.
 
+## Courts and availability
+
+Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice`, `openingHours`, and `timezone`. Structured price and opening-hour fields support the administrator's edit form; display labels support rendering.
+
+```json
+{
+  "id": "court-1",
+  "name": "Court 1",
+  "sportType": "padel",
+  "isActive": true,
+  "hourlyPriceCents": 5000,
+  "opensAt": "08:00",
+  "closesAt": "23:00",
+  "display": {
+    "hourlyPrice": "$50.00",
+    "openingHours": "08:00–23:00",
+    "timezone": "São Paulo time"
+  }
+}
+```
+
+Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{courtId}`, and `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD`. Users list active courts; administrators list all courts and exclusively create/edit them. The backend associates each court with the seeded facility; no client-supplied facility ID is needed. Deactivate through PATCH with `isActive: false`.
+
+Availability response example:
+
+```json
+{
+  "courtId": "court-1",
+  "date": "2026-11-20",
+  "display": {
+    "date": "Nov 20, 2026",
+    "timezone": "São Paulo time"
+  },
+  "slots": [
+    {
+      "startsAt": "2026-11-20T13:00:00Z",
+      "status": "available",
+      "display": {
+        "timeRange": "10:00–11:00"
+      }
+    }
+  ]
+}
+```
+
+Slots contain `startsAt`, `status`, and `display.timeRange`, without `endsAt`. Slot status is `past`, `booked`, or `available`. Past takes precedence: a slot whose start is before the server's current instant is `past` regardless of occupancy. The frontend hides all `past` slots, while booking history remains available separately. For other slots, a confirmed overlapping booking means `booked`; otherwise use `available`. Status is calculated, not persisted. The example assumes a query before the displayed start instant.
+
 ## Booking presentation
 
 Use the same booking representation for single-booking responses and items in the user's booking list:
