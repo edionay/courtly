@@ -4,9 +4,11 @@
 - Prefer self-explanatory names and small functions. Add comments only when necessary.
 - Keep the implementation small and focused on the challenge's mandatory requirements. Do not add optional bonuses.
 - Before making assumptions, consult `docs/challenge.md`, the local structured restatement of the challenge. Follow its mandatory requirements and distinguish them from project decisions. Do not invent requirements.
+- Whenever the user comments on requirements or scope, re-read the relevant section of `docs/challenge.md` before answering or changing the plan. Explain whether the statement matches the brief, is mistaken, or adds scope, citing the relevant section. Do not silently accept a mistaken interpretation; an explicit user-approved scope change remains distinguishable from a challenge requirement.
 - Read `docs/decisions.md` for approved decisions and unresolved questions. Proposed decisions are not approved requirements.
 - Use PostgreSQL with Prisma. Earlier MongoDB/Mongoose and occupied-slot-array proposals are superseded. Keep snake_case within database artifacts and use camelCase throughout TypeScript and API JSON through Prisma's mapping configuration. Preserve database-level overlap protection in versioned migrations.
 - Seed the facility with IANA timezone `America/Sao_Paulo`. Use a generic monetary unit displayed with `$` and two decimal places, without labeling it BRL, USD, or another real currency. Interpret calendar dates and opening hours in the facility timezone and booking instants in UTC.
+- Keep Facility as an internal seeded configuration entity; do not add facility listing, detail, or CRUD endpoints or facility selection screens. Return needed timezone context through the relevant court/availability contracts. The mandatory administrator day view includes all courts and total expected revenue; no export or separate reporting subsystem is required.
 - Focus on the happy path. Discuss additional edge-case behavior before implementing it.
 - Keep unit and integration tests focused, meaningful, and simple to configure. Backend tests must cover concurrency prevention, cancellation timing, and opening hours.
 - Never commit directly to `main`. Use a feature branch and a pull request for review and merge.
