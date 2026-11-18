@@ -1,6 +1,6 @@
 # API contracts in progress
 
-This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, authentication response details, endpoint-specific error codes, and some response shapes still require finalization.
+This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, endpoint-specific error codes, and some response shapes still require finalization.
 
 ## Presentation policy
 
@@ -23,12 +23,56 @@ The existing Express backend prepares client-facing representations; do not add 
 
 These rules are approved development guidance. They do not imply new endpoints or a universal response wrapper.
 
-## Authentication behavior in progress
+## Authentication
 
-- Use JWT bearer tokens stored in sessionStorage with a one-hour lifetime. Preserve the token across page reloads and send it in `Authorization: Bearer <token>`. Do not implement refresh tokens or automatic renewal. Login and session-restoration response details remain to be finalized.
+- Use JWT bearer tokens stored in sessionStorage with a one-hour lifetime. Preserve the token across page reloads and send it in `Authorization: Bearer <token>`. Do not implement refresh tokens or automatic renewal.
 - Future improvement, outside the current delivery: use an HttpOnly cookie for the JWT with suitable SameSite/Secure settings and CSRF protection. The brief does not mandate this storage strategy. sessionStorage is the approved current trade-off, not protection against token theft through XSS.
 - A protected operation returning HTTP 401 leads to a dedicated authentication-error page with an explicit login navigation option. Do not automatically redirect to login. Invalid login credentials are shown on the login form rather than sending the user through an authentication-error navigation loop.
 - Logout removes the token from sessionStorage and clears local user state. Issued JWTs remain valid until expiration; token revocation and a backend logout endpoint are outside the current bearer-token flow.
+
+### Login
+
+`POST /api/auth/login` accepts seeded account credentials:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "..."
+}
+```
+
+Return HTTP 200 with the token and user:
+
+```json
+{
+  "accessToken": "...",
+  "user": {
+    "id": "user-123",
+    "name": "Alex Morgan",
+    "role": "user"
+  }
+}
+```
+
+The client stores only the token in sessionStorage and keeps the returned user in application state. `role` is `user` or `admin`. Do not add `expiresIn` for a client that neither renews tokens nor displays an expiry countdown. Incorrect credentials return HTTP 401; malformed JSON and invalid fields follow the shared error contract. Example credentials and IDs are illustrative, not final seed values or identifier formats.
+
+### Session restoration
+
+`GET /api/auth/me` requires the bearer token and returns HTTP 200:
+
+```json
+{
+  "id": "user-123",
+  "name": "Alex Morgan",
+  "role": "user"
+}
+```
+
+On page reload with a stored token, show a loading state while requesting `/api/auth/me`. If the token is invalid or expired, use the agreed authentication-error page. When no token exists, present login normally without triggering that error-page flow.
+
+### Role trust boundary
+
+The client uses `role` for navigation and visibility only. The API derives identity and authorization from validated authentication and trusted server-side role information, never from a role or user ID submitted by the client. Enforce administrative permissions and booking ownership on every relevant request. Do not return protected data merely because the interface normally hides it. Validate JWT signatures and expiry rather than only decoding payloads. Keep the two-role model; a generic permission engine or permission-catalog endpoint is outside scope. `canCancel` remains a context-specific presentation hint, not authorization.
 
 ## Error contract
 
