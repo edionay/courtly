@@ -287,5 +287,6 @@ Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
 - Compute expected revenue from contracted totals of confirmed bookings only. Completed time periods remain included; cancelled bookings contribute nothing.
 - Prepare date, time, timezone, status, and monetary labels in the backend. Do not require the frontend to sum prices or format instants.
 - This is the mandatory day view, not an export feature or a separate reporting system.
+- Report booking items expose machine-readable `status` only, without `display.status`. The frontend uses `status` for its status presentation. This report-specific decision does not remove the separately approved `display.status` from personal booking representations.
 
 Response field names and the empty-day representation are currently proposals being discussed, not yet approved contracts.
