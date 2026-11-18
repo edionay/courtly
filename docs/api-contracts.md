@@ -289,4 +289,49 @@ Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
 - This is the mandatory day view, not an export feature or a separate reporting system.
 - Report booking items expose machine-readable `status` only, without `display.status`. The frontend uses `status` for its status presentation. This report-specific decision does not remove the separately approved `display.status` from personal booking representations.
 
-Response field names and the empty-day representation are currently proposals being discussed, not yet approved contracts.
+### Approved success response
+
+The daily-report response block is closed. Return HTTP 200:
+
+```json
+{
+  "date": "2026-11-20",
+  "display": {
+    "date": "Nov 20, 2026",
+    "expectedRevenue": "$100.00"
+  },
+  "bookings": [
+    {
+      "id": "booking-123",
+      "court": {
+        "id": "court-1",
+        "name": "Court 1"
+      },
+      "user": {
+        "name": "Alex Morgan"
+      },
+      "status": "confirmed",
+      "display": {
+        "startsAt": "10:00",
+        "endsAt": "12:00",
+        "totalPrice": "$100.00"
+      }
+    }
+  ]
+}
+```
+
+Return local start and end labels separately so the frontend can compose an accessible interval. Do not include `canCancel`, raw booking timestamps or numeric prices, timezone fields/labels, or `display.status` in this report. The raw root `date` identifies the selected day and is separate from its formatted label.
+
+For a day with no bookings, return HTTP 200 with:
+
+```json
+{
+  "date": "2026-11-21",
+  "display": {
+    "date": "Nov 21, 2026",
+    "expectedRevenue": "$0.00"
+  },
+  "bookings": []
+}
+```
