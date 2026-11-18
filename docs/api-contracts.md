@@ -11,7 +11,7 @@ The existing Express backend prepares client-facing representations; do not add 
 - Do not make the client reconstruct instants, prices, or status codes from formatted labels.
 - Keep UTC instants and contracted monetary values in backend persistence even when presentation responses omit them.
 - Facility owns the timezone. A timezone label in `display` is derived presentation context, not a Booking column.
-- Format displayed time intervals as `HH:mm – HH:mm`, with one space on each side of the en dash, including `display.openingHours` and `display.timeRange`. Preserve raw time and timestamp formats.
+- Court opening-hour presentation reuses the existing `opensAt` and `closesAt` fields. Do not return duplicate display fields or a combined opening-hours string. The client composes a spaced visual separator and accessible `until` text, hiding the visual separator from assistive technology and the accessible separator from visual presentation. This is presentation composition from values already needed by the client, not timezone conversion or parsing formatted labels. Slot and booking range accessibility contracts still require a separate review; do not assume their responses already expose both raw endpoints.
 
 ### Rules for placing fields
 
@@ -117,7 +117,7 @@ Normalize tsoa validation errors and handled database/domain errors into this fo
 
 ## Courts and availability
 
-Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice`, `openingHours`, and `timezone`. Structured price and opening-hour fields support the administrator's edit form; display labels support rendering.
+Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice` and `timezone`. Structured price and opening-hour fields support the administrator's edit form. Reuse `opensAt` and `closesAt` for accessible opening-hour presentation; formatted price and timezone labels remain in `display`.
 
 ```json
 {
@@ -130,7 +130,6 @@ Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPric
   "closesAt": "23:00",
   "display": {
     "hourlyPrice": "$50.00",
-    "openingHours": "08:00 – 23:00",
     "timezone": "São Paulo time"
   }
 }
