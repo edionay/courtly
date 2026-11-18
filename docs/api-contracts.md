@@ -138,6 +138,26 @@ Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{cour
 
 The `GET /api/courts` collection contract is approved: require authentication, accept no request body, and return HTTP 200 with `{ "items": [...] }`, using the court representation above. Return only active courts to users and both active and inactive courts to administrators. Order by court name ascending on the backend. Do not add pagination for this delivery. Empty results return `{ "items": [] }` with HTTP 200.
 
+### Court creation
+
+The `POST /api/courts` block is closed and approved for authenticated administrators. All of these request fields are required:
+
+```json
+{
+  "name": "Court 1",
+  "sportType": "padel",
+  "hourlyPriceCents": 5000,
+  "opensAt": "08:00",
+  "closesAt": "23:00"
+}
+```
+
+Require nonempty text for `name` and free-text `sportType`, a positive integer for `hourlyPriceCents`, and facility-local whole-hour opening/closing times with opening strictly before closing. Use the already approved non-overnight fixed daily schedule. Invalid fields return HTTP 422 with the shared error contract and field-specific messages. Enforce administrative permission in the API.
+
+The backend associates the court with the single seeded Facility and sets `isActive: true`; these are not client-selected creation fields. Return HTTP 201 Created with the complete court representation shown above, including the generated ID, structured price/hours, and `display.hourlyPrice` only. Do not include duplicate formatted opening intervals or a timezone label in the court response.
+
+### Court updates
+
 The `PATCH /api/courts/{courtId}` contract is approved for administrators. Accept only changed fields from `name`, `sportType`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `isActive`. An omitted field means unchanged, not deletion or replacement with a default. Reject fields outside the contract, including `facilityId`, through the shared validation error response.
 
 Authenticate and authorize first, then find the court or return HTTP 404. Validate supplied values; for example, `sportType` must be nonempty text. Validate related fields against the proposed final court state: changing only `closesAt` to `07:00` while the existing `opensAt` is `08:00` returns HTTP 422. Apply only supplied fields and return HTTP 200 with the complete updated court representation. Use `{ "isActive": false }` for deactivation. Existing bookings keep their scheduled instants and contracted prices.
