@@ -196,7 +196,23 @@ Approved endpoint: `GET /api/bookings/me`, authenticated with JWT and without a 
 
 Return HTTP 200 with `{ "items": [...] }`. Each item uses the approved booking presentation representation, with `canCancel` calculated for the requesting user. Include upcoming, past, and cancelled bookings. Sort by start instant descending on the backend, not by formatted date strings. When no bookings exist, return `{ "items": [] }` with HTTP 200.
 
-## Cancellation eligibility
+## Booking cancellation
+
+Approved request: `PATCH /api/bookings/{bookingId}`, authenticated as the booking owner, with:
+
+```json
+{
+  "status": "cancelled"
+}
+```
+
+This replaces the proposed `POST /api/bookings/{bookingId}/cancel`. Use the same partial-resource-update convention as court edits. The request permits only cancellation: do not allow changing court, schedule, owner, contracted price, or restoring status to confirmed.
+
+For a valid cancellation, return HTTP 200 with the shared booking presentation representation, updated to `status: "cancelled"`, `canCancel: false`, and `display.status: "Cancelled"`. Preserve the booking and contracted price in history; release its interval for new bookings through the existing confirmed-only exclusion constraint.
+
+Ownership and the inclusive two-hour window are enforced by the backend regardless of any previous `canCancel` value. The shared HTTP/error contract applies. The suggested HTTP 200 behavior for an already-cancelled booking is not yet approved; settle this separately before implementation.
+
+### Cancellation eligibility
 
 `canCancel` is true only when the requesting user owns the booking, its status is confirmed, and its start instant is at least two hours after the server's current instant. Exactly two hours is eligible.
 
