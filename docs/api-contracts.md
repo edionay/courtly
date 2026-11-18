@@ -138,6 +138,10 @@ Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{cour
 
 The `GET /api/courts` collection contract is approved: require authentication, accept no request body, and return HTTP 200 with `{ "items": [...] }`, using the court representation above. Return only active courts to users and both active and inactive courts to administrators. Order by court name ascending on the backend. Do not add pagination for this delivery. Empty results return `{ "items": [] }` with HTTP 200.
 
+The `PATCH /api/courts/{courtId}` contract is approved for administrators. Accept only changed fields from `name`, `sportType`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `isActive`. An omitted field means unchanged, not deletion or replacement with a default. Reject fields outside the contract, including `facilityId`, through the shared validation error response.
+
+Authenticate and authorize first, then find the court or return HTTP 404. Validate supplied values; for example, `sportType` must be nonempty text. Validate related fields against the proposed final court state: changing only `closesAt` to `07:00` while the existing `opensAt` is `08:00` returns HTTP 422. Apply only supplied fields and return HTTP 200 with the complete updated court representation. Use `{ "isActive": false }` for deactivation. Existing bookings keep their scheduled instants and contracted prices.
+
 Opening and closing times represent recurring facility-local wall-clock times, not UTC instants. Keep values such as `08:00` unchanged in the court's opening-hours rule. On each availability request, combine the selected calendar date, local opening/closing times, and the facility's IANA timezone to calculate that day's absolute slot instants. For example, on November 20, 2026, 08:00 in `America/Sao_Paulo` produces the first slot start `2026-11-20T11:00:00Z`. Do not preconvert recurring opening hours to UTC or persist generated slots. When validating a booking, interpret its absolute interval in the facility timezone and check it against the local opening interval.
 
 Availability response example:
