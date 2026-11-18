@@ -146,7 +146,7 @@ Opening and closing times represent recurring facility-local wall-clock times, n
 
 The availability request contract is approved: `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD` requires authentication and no request body. `courtId` identifies the court. `date` is required and must be a valid calendar date in the exact `YYYY-MM-DD` format, interpreted in the facility timezone rather than the browser timezone. Missing or invalid dates return HTTP 422 through the shared validation contract; a nonexistent court returns HTTP 404. Do not default an omitted date to today; that alternative was explicitly rejected. Generate slots using the selected date, court opening hours, and existing bookings. Inactive-court response behavior still requires a decision before implementation.
 
-Availability response example (the accessible separation of time labels is being revised next):
+Approved availability response: HTTP 200 with `courtId`, the requested `date`, shared `display.date` and `display.timezone`, and chronologically ordered `slots`. An empty result returns `slots: []` with HTTP 200.
 
 ```json
 {
@@ -161,14 +161,15 @@ Availability response example (the accessible separation of time labels is being
       "startsAt": "2026-11-20T13:00:00Z",
       "status": "available",
       "display": {
-        "timeRange": "10:00 – 11:00"
+        "startsAt": "10:00",
+        "endsAt": "11:00"
       }
     }
   ]
 }
 ```
 
-Slots contain `startsAt`, `status`, and `display.timeRange`, without `endsAt`. Slot status is `past`, `booked`, or `available`. Past takes precedence: a slot whose start is before the server's current instant is `past` regardless of occupancy. The frontend hides all `past` slots, while booking history remains available separately. For other slots, a confirmed overlapping booking means `booked`; otherwise use `available`. Status is calculated, not persisted. The example assumes a query before the displayed start instant.
+Slots contain the raw UTC `startsAt`, machine-readable `status`, and separate local-time strings `display.startsAt` and `display.endsAt`, without a raw `endsAt` or combined `display.timeRange`. The raw start is used in booking creation; the display times are used for presentation without client-side timezone conversion. Compose a visual separator and an accessible `until` separator in the frontend, as with court hours. Slot status is `past`, `booked`, or `available`. Past takes precedence: a slot whose start is before the server's current instant is `past` regardless of occupancy. The frontend hides all `past` slots, while booking history remains available separately. For other slots, a confirmed overlapping booking means `booked`; otherwise use `available`. Status is calculated, not persisted. The example assumes a query before the displayed start instant.
 
 ## Booking presentation
 
