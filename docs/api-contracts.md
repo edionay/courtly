@@ -1,6 +1,6 @@
 # API contracts in progress
 
-This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Endpoint paths, authentication details, complete error responses, and the administrator day-view contract still require finalization.
+This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, authentication details, complete error responses, and some response shapes still require finalization.
 
 ## Presentation policy
 
@@ -11,6 +11,17 @@ The existing Express backend prepares client-facing representations; do not add 
 - Do not make the client reconstruct instants, prices, or status codes from formatted labels.
 - Keep UTC instants and contracted monetary values in backend persistence even when presentation responses omit them.
 - Facility owns the timezone. A timezone label in `display` is derived presentation context, not a Booking column.
+
+### Rules for placing fields
+
+1. Keep fields outside `display` when they identify resources, provide action inputs, or drive interface behavior. Examples: `id`, resource objects such as `court` and `user`, machine-readable `status`, `canCancel`, and the slot `startsAt` submitted to create a booking.
+2. Put derived, formatted, or translated strings inside `display`. Examples: a formatted date, a time-range label, a dollar amount, a status label, or a readable timezone label.
+3. Keep original text fields such as `court.name`, `user.name`, and free-text `sportType` outside `display`; being visible on screen does not by itself make a value a display field.
+4. Omit fields without a concrete client use. Include both structured and formatted versions only when each has a distinct current use. For example, `status` can drive badge appearance while `display.status` supplies its label; revenue needs only a formatted value when the client merely renders it.
+5. Place shared presentation context at the nearest common response level. A daily report can have date/timezone labels once at the root and time-range/status/price labels within each booking.
+6. Never use a display label as input to calculations, authorization, comparisons, or API requests. Formatting is an API presentation concern, not a persistence or domain representation.
+
+These rules are approved development guidance. They do not imply new endpoints or a universal response wrapper.
 
 ## Booking presentation
 
@@ -60,3 +71,17 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 ```
 
 The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply those values. Complete endpoint and error contracts remain to be finalized.
+
+## Daily bookings report
+
+Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
+
+- Require an authenticated administrator. URL structure does not replace role enforcement.
+- Interpret the requested calendar day in `America/Sao_Paulo`.
+- List that day's confirmed and cancelled bookings across all courts, including deactivated courts, ordered by start instant.
+- Include court and user names for presentation.
+- Compute expected revenue from contracted totals of confirmed bookings only. Completed time periods remain included; cancelled bookings contribute nothing.
+- Prepare date, time, timezone, status, and monetary labels in the backend. Do not require the frontend to sum prices or format instants.
+- This is the mandatory day view, not an export feature or a separate reporting system.
+
+Response field names and the empty-day representation are currently proposals being discussed, not yet approved contracts.
