@@ -11,15 +11,15 @@ The existing Express backend prepares client-facing representations; do not add 
 - Do not make the client reconstruct instants, prices, or status codes from formatted labels.
 - Keep UTC instants and contracted monetary values in backend persistence even when presentation responses omit them.
 - Facility owns the timezone. A timezone label in `display` is derived presentation context, not a Booking column.
-- Court opening-hour presentation reuses the existing `opensAt` and `closesAt` fields. Do not return duplicate display fields or a combined opening-hours string. The client composes a spaced visual separator and accessible `until` text, hiding the visual separator from assistive technology and the accessible separator from visual presentation. This is presentation composition from values already needed by the client, not timezone conversion or parsing formatted labels. Slots use separate local `display.startsAt` and `display.endsAt` values as approved below. Booking range accessibility still requires a separate review; do not assume booking responses expose both raw endpoints.
+- Never return combined time-interval strings or `display.timeRange`. Court opening-hour presentation reuses existing `opensAt` and `closesAt`, without duplicate display fields. Slots, personal bookings (creation, listing, cancellation), and daily-report items use separate local `display.startsAt` and `display.endsAt` strings. The client composes a spaced visual separator and accessible `until` text, hiding the visual separator from assistive technology and the accessible separator from visual presentation. This is presentation composition, not timezone conversion or parsing combined labels. Do not add raw booking timestamps just for this presentation.
 
 ### Rules for placing fields
 
 1. Keep fields outside `display` when they identify resources, provide action inputs, or drive interface behavior. Examples: `id`, resource objects such as `court` and `user`, machine-readable `status`, `canCancel`, and the slot `startsAt` submitted to create a booking.
-2. Put derived, formatted, or translated strings inside `display`. Examples: a formatted date, a time-range label, a dollar amount, a status label, or a readable timezone label.
+2. Put derived, formatted, or translated strings inside `display`. Examples: a formatted date, separate local start/end time labels, a dollar amount, a status label, or a readable timezone label where the approved contract requires it.
 3. Keep original text fields such as `court.name`, `user.name`, and free-text `sportType` outside `display`; being visible on screen does not by itself make a value a display field.
 4. Omit fields without a concrete client use. Include both structured and formatted versions only when each has a distinct current use. For example, `status` can drive badge appearance while `display.status` supplies its label; revenue needs only a formatted value when the client merely renders it.
-5. Place shared presentation context at the nearest common response level. A daily report can have date/timezone labels once at the root and time-range/status/price labels within each booking.
+5. Place shared presentation context at the nearest common response level. The daily report has its formatted date and expected revenue at the root, and separate start/end labels and a price label within each booking. Follow its approved omission of timezone and display-status labels.
 6. Never use a display label as input to calculations, authorization, comparisons, or API requests. Formatting is an API presentation concern, not a persistence or domain representation.
 
 These rules are approved development guidance. They do not imply new endpoints or a universal response wrapper.
@@ -186,7 +186,8 @@ Use the same booking representation for single-booking responses and items in th
   "canCancel": true,
   "display": {
     "date": "Nov 20, 2026",
-    "timeRange": "10:00 – 12:00",
+    "startsAt": "10:00",
+    "endsAt": "12:00",
     "timezone": "São Paulo time",
     "status": "Confirmed",
     "totalPrice": "$100.00"
@@ -197,6 +198,8 @@ Use the same booking representation for single-booking responses and items in th
 The IDs are illustrative, not a choice of identifier format. The example's `canCancel` assumes the owner is requesting it at least two hours before the start.
 
 Do not include raw `startsAt`, `endsAt`, or numeric price fields in this presentation representation merely for potential future use. A single-booking response shape does not imply a separate detail GET endpoint.
+
+Use separate local `display.startsAt` and `display.endsAt` values in all personal booking responses, including creation, listing, and cancellation. They replace the earlier combined `display.timeRange`, allowing the frontend to compose the visual and accessible interval without splitting strings or converting timezones.
 
 The client renders `court.name` and `display` values directly. It uses `id` for actions, `status` for machine-readable state, and `canCancel` to decide whether cancellation is offered. It does not calculate cancellation deadlines.
 
@@ -265,7 +268,8 @@ Return HTTP 201 Created with the booking presentation representation. For a two-
   "canCancel": true,
   "display": {
     "date": "Nov 20, 2026",
-    "timeRange": "13:00 – 15:00",
+    "startsAt": "13:00",
+    "endsAt": "15:00",
     "timezone": "São Paulo time",
     "status": "Confirmed",
     "totalPrice": "$100.00"
