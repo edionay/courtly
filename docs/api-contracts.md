@@ -117,7 +117,7 @@ Normalize tsoa validation errors and handled database/domain errors into this fo
 
 ## Courts and availability
 
-Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice` and `timezone`. Structured price and opening-hour fields support the administrator's edit form. Reuse `opensAt` and `closesAt` for accessible opening-hour presentation; formatted price and timezone labels remain in `display`.
+Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice` only. Structured price and opening-hour fields support the administrator's edit form. Reuse `opensAt` and `closesAt` for accessible opening-hour presentation. Do not repeat the facility timezone on each court; show the facility's time reference once in the booking screen's shared context.
 
 ```json
 {
@@ -129,8 +129,7 @@ Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPric
   "opensAt": "08:00",
   "closesAt": "23:00",
   "display": {
-    "hourlyPrice": "$50.00",
-    "timezone": "São Paulo time"
+    "hourlyPrice": "$50.00"
   }
 }
 ```

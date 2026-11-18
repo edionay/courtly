@@ -12,6 +12,8 @@ This document records approved interface behavior. Read it with `challenge.md`, 
 
 Provide a calendar for jumping directly to a date and previous/next-day controls for nearby dates. Disable past dates and prevent the previous-day control from navigating before the facility's current date. The user does not have to inspect intervening days to reach a later date.
 
+Show the facility's time reference once in shared booking-screen context, for example `Times shown in São Paulo time`. Do not repeat a timezone label in each court's `display`; the backend still owns timezone calculations.
+
 When no bookable slots remain, show an explanation and allow choosing another date. Use backend `display` labels for slot presentation; pass the selected first slot's original `startsAt` and the one- or two-hour duration to booking creation.
 
 The current API supplies one date at a time. Do not add automatic next-available searches or availability indicators for every day in the calendar; those are outside the approved delivery. No additional endpoint is implied by this screen design.
