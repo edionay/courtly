@@ -26,3 +26,9 @@ Desktop uses a left sidebar with Courts, My bookings, and Sign out; mobile uses 
 Preserve the approved week strip and slot grid. On desktop place the compact Selected time/price/Continue to review block high on the right, alongside court metadata and hourly price. On mobile retain the selection/price area below the slots. Use the same slot fixture and states in both layouts. The previews illustrate two consecutive selected hours, past days, and occupied slots; they are static planning artifacts, not a functional interface or a completed accessibility test.
 
 The grayscale wireframes approve structure and hierarchy only. Final visual tokens, typography, colors, and production Tailwind components remain a later design block. Use a low-consumption agent with narrow visual context for static wireframes and let the orchestrator review them; application implementation still follows the configured programmer/reviewer workflow.
+
+## Booking review wireframe — approved
+
+Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to selection with the existing query state restored and revalidate availability.
+
+Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; modal layouts and final visual styling remain separate review items.
