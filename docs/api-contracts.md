@@ -134,7 +134,7 @@ Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPric
 }
 ```
 
-Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{courtId}`, and `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD`. Users list active courts; administrators list all courts and exclusively create/edit them. The backend associates each court with the seeded facility; no client-supplied facility ID is needed. Deactivate through PATCH with `isActive: false`.
+Approved routes: `GET /api/courts`, `POST /api/courts`, `PATCH /api/courts/{courtId}`, and `GET /api/courts/{courtId}/availability` with optional `weekStart`. Users list active courts; administrators list all courts and exclusively create/edit them. The backend associates each court with the seeded facility; no client-supplied facility ID is needed. Deactivate through PATCH with `isActive: false`.
 
 The `GET /api/courts` collection contract is approved: require authentication, accept no request body, and return HTTP 200 with `{ "items": [...] }`, using the court representation above. Return only active courts to users and both active and inactive courts to administrators. Order by court name ascending on the backend. Do not add pagination for this delivery. Empty results return `{ "items": [] }` with HTTP 200.
 
@@ -164,32 +164,182 @@ Authenticate and authorize first, then find the court or return HTTP 404. Valida
 
 Opening and closing times represent recurring facility-local wall-clock times, not UTC instants. Keep values such as `08:00` unchanged in the court's opening-hours rule. On each availability request, combine the selected calendar date, local opening/closing times, and the facility's IANA timezone to calculate that day's absolute slot instants. For example, on November 20, 2026, 08:00 in `America/Sao_Paulo` produces the first slot start `2026-11-20T11:00:00Z`. Do not preconvert recurring opening hours to UTC or persist generated slots. When validating a booking, interpret its absolute interval in the facility timezone and check it against the local opening interval.
 
-The availability request contract is approved: `GET /api/courts/{courtId}/availability?date=YYYY-MM-DD` requires authentication and no request body. `courtId` identifies the court. `date` is required and must be a valid calendar date in the exact `YYYY-MM-DD` format, interpreted in the facility timezone rather than the browser timezone. Missing or invalid dates return HTTP 422 through the shared validation contract. Availability is exposed only for active courts: a nonexistent or inactive court returns HTTP 404 with `code: "COURT_NOT_FOUND"` and `message: "Court not found or unavailable for booking."` This does not delete or hide its booking history or prevent administrator court management. A new booking attempt against an inactive court still returns HTTP 409 under the booking contract. Do not default an omitted date to today; that alternative was explicitly rejected. Generate slots using the selected date, court opening hours, and existing bookings.
+## Weekly availability
 
-Approved availability response: HTTP 200 with `courtId`, the requested `date`, shared `display.date` and `display.timezone`, and chronologically ordered `slots`. An empty result returns `slots: []` with HTTP 200.
+This request/response block is closed and approved. It replaces the earlier day-at-a-time availability contract; do not retain a competing required `date` query.
+
+The challenge still requires the user to select a court and a date and view that day's slots. Weekly API loading is an implementation strategy: return seven days, but display only the selected day's slots. This does not replace the required daily availability experience with a simultaneous seven-day slot grid.
+
+### Request
+
+`GET /api/courts/{courtId}/availability` requires authentication and no request body. Without `weekStart`, return the current week in the seeded Facility's timezone. Weeks always run Sunday through Saturday, independently of browser locale.
+
+To request another week, use `?weekStart=YYYY-MM-DD`. The supplied date must be a valid calendar Sunday. Invalid dates or other weekdays return HTTP 422 using the shared `VALIDATION_ERROR` contract; for a non-Sunday, use the field message `Choose a Sunday as the start of the week.` Do not silently normalize the input.
+
+A nonexistent or inactive court returns HTTP 404 with `code: "COURT_NOT_FOUND"` and `message: "Court not found or unavailable for booking."` Court management and booking history remain available. A new booking attempt against an inactive court still uses HTTP 409 under its separate contract.
+
+### Response and navigation
+
+Return HTTP 200 with:
+
+- `courtId`, `weekStart`, and `weekEnd`, with date-only boundaries inclusive from Sunday to Saturday.
+- `display.weekStart` and `display.weekEnd`: separate formatted date labels for the week heading.
+- `navigation.previous` and `navigation.next`: backend-generated relative API links for the adjacent weeks. Use null for `previous` when that adjacent week would be wholly in the past. The client follows links directly and does not calculate Sundays or relative page numbers.
+- `days`: exactly seven calendar days in chronological order. Each has `date`, `isSelectable`, `display.dayOfMonth`, `display.weekday`, and `slots`.
+- `isSelectable` is false for dates before the facility's current date, true for today and future dates. It does not promise free slots. Do not add `currentDate` or `minDate` to this response; the approved interface uses the day-level states.
+- Each day's slots are ordered chronologically and contain a raw UTC `startsAt`, `status`, and separate facility-local `display.startsAt` and `display.endsAt` labels. No raw end instant, slot ID, combined interval label, or booking-owner data is needed.
+
+Read the IANA timezone from Facility. Compute local week/day boundaries and convert them to UTC for the booking query; generate each day's slots from local opening hours and existing bookings. Slots are calculated, not persisted. For slots whose start is before the server's current instant, `past` takes precedence over occupancy. Otherwise a confirmed overlap is `booked`; the remaining slots are `available`. A day with no free slots remains selectable and still shows its occupied slots. Do not automatically find a day with free slots; that is a future improvement.
+
+### Complete illustrative response
+
+This example assumes November 18, 2026 at 09:00 in Sao Paulo and an illustrative court open only from 13:00 to 14:00 daily. Actual courts return every one-hour slot within their opening interval.
 
 ```json
 {
   "courtId": "court-1",
-  "date": "2026-11-20",
+  "weekStart": "2026-11-15",
+  "weekEnd": "2026-11-21",
   "display": {
-    "date": "Nov 20, 2026",
-    "timezone": "São Paulo time"
+    "weekStart": "Nov 15, 2026",
+    "weekEnd": "Nov 21, 2026"
   },
-  "slots": [
+  "navigation": {
+    "previous": null,
+    "next": "/api/courts/court-1/availability?weekStart=2026-11-22"
+  },
+  "days": [
     {
-      "startsAt": "2026-11-20T13:00:00Z",
-      "status": "available",
+      "date": "2026-11-15",
+      "isSelectable": false,
       "display": {
-        "startsAt": "10:00",
-        "endsAt": "11:00"
-      }
+        "dayOfMonth": "15",
+        "weekday": "Sun"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-15T16:00:00Z",
+          "status": "past",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-16",
+      "isSelectable": false,
+      "display": {
+        "dayOfMonth": "16",
+        "weekday": "Mon"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-16T16:00:00Z",
+          "status": "past",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "isSelectable": false,
+      "display": {
+        "dayOfMonth": "17",
+        "weekday": "Tue"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-17T16:00:00Z",
+          "status": "past",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-18",
+      "isSelectable": true,
+      "display": {
+        "dayOfMonth": "18",
+        "weekday": "Wed"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-18T16:00:00Z",
+          "status": "available",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "isSelectable": true,
+      "display": {
+        "dayOfMonth": "19",
+        "weekday": "Thu"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-19T16:00:00Z",
+          "status": "booked",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "isSelectable": true,
+      "display": {
+        "dayOfMonth": "20",
+        "weekday": "Fri"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-20T16:00:00Z",
+          "status": "available",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "isSelectable": true,
+      "display": {
+        "dayOfMonth": "21",
+        "weekday": "Sat"
+      },
+      "slots": [
+        {
+          "startsAt": "2026-11-21T16:00:00Z",
+          "status": "available",
+          "display": {
+            "startsAt": "13:00",
+            "endsAt": "14:00"
+          }
+        }
+      ]
     }
   ]
 }
 ```
 
-Slots contain the raw UTC `startsAt`, machine-readable `status`, and separate local-time strings `display.startsAt` and `display.endsAt`, without a raw `endsAt` or combined `display.timeRange`. The raw start is used in booking creation; the display times are used for presentation without client-side timezone conversion. Compose a visual separator and an accessible `until` separator in the frontend, as with court hours. Slot status is `past`, `booked`, or `available`. Past takes precedence: a slot whose start is before the server's current instant is `past` regardless of occupancy. The frontend hides all `past` slots, while booking history remains available separately. For other slots, a confirmed overlapping booking means `booked`; otherwise use `available`. Status is calculated, not persisted. The example assumes a query before the displayed start instant.
+On first entry, select the first day with `isSelectable: true` even if its slots are all occupied. Keep occupied slots visible, disabled, and labeled `Booked`; hide past slots. Display only the selected day's chronological slots beneath the seven-day strip. Switching days within the loaded week uses existing data; switching weeks follows the provided link. Clear slot selections when changing day/week. Restore date and selected hours from query parameters when returning from review and revalidate availability. Final booking creation always revalidates rules and relies on the database constraint for concurrency.
 
 ## Booking presentation
 
