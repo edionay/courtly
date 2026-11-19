@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="960" viewBox="0 0 1460 960">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="1460" height="960" fill="white"/>
+<rect x="0" y="0" width="220" height="960" fill="#fafafa"/>
+<line x1="220" y1="0" x2="220" y2="960" class="line"/>
+<text x="28" y="49" class="title" >Courtly</text>
+<rect x="16" y="92" width="188" height="46" rx="5" fill="#e8e8e8" stroke="#aaa"/>
+<text x="30" y="121" class="bold" >Courts</text>
+<text x="30" y="174" class="body" >My bookings</text>
+<line x1="16" y1="891" x2="204" y2="891" class="line"/>
+<text x="30" y="928" class="body" >Sign out</text>
+<text x="280" y="99" class="title" >Courts</text>
+<rect x="280" y="140" width="348" height="242" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="174" class="bold" >Court 1</text>
+<text x="300" y="199" class="body" >Padel</text>
+<text x="300" y="236" class="small muted" >Opening hours</text>
+<text x="300" y="260" class="body" >10:00 – 22:00</text>
+<text x="300" y="296" class="bold" >$50.00 per hour</text>
+<rect x="300" y="318" width="308" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="454" y="347" class="body" text-anchor="middle">View availability</text>
+<rect x="646" y="140" width="348" height="242" rx="5" fill="white" stroke="#bbb"/>
+<text x="666" y="174" class="bold" >Court 2</text>
+<text x="666" y="199" class="body" >Tennis</text>
+<text x="666" y="236" class="small muted" >Opening hours</text>
+<text x="666" y="260" class="body" >08:00 – 23:00</text>
+<text x="666" y="296" class="bold" >$40.00 per hour</text>
+<rect x="666" y="318" width="308" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="820" y="347" class="body" text-anchor="middle">View availability</text>
+<rect x="1012" y="140" width="348" height="242" rx="5" fill="white" stroke="#bbb"/>
+<text x="1032" y="174" class="bold" >Court 3</text>
+<text x="1032" y="199" class="body" >Basketball</text>
+<text x="1032" y="236" class="small muted" >Opening hours</text>
+<text x="1032" y="260" class="body" >08:00 – 22:00</text>
+<text x="1032" y="296" class="bold" >$60.00 per hour</text>
+<rect x="1032" y="318" width="308" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="1186" y="347" class="body" text-anchor="middle">View availability</text>
+</svg>

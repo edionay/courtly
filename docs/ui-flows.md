@@ -42,3 +42,11 @@ After successful creation, show Booking confirmed with Go to my bookings. Naviga
 For an occupied-slot conflict, show Time no longer available with the API message and Choose another time. Stay on review until this action is activated; then return to selection for the same court and date, reload weekly availability, and clear the previous slots. Do not retry automatically or classify every HTTP 409 as an occupied slot; use the error code.
 
 Implement both with native `<dialog>`, `showModal()`, and `close()`, an accessible name, appropriate focus handling, and an inert background. Escape closes only: it does not navigate or retry. After dismissing a conflict, keep its explanation and recovery action available. Static wireframe approval does not replace implementation accessibility checks.
+
+## Court listing wireframe — approved
+
+The court-list entry screen is approved. Use `/courts` and the approved authenticated `GET /api/courts` response. For regular users, list active courts in backend-provided name order. Show name, sport, opening and closing times, and `display.hourlyPrice` with a per-hour label. Do not add filters, pagination, dates, ratings, or availability claims.
+
+The desktop layout uses a grid of court cards, with one column on mobile. Each card shows the same fields and a View availability action. A sport illustration can be considered during visual refinement; it does not introduce a court-image field or change the free-text sport contract. The action navigates to the selected court's booking time-selection step without a week query, letting the backend supply the current week. Its accessible name identifies the court. Reuse separate opening/closing fields and the approved accessible time separator. An empty collection shows No courts available.
+
+Canonical SVG/PNG previews are `wireframes/court-list-desktop` and `wireframes/court-list-mobile`. This approval covers structure and navigation; final visual styling remains a later block.

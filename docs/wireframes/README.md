@@ -23,3 +23,9 @@ After successful creation, show Booking confirmed with Go to my bookings. Naviga
 For an occupied-slot conflict, show Time no longer available with the API message and Choose another time. Stay on review until this action is activated; then return to selection for the same court and date, reload weekly availability, and clear the previous slots. Do not retry automatically or classify every HTTP 409 as an occupied slot; use the error code.
 
 Implement both with native `<dialog>`, `showModal()`, and `close()`, an accessible name, appropriate focus handling, and an inert background. Escape closes only: it does not navigate or retry. After dismissing a conflict, keep its explanation and recovery action available. Static wireframe approval does not replace implementation accessibility checks.
+
+## Court list — approved
+
+The court-list layouts are approved. The authenticated `/courts` view displays active courts by name from `GET /api/courts` without filters or pagination. The three illustrative cards show the court, sport, opening hours, hourly price, and a View availability action in a three-column desktop grid and one-column mobile layout. A sport illustration is planned for later visual refinement; this does not require a court-specific image API or a sport catalog. That action opens the selected court's weekly booking step without a week query, allowing the current facility-local week to be shown. An empty list may show “No courts available.”
+
+Use a semantic HTML list and links, with each availability link's accessible name including its court and a touch target of at least 44 pixels. Show the existing `opensAt` and `closesAt` values separately with a visual dash hidden from assistive technology and a visually hidden “until” separator. Use the formatted `display.hourlyPrice` value for the price.
