@@ -451,10 +451,11 @@ Return HTTP 201 Created with the booking presentation representation. For a two-
 
 ## Daily bookings report
 
-Approved endpoint: `GET /api/reports/daily-bookings?date=YYYY-MM-DD`.
+Approved endpoint: `GET /api/reports/daily-bookings`, with optional `date=YYYY-MM-DD`.
 
 - Require an authenticated administrator. URL structure does not replace role enforcement.
-- The approved request has no body and requires `date` as a valid calendar date in exact `YYYY-MM-DD` format. Missing or invalid dates return HTTP 422. An authenticated non-administrator receives HTTP 403; authentication errors follow the shared 401 contract.
+- The approved request has no body. When `date` is omitted, use the current calendar day in the seeded Facility timezone. When supplied, require a valid calendar date in exact `YYYY-MM-DD` format; an empty or invalid supplied value returns HTTP 422. An authenticated non-administrator receives HTTP 403; authentication errors follow the shared 401 contract. This supersedes the earlier required-date decision.
+- Always return the effective date in the existing root `date` field, whether supplied or defaulted. With no date query, the client loads the current report and initializes its date input from this value, without calculating today from the browser clock. No additional currentDate field is needed.
 - Read the timezone from the single seeded Facility, currently `America/Sao_Paulo`; do not hardcode it in report logic or accept a client-provided timezone. Calculate the selected local day's midnight and the following local day's midnight in that timezone, then convert both boundaries to UTC. Include bookings whose start is at or after the first boundary and before the second. This is consistent with the approved same-day, non-overnight schedule. Derive report display labels using the same facility timezone.
 - List that day's confirmed and cancelled bookings across all courts, including deactivated courts, ordered by start instant.
 - Include court and user names for presentation.
