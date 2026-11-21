@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Frontend build tooling is approved: pin Vite `8.3.8` for React development and production builds, keeping the frontend separate from the Express backend. Use the official `@storybook/react-vite` integration for Storybook. The approved Node.js version satisfies Vite requirements; verify the exact supporting plugin/Storybook package pins and build behavior in the tooling delivery. Stable releases only.
 - Runtime/API versions are approved: Node.js `24.22.3` LTS, TypeScript `5.9.3` with strict mode, Express `4.22.3`, and tsoa `6.6.0`. Use stable releases only; do not adopt alpha, beta, or release-candidate dependencies. Express `4.22.3` satisfies the Express range declared by tsoa `6.6.0`. Version approval does not claim completed runtime validation: verify route/spec generation, TypeScript compilation, authentication, error normalization, and Swagger execution during the tooling delivery.
 - The official tsoa `7.0.0-rc.0` notes report array/buffer validation security fixes that also affect 6.x. Retaining stable tsoa `6.6.0` does not resolve those findings. Evaluate applicability to the approved contracts and actual dependency graph before considering tooling validated; keep any required remediation within the stable-release policy and discuss unresolved conflicts rather than silently adopting a prerelease or claiming the findings are fixed.
 - Database stack versions are approved: PostgreSQL `17.12` and Prisma ORM `7.10.1`, with the CLI (`prisma`) and Client (`@prisma/client`) pinned to the same exact version. Use the PostgreSQL driver adapter required by Prisma 7; its compatible package pin belongs to the remaining runtime/tooling validation. Version the `btree_gist` extension and confirmed-booking GiST exclusion constraint in a customized SQL migration. During implementation, verify migration application and the actual adapter/Prisma overlap error, then map that conflict to `BOOKING_CONFLICT` and HTTP 409. This approval is a version decision supported by documentation, not a claim that runtime compatibility has already been tested.
@@ -166,6 +167,9 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 ## Technical references
 
+- Vite 8.3.8 release: https://github.com/vitejs/vite/releases/tag/v8.3.8
+- Vite setup and Node.js requirements: https://vite.dev/guide/
+- Storybook React/Vite framework integration: https://storybook.js.org/docs/get-started/frameworks/react-vite
 - Node.js release history: https://nodejs.org/en/blog
 - TypeScript 5.9.3 release: https://github.com/microsoft/TypeScript/releases/tag/v5.9.3
 - tsoa 6.6.0 runtime dependencies: https://github.com/lukeautry/tsoa/blob/v6.6.0/packages/runtime/package.json
