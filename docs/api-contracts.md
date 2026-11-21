@@ -370,6 +370,45 @@ This example assumes November 18, 2026 at 09:00 in Sao Paulo and an illustrative
 
 On first entry, select the first day with `isSelectable: true` even if its slots are all occupied. Keep occupied slots visible, disabled, and labeled `Booked`; hide past slots. Display only the selected day's chronological slots beneath the seven-day strip. Switching days within the loaded week uses existing data; switching weeks follows the provided link. Clear slot selections when changing day/week. Restore date and selected hours from query parameters when returning from review and revalidate availability. Final booking creation always revalidates rules and relies on the database constraint for concurrency.
 
+## Booking preview
+
+`POST /api/bookings/preview` is approved for authenticated users. This endpoint supports live selected-price feedback and the separate review page; it is a project design choice, not an endpoint explicitly required by the challenge.
+
+Accept the same selection as booking creation, with no client-supplied price or user:
+
+```json
+{
+  "courtId": "court-1",
+  "startsAt": "2026-11-20T16:00:00Z",
+  "durationHours": 2
+}
+```
+
+Return HTTP 200:
+
+```json
+{
+  "court": {
+    "id": "court-1",
+    "name": "Court 1",
+    "sportType": "padel"
+  },
+  "durationHours": 2,
+  "display": {
+    "date": "Nov 20, 2026",
+    "startsAt": "13:00",
+    "endsAt": "15:00",
+    "totalPrice": "$100.00"
+  }
+}
+```
+
+The example assumes the requested start is in the future. Use the selected slot's unchanged absolute `startsAt`. Apply the same court existence/activity, explicit-offset, whole-hour alignment, one- or two-hour duration, future start, opening-hours, and overlap checks as creation. Use the approved error envelope and codes: `UNAUTHENTICATED` (401), `COURT_NOT_FOUND` (404), `COURT_INACTIVE` or `BOOKING_CONFLICT` (409), `VALIDATION_ERROR` (422 with applicable fields), and shared malformed-request/unexpected-error handling.
+
+Preview creates no booking, draft, slot hold, or price lock. Do not return a booking ID, status, or cancellation flag. Creation independently revalidates current data and saves the contracted total; PostgreSQL overlap protection remains authoritative. Share a small internal preparation function between preview and creation rather than invoking preview over HTTP or trusting previous results.
+
+The frontend uses preview for selection price and review labels, shows loading while refreshing, and ignores results for an earlier selection. Preview and creation accept no client price. A court price change between preview and confirmation may change the contracted total: display the creation response's final total. Expected-price fields, quote records, price locks, and price-change reconfirmation remain future improvements outside this delivery.
+
 ## Booking presentation
 
 Use the same booking representation for single-booking responses and items in the user's booking list:
