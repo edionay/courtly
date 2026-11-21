@@ -114,7 +114,17 @@ Approved HTTP status mapping:
 
 Display form errors and booking conflicts within the current screen. A 401 from a protected operation opens the authentication-error page with an explicit login navigation option; invalid credentials stay on the login form. This contract does not define page navigation for the remaining error statuses.
 
-Normalize tsoa validation errors and handled database/domain errors into this format through the backend error handler. Document applicable errors in OpenAPI in the same PR as each endpoint. Do not expose stack traces, SQL, or credentials in responses. Specific codes other than the illustrated `BOOKING_CONFLICT` and `VALIDATION_ERROR` will be named when completing endpoint contracts.
+Normalize tsoa validation errors and handled database/domain errors into this format through the backend error handler. Document applicable errors in OpenAPI in the same PR as each endpoint. Do not expose stack traces, SQL, or credentials in responses. Booking and court error codes are approved below. General authentication, authorization, malformed-request, and unexpected-error code names remain to be finalized.
+
+### Approved booking and court error codes
+
+- `BOOKING_CONFLICT` — HTTP 409 when the requested booking interval overlaps an existing confirmed booking. The client uses this code for occupied-slot recovery rather than treating every 409 as occupied.
+- `COURT_INACTIVE` — HTTP 409 when attempting to create a booking for an inactive court.
+- `CANCELLATION_WINDOW_CLOSED` — HTTP 409 when a new cancellation is attempted less than two hours before the booking starts. Exactly two hours is eligible. This does not change the approved idempotent success for an already-cancelled booking after ownership validation.
+- `BOOKING_NOT_FOUND` — HTTP 404 for a nonexistent booking.
+- `COURT_NOT_FOUND` — HTTP 404 for a nonexistent court, or a nonexistent/inactive court in availability queries. Preserve the approved availability message: Court not found or unavailable for booking.
+
+Field validation continues to use `VALIDATION_ERROR` with HTTP 422 and applicable `fields`, including invalid dates, nonaligned/past booking starts, duration, and opening-hour validation. The client uses codes for behavior and displays messages as explanations; it never parses message text to classify failures. These names do not change the approved authentication, authorization, ownership, or HTTP status rules.
 
 ## Courts and availability
 
@@ -177,7 +187,7 @@ The challenge still requires the user to select a court and a date and view that
 
 To request another week, use `?weekStart=YYYY-MM-DD`. The supplied date must be a valid calendar Sunday. Invalid dates or other weekdays return HTTP 422 using the shared `VALIDATION_ERROR` contract; for a non-Sunday, use the field message `Choose a Sunday as the start of the week.` Do not silently normalize the input.
 
-A nonexistent or inactive court returns HTTP 404 with `code: "COURT_NOT_FOUND"` and `message: "Court not found or unavailable for booking."` Court management and booking history remain available. A new booking attempt against an inactive court still uses HTTP 409 under its separate contract.
+A nonexistent or inactive court returns HTTP 404 with `code: "COURT_NOT_FOUND"` and `message: "Court not found or unavailable for booking."` Court management and booking history remain available. A new booking attempt against an inactive court uses HTTP 409 with `COURT_INACTIVE` under its separate contract.
 
 ### Response and navigation
 
@@ -422,7 +432,7 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 
 The supplied start must align with a whole-hour slot boundary in the facility timezone: local minutes, seconds, and fractional seconds must be zero. Reject a nonaligned start with HTTP 422; never round or silently change it. Use `code: "VALIDATION_ERROR"`, `message: "Check the highlighted fields."`, and `fields: [{ field: "startsAt", message: "Choose a start time on the hour." }]`. For example, `2026-11-20T13:30:00Z` is invalid for this facility. Enforce this on direct API requests as well as frontend requests. Slot alignment does not replace the other checks for opening hours, duration, past starts, court activity, and overlap.
 
-The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Endpoint-specific error codes remain to be finalized using the shared error contract above.
+The server derives the user from authentication and calculates the end instant and contracted price. The client does not supply user ID, end time, price, or status. Use the approved booking/court codes and shared validation contract above.
 
 ### Approved creation response
 
