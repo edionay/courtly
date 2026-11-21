@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Architecture is approved: feature-oriented layered backend with feature-specific repositories over Prisma, and frontend Container/Presentational Components with typed props and callbacks. Integration pages and hooks coordinate operations; presentation is independently rendered in Storybook with fixtures. See Architecture — approved below.
 - The user approved a one-time initial-base exception: create local `main` at existing root commit `c8ce1f8`, containing only the initial project guidance and preliminary planning decisions. This branch now exists; `planning` remains the working branch and retains every later commit for the first PR into `main`. No commits were rewritten or merged. Future changes still require feature branches and PRs, with merge performed only by the user. Remote publication and the first planning PR remain delivery steps.
 - Returning from review is simplified: retain court and date in the URL, reload weekly availability, and leave all slots unselected for a new choice. This supersedes automatic restoration of earlier slot choices. Restoring slots, revalidating the full earlier selection, and showing a dedicated stale-selection message are future improvements. Backend rule validation, conflict handling, and database concurrency protection remain in scope.
 - The booking preview contract is closed and consolidated in `docs/api-contracts.md`: authenticated `POST /api/bookings/preview` accepts the creation selection and returns court summary, durationHours, and date/start/end/total display labels with HTTP 200. Use creation-equivalent validation and approved errors; persist no draft, booking, hold, or price lock. Reuse internal preparation independently; creation revalidates current data and stores the contracted total under database overlap protection. The live selection-price and review consumers ignore stale preview responses. The approved possible price change before confirmation remains a documented limitation.
@@ -92,6 +93,47 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 - Delivery workflow: the parent agent orchestrates and prepares self-contained implementation tasks; the configured `programador` subagent implements, validates, and opens a feature PR; the configured `revisor` subagent reviews the actual PR diff without modifying code. The orchestrator sends actionable findings back to the developer for correction and subsequent review. The user alone merges PRs. Dependent deliveries start from the merged base.
 - The `programador` and `revisor` roles are available with `gpt-6-luna` and high reasoning effort. Use these configured roles rather than substituting models. Follow each role's applicable programming-practices skill. Implementation remains pending specification and incremental-plan completion.
 - The candidate writes the README, as required by the challenge. AI may help discuss decisions and review candidate-authored text.
+
+## Architecture — approved
+
+Organize frontend and backend by feature, such as courts and bookings. Use the layers below in proportion to the challenge; this decision does not require a full Clean Architecture or DDD implementation.
+
+### Backend: layered architecture with Repository Pattern
+
+- Typed tsoa controllers define HTTP contracts and delegate work to services. Generated routes and the authentication boundary enforce input and role requirements.
+- Services coordinate business rules and repository operations. Small independent functions can express rules that do not need transport or persistence.
+- Feature-specific repositories concentrate database queries and persistence through Prisma. Give them only the operations needed by their feature; do not introduce a generic CRUD repository.
+- Presenters prepare the approved response contracts and display fields separately from persistence and business calculations. Do not return Prisma records as API contracts.
+- For court creation, the controller delegates to CourtService, which validates the interval and uses CourtRepository to obtain the seeded configuration and persist the active court. The controller uses CourtPresenter to return HTTP 201 with the approved representation.
+- Repository isolation does not replace real PostgreSQL verification of the booking overlap constraint.
+
+```mermaid
+flowchart LR
+    Controller[CourtsController] --> Service[CourtService]
+    Service --> Repository[CourtRepository]
+    Repository --> Prisma[Prisma]
+    Prisma --> Database[(PostgreSQL)]
+```
+
+### Frontend: Container and Presentational Components
+
+- Integration pages and feature hooks coordinate application operations, loading, normalized errors, and navigation. Feature API modules use the shared HTTP client.
+- Presentational views and components receive data, state, and callbacks through typed props. They do not access HTTP, tokens, or routing. Local interface state, such as input values, is allowed without moving business rules into presentation.
+- For court creation, CreateCourtPage connects useCreateCourt to CreateCourtView and CourtForm. The page owns routing, the hook coordinates the operation, courtsApi defines the endpoint call, and httpClient handles transport and error normalization.
+- Storybook renders the same presentational views using fixtures and callbacks, without requiring API requests. Keep a small set of meaningful stories for pages and reused components, such as initial, submitting, validation-error, and success-dialog states.
+- Storybook is development support chosen by the project, not a challenge requirement or a replacement for the mandatory backend tests. Pin its compatible version during tooling planning.
+
+```mermaid
+flowchart TD
+    Page[CreateCourtPage] --> Hook[useCreateCourt]
+    Hook --> API[courtsApi]
+    API --> HTTP[httpClient]
+    Page -->|Data, state and callbacks| View[CreateCourtView]
+    View --> Form[CourtForm]
+    Story[Storybook story] -->|Fixtures and callbacks| View
+```
+
+Storybook reference: https://storybook.js.org/docs/writing-stories/build-pages-with-storybook
 
 ## Open planning items
 
