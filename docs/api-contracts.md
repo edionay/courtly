@@ -1,10 +1,10 @@
-# API contracts in progress
+# Courtly API contracts
 
-This document records approved contract decisions. It is not a complete endpoint specification. Read it with `challenge.md` and `decisions.md`. Remaining endpoint paths, endpoint-specific error codes, and some response shapes still require finalization.
+This is the consolidated approved API specification. Read it with [challenge.md](challenge.md), [decisions.md](decisions.md), and [execution-plan.md](execution-plan.md). Examples use illustrative IDs and dates, not fixed seed data. Controller metadata must generate matching routes, validation, and Swagger documentation during implementation.
 
 ## Presentation policy
 
-The existing Express backend prepares client-facing representations; do not add a separate BFF service. Keep formatting separate from database models and business calculations.
+The Express backend will prepare client-facing representations; do not add a separate BFF service. Keep formatting separate from database models and business calculations.
 
 - Return `display` fields ready for rendering in English, using the facility's `America/Sao_Paulo` timezone and generic `$` amounts with two decimal places.
 - Return IDs and machine-readable statuses for client behavior. Add raw values only when a concrete client action requires them.
@@ -146,7 +146,7 @@ Field validation continues to use `VALIDATION_ERROR` with HTTP 422 and applicabl
 
 ## Courts and availability
 
-Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice` only. Structured price and opening-hour fields support the administrator's edit form. Reuse `opensAt` and `closesAt` for accessible opening-hour presentation. Do not repeat the facility timezone on each court; show the facility's time reference once in the booking screen's shared context.
+Court representations contain `id`, `name`, `sportType`, `isActive`, `hourlyPriceCents`, `opensAt`, `closesAt`, and `display` with `hourlyPrice` only. Structured price and opening-hour fields support the administrator's edit form. This is deliberately one shared court representation for both roles: ordinary users also receive hourlyPriceCents even though their list renders display.hourlyPrice. Keep the approved common schema rather than adding role-specific shapes; no sensitive information is added. Reuse `opensAt` and `closesAt` for accessible opening-hour presentation. Do not add a timezone field to this court representation. Facility timezone remains the backend input for schedule calculations; timezone labels appear only in the response shapes that explicitly include them.
 
 ```json
 {

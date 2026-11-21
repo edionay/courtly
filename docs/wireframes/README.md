@@ -1,4 +1,4 @@
-# Weekly booking wireframes
+# Courtly canonical wireframes
 
 These static grayscale wireframes show the time-selection step after court selection and before review. The SVG files are editable sources; the PNG files are previews. Both layouts use the same illustrative court, Sunday-first week, slots, and selections.
 
@@ -12,7 +12,7 @@ For the eventual implementation, use native checkbox controls for slots and acce
 
 Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to the same court and date, reload weekly availability, and leave the slots unselected.
 
-Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; modal layouts and final visual styling remain separate review items.
+Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; result dialogs are approved below; final visual styling remains an implementation task.
 
 ## Booking result dialogs — approved
 
@@ -38,7 +38,7 @@ The approved confirmation uses a native modal dialog: Escape or Keep booking dis
 
 ## Administrator court list — approved
 
-These administrator layouts are approved. The same `/courts` frontend route presents role-based controls; authenticated administrators receive all courts in name order from `GET /api/courts`, with authorization enforced by the backend. Status is shown as text, and availability is offered only for active courts. The approved frontend routes are `/courts/new` for creation and `/courts/{id}/edit` for editing. Since no single-court GET API is approved, an edit page refreshed directly would retrieve the collection and find the court by ID. The form itself remains a later design block. Daily bookings is shown in administrator navigation; its destination is left for that later block.
+These administrator layouts are approved. The same `/courts` frontend route presents role-based controls; authenticated administrators receive all courts in name order from `GET /api/courts`, with authorization enforced by the backend. Status is shown as text, and availability is offered only for active courts. The approved frontend routes are `/courts/new` for creation and `/courts/{id}/edit` for editing. Since no single-court GET API is approved, an edit page refreshed directly would retrieve the collection and find the court by ID. The form and Daily bookings behavior are specified in the approved sections below and in ../ui-flows.md.
 
 ## Court forms and success dialogs — approved
 
@@ -61,3 +61,9 @@ On successful sign-in, store the token in sessionStorage, establish user state, 
 ## Return from review — simplified
 
 Keep court and date, reload availability, and leave all slots unselected. Automatic restoration of selected slots after returning from review, including revalidation and a specific stale-selection message, is a future improvement outside this delivery. This supersedes the earlier promise to restore slots. Backend booking validation and database overlap protection remain mandatory.
+
+## Canonical sources and history
+
+Each approved PNG has a same-named editable SVG. Canonical pairs are court-list-{desktop,mobile}, weekly-booking-{desktop,mobile}, booking-review-{desktop,mobile}, booking-review-{success,conflict}-desktop, my-bookings-{desktop,mobile,cancel-desktop}, court-management-{desktop,mobile}, court-{create,edit}-{desktop,mobile,success-desktop}, daily-bookings-{desktop,mobile}, login-{desktop,mobile,invalid-desktop}, and authentication-error-{desktop,mobile}. Expand brace notation to filenames in this directory.
+
+Earlier back-button, breadcrumb-comparison, and footer-edit variants are discarded local alternatives, not implementation inputs. Historical screenshots use illustrative dates/prices; runtime data comes from the API. See ../ui-flows.md for the latest behavior when an image cannot express it.

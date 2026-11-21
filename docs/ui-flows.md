@@ -1,6 +1,6 @@
-# UI flows in progress
+# Courtly UI flows
 
-This document records approved interface behavior. Read it with `challenge.md`, `decisions.md`, and `api-contracts.md`. Other screens and remaining implementation details are still being planned.
+Consolidated approved interaction specification. Read with [challenge.md](challenge.md), [decisions.md](decisions.md), [api-contracts.md](api-contracts.md), and [execution-plan.md](execution-plan.md). Canonical low-fidelity images are indexed in [wireframes/README.md](wireframes/README.md). No browser clock or formatted-label parsing supplies API action inputs.
 
 ## Weekly date and slot selection — approved
 
@@ -12,7 +12,7 @@ This document records approved interface behavior. Read it with `challenge.md`, 
 6. Use custom-styled native forms and inputs with visible focus. Day choices can use radios; slot choices use labeled checkboxes in a fieldset. Permit one slot and optionally an immediately adjacent available slot. After two selections, disable other slots; either checked slot can be unchecked. Enable `Continue` for one or two consecutive selections and show `Select up to 2 consecutive hours.`
 7. When returning from review, retain the court and date from the URL, reload weekly availability, and start with no selected slots. Query values do not authorize a booking. On a day with no bookable slots, show an explanation and allow choosing another day/week rather than automatically searching for availability.
 
-Compose displayed time intervals from separate fields. Courts provide `opensAt` and `closesAt`; slots and bookings provide local `display.startsAt` and `display.endsAt`. Use a spaced separator visually and `until` for assistive technology without announcing both. Do not convert slot timestamps to format display times. Send the first selected slot's original raw UTC `startsAt` and the selected duration when creating a booking. Court selection and final review/confirmation are separate steps; their remaining details and failure handling are still under discussion.
+Compose displayed time intervals from separate fields. Courts provide `opensAt` and `closesAt`; slots and bookings provide local `display.startsAt` and `display.endsAt`. Use a spaced separator visually and `until` for assistive technology without announcing both. Do not convert slot timestamps to format display times. Send the first selected slot's original raw UTC `startsAt` and the selected duration when creating a booking. Court selection and review/confirmation are separate steps, with the routes and result behavior below.
 
 Automatic restoration of selected slots after returning from review, including revalidation and a specific stale-selection message, is a future improvement outside this delivery. This supersedes the earlier promise to restore slots. Backend booking validation and database overlap protection remain mandatory.
 
@@ -33,7 +33,7 @@ The grayscale wireframes approve structure and hierarchy only. Final visual toke
 
 Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to the same court and date, reload weekly availability, and leave the slots unselected.
 
-Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; modal layouts and final visual styling remain separate review items.
+Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; result dialogs are approved below; final visual styling remains a later implementation task.
 
 ## Booking result dialogs — approved
 
@@ -67,9 +67,9 @@ Canonical SVG/PNG previews: `wireframes/my-bookings-desktop`, `wireframes/my-boo
 
 At `/courts`, administrators receive all courts from the approved `GET /api/courts`, ordered by name, including inactive courts. Reuse the approved desktop grid and single-column mobile layout. Add a textual Active or Inactive status and an Edit court action for each item. Offer View availability only for active courts. Place Create court above the grid. Do not add deletion, filters, pagination, or facility controls.
 
-Approved frontend navigation: Create court opens `/courts/new`; Edit court opens `/courts/{courtId}/edit`. These are frontend routes, not new API endpoints. On a direct edit-page load, the existing collection endpoint can supply the selected court without inventing a detail endpoint. Form layout, saving, and deactivation remain the next planning block.
+Approved frontend navigation: Create court opens `/courts/new`; Edit court opens `/courts/{courtId}/edit`. These are frontend routes, not new API endpoints. On a direct edit-page load, the existing collection endpoint can supply the selected court without inventing a detail endpoint. Form layout, saving, and deactivation are specified below.
 
-Administrator navigation retains Courts and My bookings and adds Daily bookings for the required selected-day report; its detailed layout will be reviewed separately. Backend permissions remain authoritative regardless of visible controls. Canonical artifacts: `wireframes/court-management-desktop` and `wireframes/court-management-mobile` (SVG/PNG). This layout and navigation are approved; form behavior remains a separate block.
+Administrator navigation retains Courts and My bookings and adds Daily bookings for the required selected-day report; its approved layout is specified below. Backend permissions remain authoritative regardless of visible controls. Canonical artifacts: `wireframes/court-management-desktop` and `wireframes/court-management-mobile` (SVG/PNG). This layout and navigation are approved; form behavior is specified below.
 
 ## Court creation and editing forms — approved
 
@@ -103,6 +103,39 @@ A protected-operation 401 clears invalid local authentication and opens `/authen
 
 Use appropriate focus and announcement for page transitions, form errors, and loading. Do not expose technical tokens or raw HTTP codes as product explanations. Canonical SVG/PNG previews: `wireframes/login-desktop`, `login-mobile`, `login-invalid-desktop`, `authentication-error-desktop`, and `authentication-error-mobile`. Layout, route names, and navigation details are approved along with the underlying authentication contracts.
 
-## Booking preview integration — approved
+## Route and data lifecycle
 
-The complete approved `POST /api/bookings/preview` request, response, validation, errors, and pricing limitation are in `docs/api-contracts.md`, Booking preview. Use it for live selection-price feedback and review. Ignore outdated selection responses and show loading while updating. No draft, hold, or price lock is created; final creation independently revalidates and contracts the current price. This preview topic is closed.
+Frontend routes are independent of API endpoints:
+
+- /login and /authentication-error: unauthenticated screens.
+- /courts: user/admin court collection; role changes controls, never API authorization.
+- /courts/new and /courts/{courtId}/edit: admin forms, with direct edit reload supplied by GET /api/courts.
+- /courts/{courtId}/booking/slots: selected court's weekly availability. Preserve selected date and, when navigating away from the default week, the weekStart provided by the backend links as URL state. On reload request that week rather than calculating its Sunday in the browser. Changing day in the loaded week does not fetch another period; changing week follows navigation links.
+- /courts/{courtId}/booking/review: preserve date, selected slot's offset-bearing startsAt, durationHours, and the current week reference in query parameters. URL encoding is required for timestamps. These are untrusted selection inputs, not an authorized quote or booking.
+- /bookings: own bookings.
+- /reports/daily-bookings with optional date: administrator report.
+
+On selection, request POST /api/bookings/preview for the live price. Ignore outdated responses after selection changes and indicate price loading. On direct review entry or reload, reconstruct the request from query state and request preview rather than relying on in-memory navigation state. Submit only the explicit Confirm booking action to POST /api/bookings. Derive its start from the first chronological selected slot, even if the user selected the second slot first. A two-hour request creates one booking.
+
+The Change action and review breadcrumb return to the same court/date/week but do not preserve selected hours. Reload availability and start unselected. No special stale-selection restoration or comparison workflow belongs in this delivery. Handle invalid API inputs with the existing validation contract; do not invent extra recovery features while implementing.
+
+## Creation results and failures
+
+- While courts, availability, or preview load, prevent stale/incomplete submission and show/announce loading. Only the latest selection may populate the interface.
+- After HTTP 201, show Booking confirmed with Go to my bookings. Only this action navigates to /bookings. Dismissal retains a completed state and cannot re-enable creation.
+- BOOKING_CONFLICT opens Time no longer available with the API message and Choose another time. Stay on review until this action is used. It returns to the same court/date/week, reloads availability, and clears hours. Dismissal only closes the modal; keep the explanation and recovery action accessible. Do not treat every 409 as occupied.
+- Show field errors by inputs and request errors near their action. Protected-operation 401 uses the authentication-error page; login credential errors stay on the form. Administrative access failures show access denied; the backend remains authoritative.
+- On an ambiguous connection failure during creation, do not automatically resubmit, assert success, or assert that nothing was saved. Offer checking My bookings before another attempt. No idempotency system is added.
+- When no courts or bookable hours exist, explain the empty state and keep appropriate navigation/date controls available. Existing report and booking empty messages are specified above.
+
+## Native dialog contract
+
+Use HTML dialog opened with showModal() and closed with close() or native mechanisms. Do not emulate modality with a div, only toggle the open attribute, or use non-modal show(). Supply a named title, associated explanation, appropriate initial focus, visible focus, and sensible restoration after closing. The rest of the document is inert while modal. Escape dismisses without navigation or submission. Do not force navigation through an inescapable dialog.
+
+Court creation/editing success dialogs use Court created/Changes saved and Go to courts. Cancellation confirmation uses Keep booking/Cancel booking, submits only on explicit confirmation, then announces success in the list without another modal.
+
+## Presentation and manual verification
+
+Dumb/presentational views receive props/callbacks and can be demonstrated independently in Storybook. Keep the small set of meaningful page states: initial, loading/submitting, relevant empty/error, and success dialogs. No automated frontend suite is planned.
+
+Use semantic list/table markup, labeled native inputs and autocomplete, radios for days, checkboxes in a fieldset for slots, and appropriate links/buttons. Native inputs may be styled but must retain keyboard operation, focus, selected/disabled semantics, and associated errors. Availability and booking status must not rely on color alone. Compose a spaced visual dash from separate start/end fields, hide it from assistive technology, and supply a visually hidden until separator instead. Verify labels, keyboard behavior, focus, state announcements, and modal dismissal during implementation; static images do not constitute completed accessibility testing.
