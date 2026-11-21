@@ -60,3 +60,11 @@ Approved interaction: Cancel booking opens a native confirmation dialog with cou
 For a closed-window error, keep the API explanation visible and refresh the collection to update available actions; do not retry automatically. A protected-operation 401 follows the approved authentication-error page. An empty collection can show No bookings yet. These interaction and recovery details are approved.
 
 Canonical SVG/PNG previews: `wireframes/my-bookings-desktop`, `wireframes/my-bookings-mobile`, and `wireframes/my-bookings-cancel-desktop`. Fixture dates are illustrative, not runtime data.
+
+## Administrator court listing — approved
+
+At `/courts`, administrators receive all courts from the approved `GET /api/courts`, ordered by name, including inactive courts. Reuse the approved desktop grid and single-column mobile layout. Add a textual Active or Inactive status and an Edit court action for each item. Offer View availability only for active courts. Place Create court above the grid. Do not add deletion, filters, pagination, or facility controls.
+
+Approved frontend navigation: Create court opens `/courts/new`; Edit court opens `/courts/{courtId}/edit`. These are frontend routes, not new API endpoints. On a direct edit-page load, the existing collection endpoint can supply the selected court without inventing a detail endpoint. Form layout, saving, and deactivation remain the next planning block.
+
+Administrator navigation retains Courts and My bookings and adds Daily bookings for the required selected-day report; its detailed layout will be reviewed separately. Backend permissions remain authoritative regardless of visible controls. Canonical artifacts: `wireframes/court-management-desktop` and `wireframes/court-management-mobile` (SVG/PNG). This layout and navigation are approved; form behavior remains a separate block.
