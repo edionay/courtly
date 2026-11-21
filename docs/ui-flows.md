@@ -90,3 +90,13 @@ Display the server's formatted date and expectedRevenue, plus all report items i
 Keep the selected date visible during loading and errors, and do not present a previous date's result as the newly selected one. Follow the approved protected-operation authentication-error flow for 401 and show access denied for 403. Empty results retain the date controls, show the returned $0.00 expected revenue, and say No bookings for this date. No exports, charts, pagination, or additional filters are proposed.
 
 Canonical artifacts: `wireframes/daily-bookings-desktop` and `daily-bookings-mobile` (SVG/PNG). Layout, frontend route, current-day default, and interaction details are approved. The preview date is an illustrative current-day fixture, not a hardcoded default.
+
+## Authentication wireframes — approved
+
+Approved frontend routes are `/login` and `/authentication-error`. These unauthenticated screens show the Courtly brand without the authenticated sidebar/menu. Sign in uses native email and password inputs with persistent labels, appropriate autocomplete, and a submit button. Do not add registration, password recovery, role selection, remember-me controls, or new authentication providers.
+
+Submit `POST /api/auth/login` with email and password. Invalid credentials stay on the login form with an announced, understandable error. Field validation appears by its input; pending submission prevents duplicates. Successful login stores only the token in sessionStorage, retains the returned user in application state, and navigates to `/courts` for either role. Authentication does not use a success modal.
+
+A protected-operation 401 clears invalid local authentication and opens `/authentication-error`, with Authentication required, a short explanation, and Go to login. Only that explicit action navigates to `/login`; do not automatically redirect there or retry the failed operation. Login credential errors do not use this route. Reload with a stored token shows loading while `/api/auth/me` restores the user; invalid/expired authentication follows this error page. With no token, present login normally. Sign out clears local authentication and returns to `/login`, without a backend logout call.
+
+Use appropriate focus and announcement for page transitions, form errors, and loading. Do not expose technical tokens or raw HTTP codes as product explanations. Canonical SVG/PNG previews: `wireframes/login-desktop`, `login-mobile`, `login-invalid-desktop`, `authentication-error-desktop`, and `authentication-error-mobile`. Layout, route names, and navigation details are approved along with the underlying authentication contracts.
