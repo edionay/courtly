@@ -116,6 +116,14 @@ Display form errors and booking conflicts within the current screen. A 401 from 
 
 Normalize tsoa validation errors and handled database/domain errors into this format through the backend error handler. Document applicable errors in OpenAPI in the same PR as each endpoint. Do not expose stack traces, SQL, or credentials in responses. Booking and court error codes are approved below. General authentication, authorization, malformed-request, and unexpected-error code names remain to be finalized.
 
+### Frontend request and error handling
+
+Use one small HTTP client in frontend infrastructure to attach the bearer token, perform requests, and normalize failures before passing them to application code. Preserve known API errors as typed failures with their `code`, `message`, and optional `fields`. Distinguish connection failures from HTTP responses. Keep transport details inside the infrastructure/authentication boundary; domain code does not depend on HTTP status codes, JSON parsing, or navigation.
+
+Unknown failures and unexpected response bodies become a generic frontend `UNKNOWN_ERROR` with `message: "Something went wrong. Please try again."`. This is a frontend fallback, not a replacement for the backend error envelope or the still-pending general backend error codes. Do not display unrecognized technical payloads directly to users. Recognized field and booking errors retain their specific information rather than collapsing into this fallback.
+
+Screens choose how to present normalized errors. The existing authentication flow handles protected-operation HTTP 401 and opens the approved authentication-error page; login credential errors remain on the form. Keep routing outside the HTTP helper, and preserve the authentication handling even when an error response body is unexpected. Do not automatically retry ambiguous booking creation or other mutations.
+
 ### Approved booking and court error codes
 
 - `BOOKING_CONFLICT` — HTTP 409 when the requested booking interval overlaps an existing confirmed booking. The client uses this code for occupied-slot recovery rather than treating every 409 as occupied.
