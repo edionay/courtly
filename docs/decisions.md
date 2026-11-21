@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Styling package versions are approved: pin `tailwindcss` and the official `@tailwindcss/vite` plugin to stable `4.3.5`. The plugin declares support for Vite 8, including approved Vite `8.3.8`. Load the same application styles and visual tokens in Storybook. Final palette, typography, and other visual tokens remain a separate design decision; verify both builds during tooling setup.
 - React runtime versions are approved: pin both `react` and `react-dom` to stable `19.3.1`. Keep their versions aligned in the Vite frontend and use the approved Container/Presentational architecture. Verify the compatible React type packages and Vite/Storybook integration during tooling setup.
 - Frontend build tooling is approved: pin Vite `8.3.8` for React development and production builds, keeping the frontend separate from the Express backend. Use the official `@storybook/react-vite` integration for Storybook. The approved Node.js version satisfies Vite requirements; verify the exact supporting plugin/Storybook package pins and build behavior in the tooling delivery. Stable releases only.
 - Runtime/API versions are approved: Node.js `24.22.3` LTS, TypeScript `5.9.3` with strict mode, Express `4.22.3`, and tsoa `6.6.0`. Use stable releases only; do not adopt alpha, beta, or release-candidate dependencies. Express `4.22.3` satisfies the Express range declared by tsoa `6.6.0`. Version approval does not claim completed runtime validation: verify route/spec generation, TypeScript compilation, authentication, error normalization, and Swagger execution during the tooling delivery.
@@ -168,6 +169,9 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 ## Technical references
 
+- Tailwind CSS with Vite: https://tailwindcss.com/docs/installation/using-vite
+- Tailwind CSS 4.3.5 release: https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.3.5
+- Tailwind Vite plugin 4.3.5 compatibility: https://github.com/tailwindlabs/tailwindcss/blob/v4.3.5/packages/%40tailwindcss-vite/package.json
 - React 19.3.1 release: https://github.com/react/react/releases/tag/v19.3.1
 - Vite 8.3.8 release: https://github.com/vitejs/vite/releases/tag/v8.3.8
 - Vite setup and Node.js requirements: https://vite.dev/guide/
