@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Storybook versions are approved: pin `storybook` and `@storybook/react-vite` to stable `10.6.8`, keeping any required Storybook companion packages aligned. Use fixtures and callbacks to demonstrate presentational pages/components and their agreed visual states, with shared application styles. This does not add automated frontend tests. Verify actual package compatibility and Storybook development/production builds in the initial frontend tooling delivery.
 - Styling package versions are approved: pin `tailwindcss` and the official `@tailwindcss/vite` plugin to stable `4.3.5`. The plugin declares support for Vite 8, including approved Vite `8.3.8`. Load the same application styles and visual tokens in Storybook. Final palette, typography, and other visual tokens remain a separate design decision; verify both builds during tooling setup.
 - React runtime versions are approved: pin both `react` and `react-dom` to stable `19.3.1`. Keep their versions aligned in the Vite frontend and use the approved Container/Presentational architecture. Verify the compatible React type packages and Vite/Storybook integration during tooling setup.
 - Frontend build tooling is approved: pin Vite `8.3.8` for React development and production builds, keeping the frontend separate from the Express backend. Use the official `@storybook/react-vite` integration for Storybook. The approved Node.js version satisfies Vite requirements; verify the exact supporting plugin/Storybook package pins and build behavior in the tooling delivery. Stable releases only.
@@ -130,7 +131,7 @@ flowchart LR
 - Presentational views and components receive data, state, and callbacks through typed props. They do not access HTTP, tokens, or routing. Local interface state, such as input values, is allowed without moving business rules into presentation.
 - For court creation, CreateCourtPage connects useCreateCourt to CreateCourtView and CourtForm. The page owns routing, the hook coordinates the operation, courtsApi defines the endpoint call, and httpClient handles transport and error normalization.
 - Storybook renders the same presentational views using fixtures and callbacks, without requiring API requests. Keep a small set of meaningful stories for pages and reused components, such as initial, submitting, validation-error, and success-dialog states.
-- Storybook is development support chosen by the project, not a challenge requirement or a replacement for the mandatory backend tests. Pin its compatible version during tooling planning.
+- Storybook is development support chosen by the project, not a challenge requirement or a replacement for the mandatory backend tests. Use approved Storybook `10.6.8` and verify its integration during tooling setup.
 
 ```mermaid
 flowchart TD
@@ -169,6 +170,7 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 ## Technical references
 
+- Storybook 10.6.8 release: https://github.com/storybookjs/storybook/releases/tag/v10.6.8
 - Tailwind CSS with Vite: https://tailwindcss.com/docs/installation/using-vite
 - Tailwind CSS 4.3.5 release: https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.3.5
 - Tailwind Vite plugin 4.3.5 compatibility: https://github.com/tailwindlabs/tailwindcss/blob/v4.3.5/packages/%40tailwindcss-vite/package.json
