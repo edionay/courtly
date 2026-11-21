@@ -56,4 +56,4 @@ Prefer native forms and controls with custom styling: radio inputs for choosing 
 
 ## Open Design Decisions
 
-Final colors, typography, visual tokens, and the detailed responsive composition have not been approved. Wireframes use neutral structural styling for review. Do not infer a production identity from these drafts.
+The low-fidelity desktop/mobile structures are approved. Final colors, typography, visual tokens, and detailed styling remain implementation design work. Wireframes use neutral structural styling; do not infer a finished production identity from them.
