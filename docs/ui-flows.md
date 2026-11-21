@@ -50,3 +50,13 @@ The court-list entry screen is approved. Use `/courts` and the approved authenti
 The desktop layout uses a grid of court cards, with one column on mobile. Each card shows the same fields and a View availability action. A sport illustration can be considered during visual refinement; it does not introduce a court-image field or change the free-text sport contract. The action navigates to the selected court's booking time-selection step without a week query, letting the backend supply the current week. Its accessible name identifies the court. Reuse separate opening/closing fields and the approved accessible time separator. An empty collection shows No courts available.
 
 Canonical SVG/PNG previews are `wireframes/court-list-desktop` and `wireframes/court-list-mobile`. This approval covers structure and navigation; final visual styling remains a later block.
+
+## My bookings wireframe — approved
+
+At `/bookings`, render the approved `GET /api/bookings/me` collection in backend-provided descending start order. Use a single list containing upcoming, past, and cancelled bookings. Show court name and the response's date, separate start/end time, timezone, status, and total-price display fields. Do not parse formatted dates to sort or group bookings, invent a Completed status, or add fields such as sport that are absent from this response. Offer Cancel booking only when `canCancel` is true; do not infer a specific ineligibility reason from false. A general cancellation-rule note can explain the inclusive two-hour cutoff.
+
+Approved interaction: Cancel booking opens a native confirmation dialog with court, date, and time, plus Keep booking and Cancel booking actions. Dismissal does not call the API. Only explicit confirmation sends `PATCH /api/bookings/{bookingId}` with `status: cancelled`. Disable repeat submission while pending. On success, update the item from the response and announce cancellation on the same page. The backend revalidates ownership and timing independently of the earlier `canCancel` hint.
+
+For a closed-window error, keep the API explanation visible and refresh the collection to update available actions; do not retry automatically. A protected-operation 401 follows the approved authentication-error page. An empty collection can show No bookings yet. These interaction and recovery details are approved.
+
+Canonical SVG/PNG previews: `wireframes/my-bookings-desktop`, `wireframes/my-bookings-mobile`, and `wireframes/my-bookings-cancel-desktop`. Fixture dates are illustrative, not runtime data.
