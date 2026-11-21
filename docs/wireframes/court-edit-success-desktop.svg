@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="960" viewBox="0 0 1460 960">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="1460" height="960" fill="white"/>
+<rect x="0" y="0" width="220" height="960" fill="#fafafa"/>
+<line x1="220" y1="0" x2="220" y2="960" class="line"/>
+<text x="28" y="49" class="title" >Courtly</text>
+<rect x="16" y="92" width="188" height="46" rx="5" fill="#e8e8e8" stroke="#aaa"/>
+<text x="30" y="121" class="bold" >Courts</text>
+<text x="30" y="174" class="body" >My bookings</text>
+<text x="30" y="226" class="body" >Daily bookings</text>
+<line x1="16" y1="891" x2="204" y2="891" class="line"/>
+<text x="30" y="928" class="body" >Sign out</text>
+<text x="280" y="64" class="small" text-decoration="underline">Courts</text>
+<text x="325" y="64" class="small muted" >/</text>
+<text x="338" y="64" class="small" >Edit court</text>
+<text x="280" y="99" class="title" >Edit court</text>
+<rect x="280" y="128" width="680" height="495" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="158" class="body" >Name</text>
+<rect x="300" y="168" width="640" height="44" rx="5" fill="white" stroke="#bbb"/>
+<text x="312" y="196" class="body" >Court 1</text>
+<text x="300" y="240" class="body" >Sport</text>
+<rect x="300" y="250" width="640" height="44" rx="5" fill="white" stroke="#bbb"/>
+<text x="312" y="278" class="body" >Padel</text>
+<text x="300" y="322" class="body" >Hourly price ($)</text>
+<rect x="300" y="332" width="640" height="44" rx="5" fill="white" stroke="#bbb"/>
+<text x="312" y="360" class="body" >50.00</text>
+<text x="300" y="404" class="body" >Opens at</text>
+<text x="630.0" y="404" class="body" >Closes at</text>
+<rect x="300" y="414" width="310.0" height="44" rx="5" fill="white" stroke="#bbb"/>
+<rect x="630.0" y="414" width="310.0" height="44" rx="5" fill="white" stroke="#bbb"/>
+<text x="312" y="442" class="body" >10:00</text>
+<text x="642.0" y="442" class="body" >22:00</text>
+<text x="300" y="484" class="small muted" >Choose whole hours.</text>
+<rect x="300" y="531" width="18" height="18" rx="5" fill="white" stroke="#bbb"/>
+<path d="M 303 540 l 4 4 l 7 -8" fill="none" stroke="#222" stroke-width="2"/>
+<text x="329" y="546" class="body" >Available for bookings</text>
+<text x="300" y="574" class="small muted" >Turning this off prevents new bookings.</text>
+<text x="300" y="593" class="small muted" >Existing bookings and history are preserved.</text>
+<text x="280" y="673" class="body" text-decoration="underline">Cancel</text>
+<rect x="760" y="643" width="200" height="48" rx="5" fill="#e8e8e8" stroke="#888"/>
+<text x="860" y="673" class="bold" text-anchor="middle">Save changes</text>
+<rect width="1460" height="960" fill="#000" opacity="0.38"/>
+<rect x="505" y="335" width="450" height="224" rx="6" fill="white" stroke="#777"/>
+<text x="531" y="377" class="bold">Changes saved</text>
+<text x="531" y="416" class="body">The court was updated successfully.</text>
+<rect x="531" y="474" width="398" height="48" rx="5" fill="#e8e8e8" stroke="#888"/>
+<text x="730" y="504" class="bold" text-anchor="middle">Go to courts</text>
+</svg>
