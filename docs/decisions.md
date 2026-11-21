@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Repository organization is approved: npm-workspaces monorepo with `frontend/`, `backend/`, `docs/`, root `compose.yaml`, a private root package.json declaring both workspaces, and one root package-lock.json. Each application has its own package.json and Dockerfile; backend owns Prisma artifacts. Root scripts coordinate common operations, not a third application. See Repository layout — approved.
 - For remaining dependency-version decisions, select the latest stable release compatible with the approved stack whenever possible. The user delegated these routine selections; do not request approval for each package version. Exclude alpha, beta, and release-candidate builds, verify requirements and peer dependencies using official sources/registry metadata, and pin exact resolved versions with the lockfile during setup. Discuss only material incompatibilities that require revisiting an approved decision. This instruction concerns pending versions, not an automatic rewrite of approved pins.
 - Pin backend `vitest` to stable `5.1.1`, selected under this policy. Its documented Node.js and Vite requirements are met by approved Node.js `24.22.3` and Vite `8.3.8`. Use the Node environment for the agreed backend unit/integration tests and verify actual test execution during tooling setup.
 - Storybook versions are approved: pin `storybook` and `@storybook/react-vite` to stable `10.6.8`, keeping any required Storybook companion packages aligned. Use fixtures and callbacks to demonstrate presentational pages/components and their agreed visual states, with shared application styles. This does not add automated frontend tests. Verify actual package compatibility and Storybook development/production builds in the initial frontend tooling delivery.
@@ -161,6 +162,31 @@ Keep backend unit and integration tests small and focused on the challenge's man
 - Use an isolated `courtly_test` database on the Docker PostgreSQL instance. Unit tests require no database. Integration tests prepare the test database with the same versioned migrations as the application, including the extension and overlap constraint, and create only their necessary fixture data.
 - Provide separate `test:unit` and `test:integration` commands. The integration command prepares the test database and runs the tests. Configure its connection separately from the application database so test setup and cleanup do not affect application data. Exact commands and version-specific migration invocation remain part of tooling validation.
 
+## Repository layout — approved
+
+Use a small npm-workspaces monorepo with separate frontend and backend applications:
+
+```text
+courtly/
+  frontend/
+    src/
+    .storybook/
+    package.json
+    Dockerfile
+  backend/
+    src/
+    prisma/
+      migrations/
+    package.json
+    Dockerfile
+  docs/
+  compose.yaml
+  package.json
+  package-lock.json
+```
+
+The root package is private and declares `frontend` and `backend` as workspaces. It coordinates dependency installation and common build/test commands; it is not a third application. Keep one root package-lock.json. Each workspace owns its application dependencies, scripts, source, and Dockerfile. Keep Prisma schema, migrations, and seed with the backend and Compose at the root. This organization does not require an additional monorepo orchestration tool. Exact runnable scripts are verified during setup rather than treating illustrative command examples as tested implementation.
+
 ## Open planning items
 
 - Consolidate remaining endpoint-specific error codes and verify cross-contract consistency before marking the API specification complete. Personal booking request/list/cancellation, separate accessible time labels across all contracts, court creation/listing/editing, availability request/response and inactive-court handling, and the complete daily-report contract are approved; see `docs/api-contracts.md`.
@@ -172,6 +198,7 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 ## Technical references
 
+- npm workspaces: https://docs.npmjs.com/cli/v11/using-npm/workspaces/
 - Vitest 5.1.1 release: https://github.com/vitest-dev/vitest/releases/tag/v5.1.1
 - Vitest setup and requirements: https://vitest.dev/guide/
 - Storybook 10.6.8 release: https://github.com/storybookjs/storybook/releases/tag/v10.6.8
