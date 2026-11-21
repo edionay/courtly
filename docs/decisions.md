@@ -10,6 +10,8 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- For remaining dependency-version decisions, select the latest stable release compatible with the approved stack whenever possible. The user delegated these routine selections; do not request approval for each package version. Exclude alpha, beta, and release-candidate builds, verify requirements and peer dependencies using official sources/registry metadata, and pin exact resolved versions with the lockfile during setup. Discuss only material incompatibilities that require revisiting an approved decision. This instruction concerns pending versions, not an automatic rewrite of approved pins.
+- Pin backend `vitest` to stable `5.1.1`, selected under this policy. Its documented Node.js and Vite requirements are met by approved Node.js `24.22.3` and Vite `8.3.8`. Use the Node environment for the agreed backend unit/integration tests and verify actual test execution during tooling setup.
 - Storybook versions are approved: pin `storybook` and `@storybook/react-vite` to stable `10.6.8`, keeping any required Storybook companion packages aligned. Use fixtures and callbacks to demonstrate presentational pages/components and their agreed visual states, with shared application styles. This does not add automated frontend tests. Verify actual package compatibility and Storybook development/production builds in the initial frontend tooling delivery.
 - Styling package versions are approved: pin `tailwindcss` and the official `@tailwindcss/vite` plugin to stable `4.3.5`. The plugin declares support for Vite 8, including approved Vite `8.3.8`. Load the same application styles and visual tokens in Storybook. Final palette, typography, and other visual tokens remain a separate design decision; verify both builds during tooling setup.
 - React runtime versions are approved: pin both `react` and `react-dom` to stable `19.3.1`. Keep their versions aligned in the Vite frontend and use the approved Container/Presentational architecture. Verify the compatible React type packages and Vite/Storybook integration during tooling setup.
@@ -155,7 +157,7 @@ Keep backend unit and integration tests small and focused on the challenge's man
 - Use Storybook to demonstrate pages and reused presentational components with fixtures and callbacks, independently of API requests. Show representative initial, loading/submitting, error, empty (where applicable), and success-dialog states rather than creating an extensive story catalog.
 - Complement Storybook demonstration with manual verification of primary user/admin flows, keyboard access, visible focus, and native dialog behavior. Record actual verification during implementation; planning these checks does not mean they have already passed.
 - Storybook stories alone are not automated tests and do not replace backend unit/integration coverage. Automated frontend and interaction tests are a possible future improvement, outside this delivery.
-- Use Vitest for backend unit and integration tests. Pin the compatible version during stack-compatibility planning. Use its mocks and controlled time for deterministic service tests.
+- Use Vitest `5.1.1` for backend unit and integration tests. Use its mocks and controlled time for deterministic service tests.
 - Use an isolated `courtly_test` database on the Docker PostgreSQL instance. Unit tests require no database. Integration tests prepare the test database with the same versioned migrations as the application, including the extension and overlap constraint, and create only their necessary fixture data.
 - Provide separate `test:unit` and `test:integration` commands. The integration command prepares the test database and runs the tests. Configure its connection separately from the application database so test setup and cleanup do not affect application data. Exact commands and version-specific migration invocation remain part of tooling validation.
 
@@ -170,6 +172,8 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 ## Technical references
 
+- Vitest 5.1.1 release: https://github.com/vitest-dev/vitest/releases/tag/v5.1.1
+- Vitest setup and requirements: https://vitest.dev/guide/
 - Storybook 10.6.8 release: https://github.com/storybookjs/storybook/releases/tag/v10.6.8
 - Tailwind CSS with Vite: https://tailwindcss.com/docs/installation/using-vite
 - Tailwind CSS 4.3.5 release: https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.3.5
