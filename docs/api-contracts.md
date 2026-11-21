@@ -368,7 +368,7 @@ This example assumes November 18, 2026 at 09:00 in Sao Paulo and an illustrative
 }
 ```
 
-On first entry, select the first day with `isSelectable: true` even if its slots are all occupied. Keep occupied slots visible, disabled, and labeled `Booked`; hide past slots. Display only the selected day's chronological slots beneath the seven-day strip. Switching days within the loaded week uses existing data; switching weeks follows the provided link. Clear slot selections when changing day/week. Restore date and selected hours from query parameters when returning from review and revalidate availability. Final booking creation always revalidates rules and relies on the database constraint for concurrency.
+On first entry, select the first day with `isSelectable: true` even if its slots are all occupied. Keep occupied slots visible, disabled, and labeled `Booked`; hide past slots. Display only the selected day's chronological slots beneath the seven-day strip. Switching days within the loaded week uses existing data; switching weeks follows the provided link. Clear slot selections when changing day/week. When returning from review, keep the court and date, reload weekly availability, and leave all slots unselected. Final booking creation always revalidates rules and relies on the database constraint for concurrency.
 
 ## Booking preview
 

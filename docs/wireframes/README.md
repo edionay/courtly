@@ -10,7 +10,7 @@ For the eventual implementation, use native checkbox controls for slots and acce
 
 ## Booking review wireframe — approved
 
-Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to selection with the existing query state restored and revalidate availability.
+Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to the same court and date, reload weekly availability, and leave the slots unselected.
 
 Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; modal layouts and final visual styling remain separate review items.
 
@@ -57,3 +57,7 @@ Display the backend date and expected-revenue labels and each booking's court, u
 These authentication screens and frontend flows are approved. Routes are `/login` and `/authentication-error`. The sign-in form uses persistent labels, native email and password inputs, `autocomplete="username"` and `autocomplete="current-password"`, visible keyboard focus, and an announced general error for invalid credentials; invalid credentials remain on the form. The example address is illustrative.
 
 On successful sign-in, store the token in sessionStorage, establish user state, and navigate either role to `/courts`. On reload, `/api/auth/me` verifies the session while loading; an invalid or expired session clears local state and opens the authentication-error page. With no token normally, show login. Logout clears local session state and goes to `/login` without an API call. The authentication-error page navigates to login only through Go to login; it does not retry an earlier action or automatically redirect.
+
+## Return from review — simplified
+
+Keep court and date, reload availability, and leave all slots unselected. Automatic restoration of selected slots after returning from review, including revalidation and a specific stale-selection message, is a future improvement outside this delivery. This supersedes the earlier promise to restore slots. Backend booking validation and database overlap protection remain mandatory.
