@@ -10,6 +10,8 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Runtime/API versions are approved: Node.js `24.22.3` LTS, TypeScript `5.9.3` with strict mode, Express `4.22.3`, and tsoa `6.6.0`. Use stable releases only; do not adopt alpha, beta, or release-candidate dependencies. Express `4.22.3` satisfies the Express range declared by tsoa `6.6.0`. Version approval does not claim completed runtime validation: verify route/spec generation, TypeScript compilation, authentication, error normalization, and Swagger execution during the tooling delivery.
+- The official tsoa `7.0.0-rc.0` notes report array/buffer validation security fixes that also affect 6.x. Retaining stable tsoa `6.6.0` does not resolve those findings. Evaluate applicability to the approved contracts and actual dependency graph before considering tooling validated; keep any required remediation within the stable-release policy and discuss unresolved conflicts rather than silently adopting a prerelease or claiming the findings are fixed.
 - Database stack versions are approved: PostgreSQL `17.12` and Prisma ORM `7.10.1`, with the CLI (`prisma`) and Client (`@prisma/client`) pinned to the same exact version. Use the PostgreSQL driver adapter required by Prisma 7; its compatible package pin belongs to the remaining runtime/tooling validation. Version the `btree_gist` extension and confirmed-booking GiST exclusion constraint in a customized SQL migration. During implementation, verify migration application and the actual adapter/Prisma overlap error, then map that conflict to `BOOKING_CONFLICT` and HTTP 409. This approval is a version decision supported by documentation, not a claim that runtime compatibility has already been tested.
 - Frontend verification scope is explicit: no automated frontend tests in this delivery. Demonstrate isolated presentational pages/components and meaningful visual states through Storybook, and manually verify primary flows and accessibility behavior. This is an approved scope choice permitted by the challenge, not a claim that Storybook alone provides automated coverage. Automated frontend tests remain a future improvement.
 - Backend test tooling is approved: Vitest, an isolated `courtly_test` database in Docker PostgreSQL, application migrations for integration setup, and separate `test:unit` and `test:integration` commands. Unit tests need no database; integration fixtures remain small. Versions and exact commands will be fixed during stack-compatibility validation.
@@ -156,14 +158,19 @@ Keep backend unit and integration tests small and focused on the challenge's man
 ## Open planning items
 
 - Consolidate remaining endpoint-specific error codes and verify cross-contract consistency before marking the API specification complete. Personal booking request/list/cancellation, separate accessible time labels across all contracts, court creation/listing/editing, availability request/response and inactive-court handling, and the complete daily-report contract are approved; see `docs/api-contracts.md`.
-- Finalize remaining API contracts, UI flows, and minimal testing infrastructure. Login, session restoration, role exposure, JWT bearer storage in sessionStorage, and one-hour expiry are approved. Court routes are not facility-scoped. Pin compatible tsoa, Express, and TypeScript versions and confirm generation and development-watch commands.
-- PostgreSQL `17.12` and Prisma `7.10.1` are approved. Fix the remaining runtime/adapter package versions, and include custom migration application and exclusion-constraint error mapping in the database delivery acceptance criteria.
+- Finalize remaining API contracts, UI flows, and minimal testing infrastructure. Login, session restoration, role exposure, JWT bearer storage in sessionStorage, and one-hour expiry are approved. Court routes are not facility-scoped. Node.js `24.22.3`, TypeScript `5.9.3`, Express `4.22.3`, and tsoa `6.6.0` are approved; confirm generation and development-watch commands and evaluate the noted tsoa validation findings before accepting the tooling delivery.
+- PostgreSQL `17.12` and Prisma `7.10.1` are approved. Fix the remaining adapter and supporting package versions, and include custom migration application and exclusion-constraint error mapping in the database delivery acceptance criteria.
 - Define incremental PR deliverables and acceptance criteria. Local `main` has the approved bootstrap base at `c8ce1f8`; publish this base and `planning` when preparing the first PR. The user reviews and merges that PR.
 - Prepare self-contained task briefs for the available `programador` and `revisor` roles, including ownership, specification references, acceptance criteria, dependencies, and verification commands.
 - Once planning decisions are closed, consolidate related architectural decisions into concise ADRs with context, alternatives, and consequences to support implementation and the candidate's project defense. Avoid duplicating or contradicting the contracts and challenge reference.
 
 ## Technical references
 
+- Node.js release history: https://nodejs.org/en/blog
+- TypeScript 5.9.3 release: https://github.com/microsoft/TypeScript/releases/tag/v5.9.3
+- tsoa 6.6.0 runtime dependencies: https://github.com/lukeautry/tsoa/blob/v6.6.0/packages/runtime/package.json
+- Express 4.22.3 package metadata: https://github.com/expressjs/express/blob/v4.22.3/package.json
+- tsoa 7 release-candidate notes, including findings affecting 6.x: https://github.com/lukeautry/tsoa/releases/tag/v7.0.0-rc.0
 - PostgreSQL supported versions and patch releases: https://www.postgresql.org/support/versioning/
 - Prisma release status and supported version-7 line: https://www.prisma.io/docs/orm/release-status
 - tsoa setup and generation: https://tsoa-community.github.io/docs/getting-started.html
