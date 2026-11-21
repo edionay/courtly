@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Backend test tooling is approved: Vitest, an isolated `courtly_test` database in Docker PostgreSQL, application migrations for integration setup, and separate `test:unit` and `test:integration` commands. Unit tests need no database; integration fixtures remain small. Versions and exact commands will be fixed during stack-compatibility validation.
 - The minimum test strategy is approved: service unit tests with simulated repositories for opening hours and inclusive cancellation timing, plus a real-PostgreSQL concurrent creation test proving one success, one conflict, and one stored booking. Keep test setup small; Storybook supports visual states without requiring an automated frontend suite. See Testing strategy — approved.
 - Architecture is approved: feature-oriented layered backend with feature-specific repositories over Prisma, and frontend Container/Presentational Components with typed props and callbacks. Integration pages and hooks coordinate operations; presentation is independently rendered in Storybook with fixtures. See Architecture — approved below.
 - The user approved a one-time initial-base exception: create local `main` at existing root commit `c8ce1f8`, containing only the initial project guidance and preliminary planning decisions. This branch now exists; `planning` remains the working branch and retains every later commit for the first PR into `main`. No commits were rewritten or merged. Future changes still require feature branches and PRs, with merge performed only by the user. Remote publication and the first planning PR remain delivery steps.
@@ -143,7 +144,9 @@ Keep backend unit and integration tests small and focused on the challenge's man
 - Unit-test service behavior with a simulated feature repository. Cover opening-hours validation and cancellation timing before, exactly at, and after the inclusive two-hour cutoff. Use a controlled current instant so timing tests are deterministic.
 - Integration-test simultaneous booking creation against real PostgreSQL using the versioned application migrations. Two attempts for the same court and interval must leave exactly one persisted booking, with one successful creation and one conflict. Do not replace the database exclusion constraint with a repository mock in this test.
 - Do not require an extensive test suite for every layer. Storybook covers meaningful visual states for pages and reused components; automated frontend tests are not required for this delivery.
-- The test runner and minimal test-database setup remain tooling decisions to close separately.
+- Use Vitest for backend unit and integration tests. Pin the compatible version during stack-compatibility planning. Use its mocks and controlled time for deterministic service tests.
+- Use an isolated `courtly_test` database on the Docker PostgreSQL instance. Unit tests require no database. Integration tests prepare the test database with the same versioned migrations as the application, including the extension and overlap constraint, and create only their necessary fixture data.
+- Provide separate `test:unit` and `test:integration` commands. The integration command prepares the test database and runs the tests. Configure its connection separately from the application database so test setup and cleanup do not affect application data. Exact commands and version-specific migration invocation remain part of tooling validation.
 
 ## Open planning items
 
