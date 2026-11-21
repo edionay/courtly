@@ -10,6 +10,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 
 ## Approved decisions
 
+- Database stack versions are approved: PostgreSQL `17.12` and Prisma ORM `7.10.1`, with the CLI (`prisma`) and Client (`@prisma/client`) pinned to the same exact version. Use the PostgreSQL driver adapter required by Prisma 7; its compatible package pin belongs to the remaining runtime/tooling validation. Version the `btree_gist` extension and confirmed-booking GiST exclusion constraint in a customized SQL migration. During implementation, verify migration application and the actual adapter/Prisma overlap error, then map that conflict to `BOOKING_CONFLICT` and HTTP 409. This approval is a version decision supported by documentation, not a claim that runtime compatibility has already been tested.
 - Frontend verification scope is explicit: no automated frontend tests in this delivery. Demonstrate isolated presentational pages/components and meaningful visual states through Storybook, and manually verify primary flows and accessibility behavior. This is an approved scope choice permitted by the challenge, not a claim that Storybook alone provides automated coverage. Automated frontend tests remain a future improvement.
 - Backend test tooling is approved: Vitest, an isolated `courtly_test` database in Docker PostgreSQL, application migrations for integration setup, and separate `test:unit` and `test:integration` commands. Unit tests need no database; integration fixtures remain small. Versions and exact commands will be fixed during stack-compatibility validation.
 - The minimum test strategy is approved: service unit tests with simulated repositories for opening hours and inclusive cancellation timing, plus a real-PostgreSQL concurrent creation test proving one success, one conflict, and one stored booking. Keep test setup small; Storybook supports visual states without requiring an automated frontend suite. See Testing strategy — approved.
@@ -39,7 +40,7 @@ Build a small sports court booking application for the Procimo fullstack hiring 
 - API errors use `{ code, message }`, with optional `fields: [{ field, message }]` only for field-specific validation errors. Messages are ready-to-display English text without a `display` wrapper. Use 400 for malformed JSON, 401 for invalid credentials or missing/invalid/expired tokens, 403 for insufficient permissions or cancelling another user's booking, 404 for missing courts/bookings, 409 for booking overlap/inactive courts blocking new bookings/closed cancellation windows, 422 for invalid fields/past bookings/out-of-hours bookings, and 500 for unexpected failures with generic client messages and technical details only in backend logs. Forms and conflicts stay on the current screen; protected-operation 401 follows the dedicated error-page flow. See `docs/api-contracts.md` for examples.
 - Use tsoa with Express. Typed controllers and decorators are the source for generated Express routes, input validation, and OpenAPI. This replaces the proposed Zod plus OpenAPI generation approach. Keep business rules in services and persistence in Prisma; do not expose Prisma models directly as API contracts.
 - Run tsoa generation automatically before development startup and production compilation, and regenerate after controller or contract changes during development. Include generation in the Docker build and verification workflow. Treat generated routes and specifications as build artifacts and never edit them manually. Explicitly maintain response and error declarations, authentication metadata, examples, and business-rule descriptions; tsoa cannot infer all runtime behavior. Verify critical response contracts through the existing integration tests without introducing a separate elaborate testing system.
-- Use snake_case for database tables and columns and camelCase for TypeScript properties and API JSON fields. Configure the mapping in Prisma so database naming does not propagate into application or domain code. Pin the Prisma version and confirm its mapping and migration APIs during implementation planning.
+- Use snake_case for database tables and columns and camelCase for TypeScript properties and API JSON fields. Configure the mapping in Prisma so database naming does not propagate into application or domain code. Use approved Prisma `7.10.1` and verify its mapping and custom migration behavior during implementation.
 - All code, interface text, and repository documentation will be in English. Planning conversations may be in Portuguese.
 - Implement mandatory requirements only. No optional bonus is planned.
 - Whenever the user comments on requirements or scope, consult the relevant section of `docs/challenge.md` before responding or modifying the plan. Identify agreement, incorrect interpretations, and scope additions explicitly instead of accepting them automatically.
@@ -156,13 +157,15 @@ Keep backend unit and integration tests small and focused on the challenge's man
 
 - Consolidate remaining endpoint-specific error codes and verify cross-contract consistency before marking the API specification complete. Personal booking request/list/cancellation, separate accessible time labels across all contracts, court creation/listing/editing, availability request/response and inactive-court handling, and the complete daily-report contract are approved; see `docs/api-contracts.md`.
 - Finalize remaining API contracts, UI flows, and minimal testing infrastructure. Login, session restoration, role exposure, JWT bearer storage in sessionStorage, and one-hour expiry are approved. Court routes are not facility-scoped. Pin compatible tsoa, Express, and TypeScript versions and confirm generation and development-watch commands.
-- Pin compatible PostgreSQL and Prisma versions and validate custom migration and exclusion-constraint error handling before defining implementation tasks.
+- PostgreSQL `17.12` and Prisma `7.10.1` are approved. Fix the remaining runtime/adapter package versions, and include custom migration application and exclusion-constraint error mapping in the database delivery acceptance criteria.
 - Define incremental PR deliverables and acceptance criteria. Local `main` has the approved bootstrap base at `c8ce1f8`; publish this base and `planning` when preparing the first PR. The user reviews and merges that PR.
 - Prepare self-contained task briefs for the available `programador` and `revisor` roles, including ownership, specification references, acceptance criteria, dependencies, and verification commands.
 - Once planning decisions are closed, consolidate related architectural decisions into concise ADRs with context, alternatives, and consequences to support implementation and the candidate's project defense. Avoid duplicating or contradicting the contracts and challenge reference.
 
 ## Technical references
 
+- PostgreSQL supported versions and patch releases: https://www.postgresql.org/support/versioning/
+- Prisma release status and supported version-7 line: https://www.prisma.io/docs/orm/release-status
 - tsoa setup and generation: https://tsoa-community.github.io/docs/getting-started.html
 - tsoa authentication integration: https://tsoa-community.github.io/docs/authentication.html
 - tsoa validation error handling: https://tsoa-community.github.io/docs/error-handling.html
@@ -171,6 +174,6 @@ Keep backend unit and integration tests small and focused on the challenge's man
 - Prisma ORM v7 database mapping: https://www.prisma.io/docs/orm/v7/prisma-schema/data-model/database-mapping
 - Prisma ORM v7 extensions through customized migrations: https://www.prisma.io/docs/orm/v7/prisma-schema/postgresql-extensions
 
-Prisma version-specific references illustrate the mechanisms; they do not lock a major version. Confirm the selected version's APIs before implementation.
+Prisma `7.10.1` is the approved version. Use the version-7 documentation for mapping, configuration, adapters, and migrations; verify behavior against the installed packages during implementation.
 
 These references support technical mechanisms; they do not replace the challenge brief or approved product decisions.
