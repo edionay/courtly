@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  user
+  admin
+
+  @@map("user_role")
+}
+
+enum BookingStatus {
+  confirmed
+  cancelled
+
+  @@map("booking_status")
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         UserRole  @default(user)
+  bookings     Booking[]
+
+  @@map("users")
+}
+
+model Facility {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  timezone  String
+  courts    Court[]
+
+  @@map("facilities")
+}
+
+model Court {
+  id                String    @id @default(uuid()) @db.Uuid
+  facilityId        String    @map("facility_id") @db.Uuid
+  facility          Facility  @relation(fields: [facilityId], references: [id])
+  name              String
+  sportType         String    @map("sport_type")
+  hourlyPriceCents  Int       @map("hourly_price_cents")
+  opensAt           DateTime  @map("opens_at") @db.Time(0)
+  closesAt          DateTime  @map("closes_at") @db.Time(0)
+  isActive          Boolean   @default(true) @map("is_active")
+  bookings          Booking[]
+
+  @@unique([facilityId, name])
+  @@map("courts")
+}
+
+model Booking {
+  id               String        @id @default(uuid()) @db.Uuid
+  courtId          String        @map("court_id") @db.Uuid
+  court            Court         @relation(fields: [courtId], references: [id])
+  userId           String        @map("user_id") @db.Uuid
+  user             User          @relation(fields: [userId], references: [id])
+  startsAt         DateTime      @map("starts_at") @db.Timestamptz(3)
+  endsAt           DateTime      @map("ends_at") @db.Timestamptz(3)
+  status           BookingStatus @default(confirmed)
+  totalPriceCents  Int           @map("total_price_cents")
+
+  @@index([userId, startsAt])
+  @@map("bookings")
+}

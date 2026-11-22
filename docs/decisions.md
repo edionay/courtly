@@ -76,6 +76,7 @@ The normative operation shapes, examples, errors, validation, and display-field 
 
 ## Verification and delivery
 
+- Programmer reasoning preference: Luna medium by default, or low for a simple task when a compatible configured profile is available. Verify the actual loaded profile before delegation rather than assuming a file edit changes an existing agent. Do not silently use high; reviewer settings are unchanged.
 - Vitest service unit tests use simulated repositories and controlled time for opening hours and the inclusive cancellation boundary. Real-PostgreSQL integration proves concurrent prevention; also verify partial overlap, adjacency, and rebooking after cancellation with small focused cases.
 - Use isolated courtly_test database on Docker PostgreSQL and the application migrations. test:unit needs no database; test:integration prepares its isolated database. Never reset application data for a test.
 - No automated frontend tests in this delivery. Demonstrate visual states in Storybook and manually verify main user/admin flows, keyboard/focus/native dialog behavior. Storybook alone is not automated coverage.
