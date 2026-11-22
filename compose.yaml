@@ -20,6 +20,7 @@ services:
     environment:
       DATABASE_URL: postgresql://courtly:courtly-local@database:5432/courtly?schema=public
       PORT: 3000
+      JWT_SECRET: ${COURTLY_JWT_SECRET:-courtly-local-development-secret-key-at-least-32}
     depends_on:
       database:
         condition: service_healthy

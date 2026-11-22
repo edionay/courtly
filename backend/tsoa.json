@@ -5,10 +5,13 @@
   "spec": {
     "specVersion": 3,
     "outputDirectory": "generated",
-    "securityDefinitions": {}
+    "securityDefinitions": {
+      "jwt": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
   },
   "routes": {
     "routesDir": "generated",
-    "middleware": "express"
+    "middleware": "express",
+    "authenticationModule": "src/auth/authentication"
   }
 }
