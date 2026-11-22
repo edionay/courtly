@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1060" viewBox="0 0 390 1060">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="390" height="1060" fill="white"/>
+<text x="24" y="38" class="bold" >Courtly</text>
+<text x="366" y="38" class="body" text-anchor="end">Menu</text>
+<line x1="0" y1="62" x2="390" y2="62" class="line"/>
+<text x="20" y="110" class="title" >Courts</text>
+<rect x="20" y="140" width="350" height="232" rx="5" fill="white" stroke="#bbb"/>
+<text x="38" y="170" class="bold" >Court 1</text>
+<text x="38" y="193" class="body" >Padel</text>
+<text x="38" y="227" class="small muted" >Opening hours</text>
+<text x="38" y="250" class="body" >10:00 – 22:00</text>
+<text x="38" y="286" class="bold" >$50.00 per hour</text>
+<rect x="38" y="308" width="314" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="195" y="337" class="body" text-anchor="middle">View availability</text>
+<rect x="20" y="392" width="350" height="232" rx="5" fill="white" stroke="#bbb"/>
+<text x="38" y="422" class="bold" >Court 2</text>
+<text x="38" y="445" class="body" >Tennis</text>
+<text x="38" y="479" class="small muted" >Opening hours</text>
+<text x="38" y="502" class="body" >08:00 – 23:00</text>
+<text x="38" y="538" class="bold" >$40.00 per hour</text>
+<rect x="38" y="560" width="314" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="195" y="589" class="body" text-anchor="middle">View availability</text>
+<rect x="20" y="644" width="350" height="232" rx="5" fill="white" stroke="#bbb"/>
+<text x="38" y="674" class="bold" >Court 3</text>
+<text x="38" y="697" class="body" >Basketball</text>
+<text x="38" y="731" class="small muted" >Opening hours</text>
+<text x="38" y="754" class="body" >08:00 – 22:00</text>
+<text x="38" y="790" class="bold" >$60.00 per hour</text>
+<rect x="38" y="812" width="314" height="46" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="195" y="841" class="body" text-anchor="middle">View availability</text>
+</svg>

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="960" viewBox="0 0 1460 960">
+<style>text{font-family:Arial,sans-serif;fill:#222} .muted{fill:#666} .small{font-size:13px} .body{font-size:15px} .bold{font-weight:700} .title{font-size:28px;font-weight:700} .line{stroke:#bbb;stroke-width:1} .box{fill:#fff;stroke:#bbb} .disabled{fill:#f2f2f2;stroke:#ccc}</style>
+<rect width="1460" height="960" fill="white"/>
+<rect x="0" y="0" width="220" height="960" fill="#fafafa"/>
+<line x1="220" y1="0" x2="220" y2="960" class="line"/>
+<text x="28" y="49" class="title">Courtly</text>
+<rect x="16" y="92" width="188" height="46" rx="5" fill="#e8e8e8" stroke="#aaa"/>
+<text x="30" y="121" class="bold">Courts</text>
+<text x="30" y="174" class="body">My bookings</text>
+<line x1="16" y1="891" x2="204" y2="891" class="line"/>
+<text x="30" y="928" class="body">Sign out</text>
+<g transform="translate(180 -40)">
+<text x="100" y="104" class="small" text-decoration="underline">Courts</text>
+<text x="145" y="104" class="small muted">/</text>
+<text x="158" y="104" class="small">Court 1</text>
+<text x="100" y="139" class="title">Choose your time</text>
+<text x="100" y="168" class="body">Court 1  ·  Padel  ·  $50.00 / hour</text>
+<text x="100" y="229" class="bold">November 15 – 21, 2026</text>
+<rect x="686" y="203" width="40" height="36" rx="6" class="disabled"/>
+<text x="706" y="227" class="body muted" text-anchor="middle">‹</text>
+<rect x="734" y="203" width="40" height="36" rx="6" class="box"/>
+<text x="754" y="227" class="body" text-anchor="middle">›</text>
+<rect x="100" y="258" width="90" height="76" rx="4" class="disabled"/>
+<text x="145.0" y="279" class="small muted" text-anchor="middle">Sun</text>
+<text x="145.0" y="300" class="bold muted" text-anchor="middle">15</text>
+<text x="145.0" y="320" class="small muted" text-anchor="middle">Past</text>
+<rect x="197" y="258" width="90" height="76" rx="4" class="disabled"/>
+<text x="242.0" y="279" class="small muted" text-anchor="middle">Mon</text>
+<text x="242.0" y="300" class="bold muted" text-anchor="middle">16</text>
+<text x="242.0" y="320" class="small muted" text-anchor="middle">Past</text>
+<rect x="294" y="258" width="90" height="76" rx="4" class="disabled"/>
+<text x="339.0" y="279" class="small muted" text-anchor="middle">Tue</text>
+<text x="339.0" y="300" class="bold muted" text-anchor="middle">17</text>
+<text x="339.0" y="320" class="small muted" text-anchor="middle">Past</text>
+<rect x="391" y="258" width="90" height="76" rx="4" class="box"/>
+<rect x="393" y="260" width="86" height="72" rx="3" fill="none" stroke="#333" stroke-width="2"/>
+<text x="436.0" y="279" class="small" text-anchor="middle">Wed</text>
+<text x="436.0" y="300" class="bold" text-anchor="middle">18</text>
+<text x="436.0" y="320" class="small" text-anchor="middle">Selected</text>
+<rect x="488" y="258" width="90" height="76" rx="4" class="box"/>
+<text x="533.0" y="279" class="small" text-anchor="middle">Thu</text>
+<text x="533.0" y="300" class="bold" text-anchor="middle">19</text>
+<rect x="585" y="258" width="90" height="76" rx="4" class="box"/>
+<text x="630.0" y="279" class="small" text-anchor="middle">Fri</text>
+<text x="630.0" y="300" class="bold" text-anchor="middle">20</text>
+<rect x="682" y="258" width="90" height="76" rx="4" class="box"/>
+<text x="727.0" y="279" class="small" text-anchor="middle">Sat</text>
+<text x="727.0" y="300" class="bold" text-anchor="middle">21</text>
+<text x="100" y="378" class="bold">Wednesday, November 18</text>
+<text x="100" y="404" class="small muted">Select up to 2 consecutive hours</text>
+<rect x="100" y="423" width="210" height="70" rx="4" class="disabled"/>
+<rect x="112" y="438" width="16" height="16" rx="2" class="box"/>
+<text x="136" y="451" class="small muted">10:00 – 11:00</text>
+<text x="136" y="474" class="small muted">Available</text>
+<rect x="322" y="423" width="210" height="70" rx="4" class="disabled"/>
+<rect x="334" y="438" width="16" height="16" rx="2" class="box"/>
+<text x="358" y="451" class="small muted">11:00 – 12:00</text>
+<text x="358" y="474" class="small muted">Booked</text>
+<rect x="544" y="423" width="210" height="70" rx="4" class="disabled"/>
+<rect x="556" y="438" width="16" height="16" rx="2" class="box"/>
+<text x="580" y="451" class="small muted">12:00 – 13:00</text>
+<text x="580" y="474" class="small muted">Available</text>
+<rect x="100" y="503" width="210" height="70" rx="4" class="box"/>
+<rect x="101.5" y="504.5" width="207" height="67" rx="3" fill="none" stroke="#333" stroke-width="1.5"/>
+<rect x="112" y="518" width="16" height="16" rx="2" class="box"/>
+<path d="M 115 526 l 3 3 l 6 -7" fill="none" stroke="#222" stroke-width="2"/>
+<text x="136" y="531" class="small">13:00 – 14:00</text>
+<text x="136" y="554" class="small">Selected</text>
+<rect x="322" y="503" width="210" height="70" rx="4" class="box"/>
+<rect x="323.5" y="504.5" width="207" height="67" rx="3" fill="none" stroke="#333" stroke-width="1.5"/>
+<rect x="334" y="518" width="16" height="16" rx="2" class="box"/>
+<path d="M 337 526 l 3 3 l 6 -7" fill="none" stroke="#222" stroke-width="2"/>
+<text x="358" y="531" class="small">14:00 – 15:00</text>
+<text x="358" y="554" class="small">Selected</text>
+<rect x="544" y="503" width="210" height="70" rx="4" class="disabled"/>
+<rect x="556" y="518" width="16" height="16" rx="2" class="box"/>
+<text x="580" y="531" class="small muted">15:00 – 16:00</text>
+<text x="580" y="554" class="small muted">Available</text>
+<rect x="100" y="583" width="210" height="70" rx="4" class="disabled"/>
+<rect x="112" y="598" width="16" height="16" rx="2" class="box"/>
+<text x="136" y="611" class="small muted">16:00 – 17:00</text>
+<text x="136" y="634" class="small muted">Booked</text>
+<rect x="322" y="583" width="210" height="70" rx="4" class="disabled"/>
+<rect x="334" y="598" width="16" height="16" rx="2" class="box"/>
+<text x="358" y="611" class="small muted">17:00 – 18:00</text>
+<text x="358" y="634" class="small muted">Available</text>
+<rect x="544" y="583" width="210" height="70" rx="4" class="disabled"/>
+<rect x="556" y="598" width="16" height="16" rx="2" class="box"/>
+<text x="580" y="611" class="small muted">18:00 – 19:00</text>
+<text x="580" y="634" class="small muted">Available</text>
+<rect x="100" y="663" width="210" height="70" rx="4" class="disabled"/>
+<rect x="112" y="678" width="16" height="16" rx="2" class="box"/>
+<text x="136" y="691" class="small muted">19:00 – 20:00</text>
+<text x="136" y="714" class="small muted">Available</text>
+<rect x="322" y="663" width="210" height="70" rx="4" class="disabled"/>
+<rect x="334" y="678" width="16" height="16" rx="2" class="box"/>
+<text x="358" y="691" class="small muted">20:00 – 21:00</text>
+<text x="358" y="714" class="small muted">Available</text>
+<rect x="544" y="663" width="210" height="70" rx="4" class="disabled"/>
+<rect x="556" y="678" width="16" height="16" rx="2" class="box"/>
+<text x="580" y="691" class="small muted">21:00 – 22:00</text>
+<text x="580" y="714" class="small muted">Available</text>
+<g transform="translate(0 -228)">
+<rect x="818" y="378" width="362" height="182" rx="6" class="box"/>
+<text x="836" y="408" class="bold">Selected time</text>
+<text x="836" y="436" class="small">Wednesday, November 18</text>
+<text x="836" y="459" class="body">13:00 – 15:00  ·  2 hours</text>
+<line x1="836" y1="476" x2="1162" y2="476" class="line"/>
+<text x="836" y="505" class="bold">Total</text>
+<text x="1162" y="505" class="bold" text-anchor="end">$100.00</text>
+<rect x="836" y="519" width="326" height="28" rx="4" class="box"/>
+<text x="999.0" y="538" class="small bold" text-anchor="middle">Continue to review</text>
+</g>
+</g>
+</svg>

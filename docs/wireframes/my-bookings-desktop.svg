@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="960" viewBox="0 0 1460 960">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="1460" height="960" fill="white"/>
+<rect x="0" y="0" width="220" height="960" fill="#fafafa"/>
+<line x1="220" y1="0" x2="220" y2="960" class="line"/>
+<text x="28" y="49" class="title" >Courtly</text>
+<text x="30" y="121" class="body" >Courts</text>
+<rect x="16" y="145" width="188" height="46" rx="5" fill="#e8e8e8" stroke="#aaa"/>
+<text x="30" y="174" class="bold" >My bookings</text>
+<line x1="16" y1="891" x2="204" y2="891" class="line"/>
+<text x="30" y="928" class="body" >Sign out</text>
+<text x="280" y="99" class="title" >My bookings</text>
+<text x="280" y="130" class="small muted" >Bookings can be cancelled up to 2 hours before their start.</text>
+<rect x="280" y="156" width="1080" height="128" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="191" class="bold" >Court 1</text>
+<text x="300" y="221" class="body" >Friday, November 20, 2026</text>
+<text x="620" y="191" class="body" >13:00 – 15:00</text>
+<text x="620" y="215" class="small muted" >São Paulo time</text>
+<text x="840" y="191" class="body" >Confirmed</text>
+<text x="994" y="191" class="bold" >$100.00</text>
+<rect x="1132" y="181" width="208" height="48" rx="5" fill="#f2f2f2" stroke="#aaa"/>
+<text x="1236" y="211" class="body" text-anchor="middle">Cancel booking</text>
+<rect x="280" y="304" width="1080" height="128" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="339" class="bold" >Court 2</text>
+<text x="300" y="369" class="body" >Thursday, November 19, 2026</text>
+<text x="620" y="339" class="body" >10:00 – 11:00</text>
+<text x="620" y="363" class="small muted" >São Paulo time</text>
+<text x="840" y="339" class="body" >Confirmed</text>
+<text x="994" y="339" class="bold" >$40.00</text>
+<rect x="280" y="452" width="1080" height="128" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="487" class="bold" >Court 1</text>
+<text x="300" y="517" class="body" >Wednesday, November 18, 2026</text>
+<text x="620" y="487" class="body" >13:00 – 15:00</text>
+<text x="620" y="511" class="small muted" >São Paulo time</text>
+<text x="840" y="487" class="body" >Confirmed</text>
+<text x="994" y="487" class="bold" >$100.00</text>
+<rect x="280" y="600" width="1080" height="128" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="635" class="bold" >Court 3</text>
+<text x="300" y="665" class="body" >Tuesday, November 17, 2026</text>
+<text x="620" y="635" class="body" >17:00 – 18:00</text>
+<text x="620" y="659" class="small muted" >São Paulo time</text>
+<text x="840" y="635" class="body" >Cancelled</text>
+<text x="994" y="635" class="bold" >$60.00</text>
+</svg>

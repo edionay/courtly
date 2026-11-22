@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="960" viewBox="0 0 1460 960">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="1460" height="960" fill="white"/>
+<rect x="0" y="0" width="220" height="960" fill="#fafafa"/>
+<line x1="220" y1="0" x2="220" y2="960" class="line"/>
+<text x="28" y="49" class="title" >Courtly</text>
+<text x="30" y="121" class="body" >Courts</text>
+<text x="30" y="174" class="body" >My bookings</text>
+<rect x="16" y="197" width="188" height="46" rx="5" fill="#e8e8e8" stroke="#aaa"/>
+<text x="30" y="226" class="bold" >Daily bookings</text>
+<line x1="16" y1="891" x2="204" y2="891" class="line"/>
+<text x="30" y="928" class="body" >Sign out</text>
+<text x="280" y="99" class="title" >Daily bookings</text>
+<text x="280" y="142" class="body" >Date</text>
+<rect x="280" y="153" width="230" height="46" rx="5" fill="white" stroke="#bbb"/>
+<text x="292" y="182" class="body" >11/20/2026</text>
+<rect x="526" y="153" width="180" height="46" rx="5" fill="#e8e8e8" stroke="#888"/>
+<text x="616" y="182" class="bold" text-anchor="middle">View bookings</text>
+<text x="280" y="252" class="bold" >November 20, 2026</text>
+<text x="280" y="283" class="bold" >Expected revenue  $180.00</text>
+<text x="280" y="305" class="small muted" >Cancelled bookings are excluded.</text>
+<rect x="280" y="332" width="1080" height="224" rx="5" fill="white" stroke="#bbb"/>
+<text x="300" y="363" class="small muted" >Time</text>
+<text x="530" y="363" class="small muted" >Court</text>
+<text x="730" y="363" class="small muted" >User</text>
+<text x="980" y="363" class="small muted" >Status</text>
+<text x="1230" y="363" class="small muted" >Total</text>
+<line x1="280" y1="380" x2="1360" y2="380" class="line"/>
+<text x="300" y="416" class="body" >10:00 – 12:00</text>
+<text x="530" y="416" class="body" >Court 1</text>
+<text x="730" y="416" class="body" >Alex Morgan</text>
+<text x="980" y="416" class="body" >Confirmed</text>
+<text x="1230" y="416" class="body" >$100.00</text>
+<line x1="280" y1="436" x2="1360" y2="436" class="line"/>
+<text x="300" y="474" class="body" >13:00 – 14:00</text>
+<text x="530" y="474" class="body" >Court 2</text>
+<text x="730" y="474" class="body" >Sam Taylor</text>
+<text x="980" y="474" class="body" >Confirmed</text>
+<text x="1230" y="474" class="body" >$80.00</text>
+<line x1="280" y1="494" x2="1360" y2="494" class="line"/>
+<text x="300" y="532" class="body" >17:00 – 18:00</text>
+<text x="530" y="532" class="body" >Court 3</text>
+<text x="730" y="532" class="body" >Alex Morgan</text>
+<text x="980" y="532" class="body" >Cancelled</text>
+<text x="1230" y="532" class="body" >$60.00</text>
+</svg>

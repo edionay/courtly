@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+<style>text{font-family:Arial,sans-serif;fill:#222}.muted{fill:#666}.small{font-size:13px}.body{font-size:15px}.bold{font-weight:700}.title{font-size:28px;font-weight:700}.line{stroke:#bbb;stroke-width:1}</style>
+<rect width="390" height="844" fill="white"/>
+<text x="24" y="40" class="bold" >Courtly</text>
+<line x1="0" y1="62" x2="390" y2="62" class="line"/>
+<text x="20" y="150" class="title" >Sign in</text>
+<text x="20" y="208" class="body" >Email</text>
+<rect x="20" y="220" width="350" height="48" rx="5" fill="white" stroke="#bbb"/>
+<text x="20" y="303" class="body" >Password</text>
+<rect x="20" y="315" width="350" height="48" rx="5" fill="white" stroke="#bbb"/>
+<rect x="20" y="387" width="350" height="48" rx="5" fill="#e8e8e8" stroke="#888"/>
+<text x="195.0" y="417" class="bold" text-anchor="middle">Sign in</text>
+</svg>
