@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+storybook-static/
+backend/generated/
+backend/prisma/*.db
+.env
+.env.*
+!.env.example
