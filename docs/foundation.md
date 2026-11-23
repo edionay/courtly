@@ -29,6 +29,8 @@ The registry audit for this exact pin set reports 10 transitive advisories (7 mo
 
 ## PostgreSQL overlap evidence
 
+This records the historical D1 check. The later user-approved D3.3a learning stage temporarily removes the constraint with a new migration; final protection remains pending until D3.3b (see execution-plan.md).
+
 The real PostgreSQL integration check confirmed that `btree_gist` and `bookings_no_confirmed_overlap` exist, an overlapping confirmed interval fails, and an adjacent interval is accepted. With Prisma 7.10.1 and `@prisma/adapter-pg` 7.10.1, the observed overlap is a `PrismaClientKnownRequestError` with code `P2039`, `meta.modelName: "Booking"`, and `meta.driverAdapterError.cause` containing PostgreSQL code `23P01` and a message naming `bookings_no_confirmed_overlap`. Map conflicts by the observed driver code and constraint identity; do not classify every `P2039` as a booking conflict.
 
 ## Seeded demonstration data
