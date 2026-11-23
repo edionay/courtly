@@ -23,6 +23,16 @@ flowchart LR
     Prisma --> Database[(PostgreSQL)]
 ```
 
+### Model-driven HTTP contracts and Swagger
+
+Request and response models are explicit TypeScript interfaces/types representing public JSON. Controller parameters and declared return types reference those models; tsoa infers their OpenAPI schemas, required/optional fields and structural input validation. Reuse existing service input and presenter output types when their shape matches the API. Keep feature-specific models close to their consumers; extract a small shared feature contract file only when needed. Do not introduce a model registry, generic base DTO, class-decorator framework, or broad file reorganization.
+
+Follow the lightweight typed-controller style demonstrated by fiapx-api: keep route, parameter, authentication, role and success-status decorators. Declare expected non-success responses concisely with the shared ApiErrorResponse type because tsoa cannot infer thrown errors from service bodies. Do not attach manual example payloads to those declarations. Remove descriptive JSDoc and @Example/@example payloads added solely for generated documentation; Swagger UI supplies sample values from schemas. Comments remain exceptional for a genuinely non-obvious implementation reason.
+
+API models remain separate from Prisma models. Preserve the approved JSON fields, display objects, error envelope and runtime rules. Inferring a string or number schema does not implement business validation; keep the current service checks, authorization and error normalization. This change does not adopt fiapx-api's language, DI container, dependencies or other architecture choices.
+
+Detailed business/timezone rules, error codes and curated request/response examples live in api-contracts.md and must be updated in the same PR as behavior changes. Generated Swagger at /api/docs and /api/openapi.json must stay current with schemas, auth, statuses and typed errors; it no longer duplicates all explanatory prose/examples. This explicitly supersedes the previous richer Swagger-metadata requirement. Regenerate in development/build/Docker, never hand-edit generated files, and verify affected operations through Swagger.
+
 ### Boundary verification
 
 Framework adapters are included in the repository boundary: expressAuthentication validates/extracts transport credentials and delegates authentication work; it does not query Prisma directly. JWT issuance/verification helpers and shared identity types must be usable without importing that transport adapter into a service. Reuse AuthRepository for current-user lookups as well as login lookups.

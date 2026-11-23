@@ -18,7 +18,7 @@ Record a concise status and evidence for each applicable group:
 - Architecture and dependency direction: repositories, services, framework adapters, presenters, and frontend presentation boundaries as applicable.
 - API/business/security contracts: public fields, errors, roles/ownership, time/money rules, and authoritative validations affected by the diff.
 - Readability and comments: self-explanatory code, minimal comments, no unnecessary layers or repeated narrative. Inspect changed JSDoc independently from API documentation completeness.
-- Documentation: generated Swagger and contract consistency, meaningful examples and rules, with no redundant prose repeating signatures/decorators/status lists. Necessary generator tags and brief non-inferable contract semantics are a narrow justified exception.
+- Documentation: generated Swagger schemas match explicit request/response models, auth/status and concise typed errors; no descriptive JSDoc or hand-authored @Example/@example payloads solely for Swagger. Detailed examples and business rules remain current in api-contracts.md. Apply the model-driven policy in architecture.md, not the superseded rich-metadata requirement.
 - Verification: required focused checks actually executed, results, and explicit limitations; identify another delivery's checks as not applicable rather than claiming them passed.
 - Delivery workflow: feature branch, allowed file ownership, commit/PR conventions, candidate README ownership, and user-only merge.
 
