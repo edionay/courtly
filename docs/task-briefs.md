@@ -8,6 +8,22 @@ Read root AGENTS.md and PRODUCT.md; docs/challenge.md, docs/decisions.md, docs/e
 
 All code/UI/docs are English. Feature-only lowercase kebab-case branches, Google-style type: imperative subject without scope parentheses, no AI/agent attribution/co-author trailers. No direct main commits except the already-completed initial-base exception; no agent merges or challenge submission. The candidate authors the root README. Preserve other workers' and candidate changes; you are not alone in the repository.
 
+## Applicable-rule gate
+
+Before implementation handoff and review completion, derive criteria from the current user request, AGENTS.md, and relevant specifications. A newly emphasized issue does not replace the other applicable rules. Keep this proportional to the delivery; do not audit unrelated legacy or implement optional features to fill a checklist.
+
+Record a concise status and evidence for each applicable group:
+
+- Scope and feature acceptance: mandatory challenge requirements, assigned delivery, and excluded/deferred work.
+- Architecture and dependency direction: repositories, services, framework adapters, presenters, and frontend presentation boundaries as applicable.
+- API/business/security contracts: public fields, errors, roles/ownership, time/money rules, and authoritative validations affected by the diff.
+- Readability and comments: self-explanatory code, minimal comments, no unnecessary layers or repeated narrative. Inspect changed JSDoc independently from API documentation completeness.
+- Documentation: generated Swagger and contract consistency, meaningful examples and rules, with no redundant prose repeating signatures/decorators/status lists. Necessary generator tags and brief non-inferable contract semantics are a narrow justified exception.
+- Verification: required focused checks actually executed, results, and explicit limitations; identify another delivery's checks as not applicable rather than claiming them passed.
+- Delivery workflow: feature branch, allowed file ownership, commit/PR conventions, candidate README ownership, and user-only merge.
+
+Use verified, not applicable with reason, or pending with limitation. Cite relevant files/symbols or executed commands. Do not manufacture evidence or declare general conformance from a passing test suite or partial checklist. The programmer self-checks and reviewer independently checks; the orchestrator verifies the review covers material applicable groups before calling the PR ready.
+
 ## Programmer dispatch template
 
 Implement only delivery <D1–D6 and title> from docs/execution-plan.md on branch <approved feature name>, starting from merged main after <dependency> is merged by the user.
