@@ -1,6 +1,6 @@
 # Courtly approved decisions
 
-Consolidated on November 21, 2026. This is the current decision register; historical proposals are superseded by this document and the referenced specifications. Application implementation has not started.
+Consolidated on November 21, 2026. This is the current decision register; historical proposals are superseded by this document and the referenced specifications. Application implementation proceeds incrementally through feature PRs; follow execution-plan.md for delivery boundaries and acceptance criteria.
 
 ## How to continue
 
