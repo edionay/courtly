@@ -4,19 +4,13 @@ import { CourtRepository, type CourtChanges } from "./courtRepository";
 import { presentCourt, type CourtRepresentation } from "./courtPresenter";
 
 export interface CreateCourtInput {
-  /** Nonempty court name. */
   name: string;
-  /** Nonempty free-text sport type. */
   sportType: string;
-  /** Positive integer cents. */
   hourlyPriceCents: number;
-  /** Facility-local whole-hour opening time. */
   opensAt: string;
-  /** Facility-local whole-hour closing time. */
   closesAt: string;
 }
 
-/** Partial update; field value constraints follow CreateCourtInput. */
 export interface UpdateCourtInput {
   name?: string;
   sportType?: string;
