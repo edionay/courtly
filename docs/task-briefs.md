@@ -54,7 +54,7 @@ Return findings, required rechecks, and whether delivery acceptance is met. Rout
 
 - D1 application-foundation: root tooling/compose/lockfile, backend database/bootstrap, minimal frontend/Storybook bootstrap. No product flow work.
 - D2 authentication-and-courts: backend auth/courts/errors/contracts and focused checks.
-- D3 booking-api: backend availability/bookings/report and mandatory real-DB/business-rule verification.
+- D3.1–D3.6: separate PRs for weekly availability, preview, creation, own list, cancellation and daily report, in the execution-plan.md order. Scope ownership and mandatory tests to the authorized subdelivery; wait for user merge before the next. Concurrency tests belong to creation and cancellation boundary tests to cancellation, not the initial read-only availability PR.
 - D4 frontend-foundation: frontend shell/auth/HTTP/court browsing/presentation/stories/tokens.
 - D5 booking-interface: frontend availability/review/own bookings/cancellation and stories/manual evidence.
 - D6 court-administration: frontend admin forms/report, final minimal fixes/evidence, candidate README review/handoff.

@@ -95,18 +95,45 @@ Acceptance:
 - List filtering/order and empty collection match contracts. Admin create/update validates changed allowlisted fields and final opening interval; deactivation preserves rows, booking history/instants and contracted totals. Prisma snake_case mapping never leaks into JSON.
 - Positive integer cents/free-text sport/local whole-hour validation and errors match contracts. All affected routes documented/exercised through Swagger; simple tests cover meaningful court opening-rule behavior, no elaborate controller suite.
 
-### D3 — Availability, booking and daily report API
+### D3 — Availability, booking and daily report API: separate PRs
 
-Branch: booking-api. Depends on D2. Own backend availability/bookings/reports modules, repositories/services/presenters, focused mandatory tests, necessary migrations only if justified, and same-PR contract documentation.
+D3 is an umbrella milestone, not one PR. The user approved one PR for each feature below on November 23, 2026. Implement only the authorized subdelivery. Each branch starts from main after the user merges its dependency; do not stack unreviewed implementation. API contracts remain in api-contracts.md and architecture/composition rules remain in architecture.md. Do not implement frontend screens in D3.
+
+#### D3.1 — Weekly availability
+
+Branch: weekly-availability. Depends on merged D2. Own the availability controller, explicit API models, service, repository interface/Prisma implementation, presenter, manual dependency composition, focused tests and necessary stable timezone dependency/lockfile. Deliver only authenticated GET /api/courts/{courtId}/availability. Do not add preview, booking writes/list/cancellation, daily report or database migrations.
 
 Acceptance:
 
-- Weekly/default/Sunday-validation/navigation/day statuses and slots match full example schema; current Facility-local time drives past behavior. Occupied slots reveal no owner. Nonexistent/inactive availability is 404.
-- Preview and creation share independent preparation logic, correct absolute instants, opening/future/duration/overlap rules, formatted labels, current-price total, and no draft/hold. Creation remains protected by exclusion constraint under simultaneous requests, with actual overlap mapped to BOOKING_CONFLICT/409.
-- Own list ordering/presentation, owner-only cancellation before/exactly/after two-hour cutoff, idempotent already-cancelled response and released interval match contracts. Preserve history/prices.
-- Report optional-date default initializes effective root date from server; explicit day uses correct Facility-local midnight-to-next-midnight bounds, includes inactive courts/cancelled rows and sums confirmed stored totals only. No forbidden presentation fields.
-- Vitest service cases cover opening hours and cancellation boundaries with deterministic time. Integration against real migrated PostgreSQL proves concurrent creation: one success, one conflict, one stored booking. Small related checks verify partial overlap, adjacency and rebooking after cancellation. Do not add broad edge-case suites.
-- Exercise each operation/auth/error through Swagger and keep generated metadata/build commands current.
+- Match the approved Weekly availability request/response in api-contracts.md exactly: optional weekStart defaults to the current Facility-local Sunday; explicit calendar Sundays only, otherwise shared 422. Missing/inactive court returns approved COURT_NOT_FOUND/404.
+- Return seven Sunday-to-Saturday days, ordered one-hour slots inside local opening hours, UTC startsAt and separate English/local display labels. Read the IANA timezone from the court's Facility, not the browser or a hardcoded offset. Calculate slots on demand; persist nothing.
+- Confirmed overlapping bookings occupy slots; cancelled bookings do not. Query overlaps using half-open intervals across the UTC bounds of the local week. Past-start slots take precedence over occupancy; isSelectable is false only before the current Facility-local date. No booking owner data, extra timezone/currentDate/minDate fields or slot IDs.
+- Previous/next are backend-generated relative adjacent-week links; previous is null when that preceding week is wholly past. A full day remains selectable. No free-day scan or frontend implementation.
+- Services consume repository interfaces with required constructor arguments; Prisma calls stay in the concrete implementation, formatting in the presenter, instances in dependencies.ts. Keep model-driven Swagger and minimal comments.
+- Add a small set of deterministic service tests for week/default/Sunday validation, Facility-local conversion/opening hours and occupancy/past/navigation. Use repository doubles. Do not claim future booking concurrency/cancellation acceptance here; those tests belong to D3.3/D3.5.
+- Regenerate/typecheck/build, run relevant existing/new tests, and exercise availability/auth/validation/404 through Swagger against seeded or isolated data. Keep fixtures isolated in courtly_test; never reset application data. Record actual commands/results and any limitation.
+
+#### D3.2 — Booking preview
+
+Branch: booking-preview. Depends on merged D3.1. Implement only POST /api/bookings/preview, its typed models/presentation and reusable selection preparation. Validate court/activity, absolute future whole-hour start, duration 1|2, opening interval and conflicts; return approved formatted date/start/end/total and durationHours. No writes, holds or quote lock. Focused preparation tests and Swagger verification; creation remains a separate PR.
+
+#### D3.3 — Booking creation
+
+Branch: booking-creation. Depends on merged D3.2. Implement only POST /api/bookings using shared preparation and stored cent totals. Preserve the existing versioned exclusion constraint; map actual overlap to BOOKING_CONFLICT/409. Real migrated PostgreSQL tests prove two simultaneous attempts yield one success, one conflict and one persisted booking; include small partial-overlap/adjacency checks and focused opening/future rules. No cancellation/list/report implementation.
+
+#### D3.4 — Own bookings
+
+Branch: own-bookings. Depends on merged D3.3. Implement only GET /api/bookings/me, owner scoping, descending start order, approved personal representation and computed canCancel. Preserve history/prices and exclude unused raw timestamps/numeric totals. Focused scoping/presentation tests and Swagger verification.
+
+#### D3.5 — Booking cancellation
+
+Branch: booking-cancellation. Depends on merged D3.4. Implement only PATCH /api/bookings/{bookingId} accepting cancelled status. Enforce owner-only cancellation before and exactly at the inclusive two-hour cutoff, idempotent already-cancelled response and preserved history/prices. Deterministic boundary tests plus a small real-DB rebooking-after-cancellation check; verify errors/auth through Swagger.
+
+#### D3.6 — Daily booking report
+
+Branch: daily-booking-report. Depends on merged D3.5. Implement only admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Focused date/revenue/role checks and Swagger verification.
+
+D3 is complete only after all six PRs have been reviewed and merged by the user. Each PR reports its own acceptance and does not claim future subdelivery tests passed. Preserve model-driven Swagger, manual composition and simple focused validation throughout. D4 continues to depend on completion of the full D3 milestone.
 
 ### D4 — Frontend foundation, authentication and court grid
 
