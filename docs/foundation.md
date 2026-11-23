@@ -9,7 +9,7 @@ The root lockfile pins the following direct dependencies:
 - Node runtime and Docker base image: 24.22.3; TypeScript: 5.9.3.
 - API: Express 4.22.3, tsoa 6.6.0, Prisma and `@prisma/client` 7.10.1, PostgreSQL 17.12, and Vitest 5.1.1. Supporting direct pins: `@prisma/adapter-pg` 7.10.1, `pg` 8.16.3, `bcryptjs` 3.0.2, and `swagger-ui-express` 5.0.1.
 - Web: React and React DOM 19.3.1, Vite 8.3.8, Tailwind CSS and its Vite plugin 4.3.5, and Storybook 10.6.8. Supporting direct pins: `@vitejs/plugin-react` 6.0.1, `@types/react` 19.2.7, and `@types/react-dom` 19.2.3.
-- Development support: TypeScript 5.9.3; backend pins `nodemon` 3.1.10, `tsx` 4.20.6, `@types/express` 4.17.25, `@types/node` 24.10.1, `@types/pg` 8.15.5, `@types/bcryptjs` 2.4.6, and `@types/swagger-ui-express` 4.1.8. The package lock records their complete resolved dependency graph.
+- Development support: TypeScript 5.9.3; backend pins `nodemon` 3.1.10, `tsx` 4.20.6, `@types/express` 4.17.25, `@types/node` 24.10.1, `@types/pg` 8.15.5, `@types/bcryptjs` 2.4.6, `@types/jsonwebtoken` 9.0.10, and `@types/swagger-ui-express` 4.1.8. The backend uses `jsonwebtoken` 9.0.3 for HS256 bearer tokens with a one-hour expiry. The package lock records their complete resolved dependency graph.
 
 The frontend plugin's declared peer range includes Vite 8; Storybook's React/Vite peer requirements include React 19, Vite 8, and Storybook 10.6.8. Express 4 uses the matching Express 4 type declarations. The D1 typecheck and builds are the compatibility checks for the installed set.
 

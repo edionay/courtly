@@ -1,6 +1,6 @@
 # Courtly API contracts
 
-This is the consolidated approved API specification. Read it with [challenge.md](challenge.md), [decisions.md](decisions.md), and [execution-plan.md](execution-plan.md). Examples use illustrative IDs and dates, not fixed seed data. Controller metadata must generate matching routes, validation, and Swagger documentation during implementation.
+This is the consolidated approved API specification. Read it with [challenge.md](challenge.md), [decisions.md](decisions.md), and [execution-plan.md](execution-plan.md). Examples use illustrative IDs and dates, not fixed seed data. Controller signatures use explicit TypeScript request/response models to generate matching routes, structural validation, and Swagger schemas. Models describe public JSON, not Prisma persistence records. Swagger uses schema-derived sample values and minimal route/auth/status/typed-error decorators, without descriptive JSDoc or manually curated example payloads. This document retains the detailed examples and business/timezone rules; they need not be duplicated in Swagger.
 
 ## Presentation policy
 
@@ -485,7 +485,7 @@ Availability must retain a machine-readable UTC `startsAt` on each slot, alongsi
 
 `durationHours` is 1 or 2. A two-hour booking occupies two consecutive hourly slots as one reservation, not two independent bookings. Slots are calculated availability objects, not persisted entities with IDs.
 
-`startsAt` identifies an absolute instant and must include `Z` or an explicit numeric offset; reject timestamps without an offset. Respect the supplied instant instead of replacing its timezone while preserving the wall-clock numbers. For example, `2026-11-20T16:00:00Z` and `2026-11-20T13:00:00-03:00` represent the same 13:00 start in the facility's timezone. `2026-11-20T13:00:00Z` instead represents 10:00 locally. Explain this distinction with examples in Swagger.
+`startsAt` identifies an absolute instant and must include `Z` or an explicit numeric offset; reject timestamps without an offset. Respect the supplied instant instead of replacing its timezone while preserving the wall-clock numbers. For example, `2026-11-20T16:00:00Z` and `2026-11-20T13:00:00-03:00` represent the same 13:00 start in the facility's timezone. `2026-11-20T13:00:00Z` instead represents 10:00 locally. Keep this distinction in the examples here; generated Swagger describes the typed request schema without duplicating this narrative.
 
 The supplied start must align with a whole-hour slot boundary in the facility timezone: local minutes, seconds, and fractional seconds must be zero. Reject a nonaligned start with HTTP 422; never round or silently change it. Use `code: "VALIDATION_ERROR"`, `message: "Check the highlighted fields."`, and `fields: [{ field: "startsAt", message: "Choose a start time on the hour." }]`. For example, `2026-11-20T13:30:00Z` is invalid for this facility. Enforce this on direct API requests as well as frontend requests. Slot alignment does not replace the other checks for opening hours, duration, past starts, court activity, and overlap.
 
