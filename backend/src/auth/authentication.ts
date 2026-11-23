@@ -1,16 +1,13 @@
 import type { Request } from "express";
 import jwt from "jsonwebtoken";
-import { AuthRepository } from "./authRepository";
+import type { AuthRepository } from "./authRepository";
+import { PrismaAuthRepository } from "./prismaAuthRepository";
 import type { AuthenticatedUser } from "./userIdentity";
 import { jwtSecret } from "./accessToken";
 import { ApiError } from "../errors/apiError";
 
-export interface AuthenticatedUserRepository {
-  findById(id: string): Promise<AuthenticatedUser | null>;
-}
-
 export function createExpressAuthentication(
-  repository: AuthenticatedUserRepository = new AuthRepository(),
+  repository: Pick<AuthRepository, "findById"> = new PrismaAuthRepository(),
 ): typeof expressAuthentication {
   return async function authenticateRequest(
     request: Request,

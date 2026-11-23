@@ -1,4 +1,4 @@
-import { getPrismaClient } from "../database";
+import type { Court } from "../../generated/prisma/client";
 
 export interface CourtChanges {
   name?: string;
@@ -9,27 +9,10 @@ export interface CourtChanges {
   isActive?: boolean;
 }
 
-export class CourtRepository {
-  public list(activeOnly: boolean) {
-    return getPrismaClient().court.findMany({
-      where: activeOnly ? { isActive: true } : undefined,
-      orderBy: { name: "asc" },
-    });
-  }
-
-  public findById(id: string) {
-    return getPrismaClient().court.findUnique({ where: { id } });
-  }
-
-  public async create(facilityId: string, values: Required<Omit<CourtChanges, "isActive">>) {
-    return getPrismaClient().court.create({ data: { ...values, facilityId, isActive: true } });
-  }
-
-  public update(id: string, changes: CourtChanges) {
-    return getPrismaClient().court.update({ where: { id }, data: changes });
-  }
-
-  public findFacility() {
-    return getPrismaClient().facility.findFirst({ select: { id: true } });
-  }
+export interface CourtRepository {
+  list(activeOnly: boolean): Promise<Court[]>;
+  findById(id: string): Promise<Court | null>;
+  create(facilityId: string, values: Required<Omit<CourtChanges, "isActive">>): Promise<Court>;
+  update(id: string, changes: CourtChanges): Promise<Court>;
+  findFacility(): Promise<{ id: string } | null>;
 }

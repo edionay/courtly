@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Court } from "../../generated/prisma/client";
-import { CourtService, type CourtStore } from "../../src/courts/courtService";
+import { CourtService } from "../../src/courts/courtService";
+import type { CourtRepository } from "../../src/courts/courtRepository";
 
 const existingCourt: Court = {
   id: "00000000-0000-4000-8000-000000000020",
@@ -16,7 +17,7 @@ const existingCourt: Court = {
 describe("CourtService", () => {
   it("rejects a partial update whose final opening interval is invalid", async () => {
     let updateCalled = false;
-    const store: CourtStore = {
+    const store: CourtRepository = {
       list: async () => [existingCourt],
       findById: async () => existingCourt,
       create: async () => existingCourt,
@@ -37,7 +38,7 @@ describe("CourtService", () => {
 
   it("updates only supplied fields and preserves the rest", async () => {
     let savedChanges: unknown;
-    const store: CourtStore = {
+    const store: CourtRepository = {
       list: async () => [existingCourt],
       findById: async () => existingCourt,
       create: async () => existingCourt,

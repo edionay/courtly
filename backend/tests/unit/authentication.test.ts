@@ -1,7 +1,8 @@
 import type { Request } from "express";
 import jwt from "jsonwebtoken";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createExpressAuthentication, type AuthenticatedUserRepository } from "../../src/auth/authentication";
+import { createExpressAuthentication } from "../../src/auth/authentication";
+import type { AuthRepository } from "../../src/auth/authRepository";
 import type { AuthenticatedUser } from "../../src/auth/userIdentity";
 
 const secret = "courtly-unit-test-secret-at-least-32-characters";
@@ -25,7 +26,7 @@ describe("express authentication adapter", () => {
   });
 
   it("rejects a valid token when its user no longer exists", async () => {
-    const repository: AuthenticatedUserRepository = { findById: async () => null };
+    const repository: Pick<AuthRepository, "findById"> = { findById: async () => null };
     const authenticate = createExpressAuthentication(repository);
     const token = jwt.sign({ sub: user.id }, secret, { algorithm: "HS256", expiresIn: "1h" });
 
@@ -48,7 +49,7 @@ describe("express authentication adapter", () => {
   });
 
   it("uses the repository role to enforce administrator scope", async () => {
-    const repository: AuthenticatedUserRepository = { findById: async () => user };
+    const repository: Pick<AuthRepository, "findById"> = { findById: async () => user };
     const authenticate = createExpressAuthentication(repository);
     const token = jwt.sign({ sub: user.id, role: "admin" }, secret, { algorithm: "HS256", expiresIn: "1h" });
 

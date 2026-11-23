@@ -1,17 +1,10 @@
-import { getPrismaClient } from "../database";
+import type { AuthenticatedUser } from "./userIdentity";
 
-export class AuthRepository {
-  public findByEmail(email: string) {
-    return getPrismaClient().user.findUnique({
-      where: { email },
-      select: { id: true, name: true, role: true, passwordHash: true },
-    });
-  }
+export interface AuthUserRecord extends AuthenticatedUser {
+  passwordHash: string;
+}
 
-  public findById(id: string) {
-    return getPrismaClient().user.findUnique({
-      where: { id },
-      select: { id: true, name: true, role: true },
-    });
-  }
+export interface AuthRepository {
+  findByEmail(email: string): Promise<AuthUserRecord | null>;
+  findById(id: string): Promise<AuthenticatedUser | null>;
 }

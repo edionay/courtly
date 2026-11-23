@@ -1,6 +1,6 @@
 import { ApiError, validationError, type FieldError } from "../errors/apiError";
-import type { Court } from "../../generated/prisma/client";
-import { CourtRepository, type CourtChanges } from "./courtRepository";
+import type { CourtRepository, CourtChanges } from "./courtRepository";
+import { PrismaCourtRepository } from "./prismaCourtRepository";
 import { presentCourt, type CourtRepresentation } from "./courtPresenter";
 
 export interface CreateCourtInput {
@@ -20,16 +20,8 @@ export interface UpdateCourtInput {
   isActive?: boolean;
 }
 
-export interface CourtStore {
-  list(activeOnly: boolean): Promise<Court[]>;
-  findById(id: string): Promise<Court | null>;
-  create(facilityId: string, values: Required<Omit<CourtChanges, "isActive">>): Promise<Court>;
-  update(id: string, changes: CourtChanges): Promise<Court>;
-  findFacility(): Promise<{ id: string } | null>;
-}
-
 export class CourtService {
-  public constructor(private readonly repository: CourtStore = new CourtRepository()) {}
+  public constructor(private readonly repository: CourtRepository = new PrismaCourtRepository()) {}
 
   public async list(isAdmin: boolean): Promise<{ items: CourtRepresentation[] }> {
     const courts = await this.repository.list(!isAdmin);
