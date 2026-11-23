@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
-import { createAccessToken, type AuthenticatedUser } from "./authentication";
+import { createAccessToken } from "./accessToken";
+import type { AuthenticatedUser } from "./userIdentity";
 import { AuthRepository } from "./authRepository";
 import { ApiError, validationError } from "../errors/apiError";
 

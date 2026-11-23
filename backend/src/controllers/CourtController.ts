@@ -1,5 +1,5 @@
 import { Body, Controller, Example, Get, Patch, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
-import type { AuthenticatedRequest } from "../auth/authentication";
+import type { AuthenticatedRequest } from "../auth/authenticatedRequest";
 import type { ApiErrorResponse } from "../errors/apiError";
 import { CourtService, type CreateCourtInput, type UpdateCourtInput } from "../courts/courtService";
 import type { CourtRepresentation } from "../courts/courtPresenter";

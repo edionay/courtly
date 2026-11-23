@@ -1,5 +1,6 @@
 import { Body, Controller, Example, Get, Post, Request, Response, Route, Security, Tags } from "tsoa";
-import type { AuthenticatedRequest, AuthenticatedUser } from "../auth/authentication";
+import type { AuthenticatedRequest } from "../auth/authenticatedRequest";
+import type { AuthenticatedUser } from "../auth/userIdentity";
 import { AuthService } from "../auth/authService";
 import type { ApiErrorResponse } from "../errors/apiError";
 
