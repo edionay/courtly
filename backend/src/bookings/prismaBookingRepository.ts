@@ -29,4 +29,8 @@ export class PrismaBookingRepository implements BookingRepository {
       select: { startsAt: true, endsAt: true },
     });
   }
+
+  public createBooking(values: Parameters<BookingRepository["createBooking"]>[0]) {
+    return getPrismaClient().booking.create({ data: values });
+  }
 }
