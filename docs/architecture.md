@@ -12,16 +12,31 @@ Organize frontend and backend by feature, such as courts and bookings. Use the l
 - Services coordinate business rules and repository operations. Small independent functions can express rules that do not need transport or persistence.
 - Feature-specific repositories concentrate database queries and persistence through Prisma. Give them only the operations needed by their feature; do not introduce a generic CRUD repository.
 - Presenters prepare the approved response contracts and display fields separately from persistence and business calculations. Do not return Prisma records as API contracts.
-- For court creation, the controller delegates to CourtService, which validates the interval and uses CourtRepository to obtain the seeded configuration and persist the active court. The controller uses CourtPresenter to return HTTP 201 with the approved representation.
+- For court creation, the controller delegates to CourtService, which validates the interval and uses CourtRepository to obtain the seeded configuration and persist the active court. CourtService uses presentCourt to prepare the approved representation; the controller returns HTTP 201.
 - Repository isolation does not replace real PostgreSQL verification of the booking overlap constraint.
 
 ```mermaid
 flowchart LR
     Controller[CourtsController] --> Service[CourtService]
     Service --> Repository[CourtRepository]
-    Repository --> Prisma[Prisma]
+    Implementation[PrismaCourtRepository] -. implements .-> Repository
+    Implementation --> Prisma[Prisma]
     Prisma --> Database[(PostgreSQL)]
 ```
+
+### Repository contracts and Prisma implementations
+
+For each implemented persistence feature, separate its contract from its implementation within the existing feature folder:
+
+- `courtRepository.ts` exports the `CourtRepository` interface and related persistence input types.
+- `prismaCourtRepository.ts` exports `PrismaCourtRepository implements CourtRepository` and owns Prisma queries.
+- `courtService.ts` consumes `CourtRepository` through its constructor; it does not declare `CourtStore` or another persistence interface.
+
+Apply the same convention to authentication (`AuthRepository` / `PrismaAuthRepository`) and future implemented features such as bookings. Repository interfaces own explicit method signatures with only the operations currently needed; they contain no database calls or dependency on service/transport modules. Existing persisted record types may be reused internally without exposing them as HTTP contracts; this decision does not require a parallel domain-model hierarchy.
+
+Framework adapters reuse the feature contract or a narrow `Pick` rather than declaring a second persistence contract. A default Prisma implementation in the existing constructor/factory is acceptable as lightweight wiring; the dependency parameter remains typed as the interface. Tests provide simple structurally compatible doubles. A named in-memory implementation is optional only when there is a concrete use. Do not add a DI container, composition framework, generic base repository, or unused repositories for every database entity. The seeded Facility remains internal configuration accessed through the existing court repository until another implemented use requires separation.
+
+This formalizes the approved Repository Pattern and replaces the service-local Store naming. It applies to current auth/courts and future implemented persistence features. Public endpoint schemas, business rules, presenters and database migrations remain unchanged by this organization change.
 
 ### Model-driven HTTP contracts and Swagger
 

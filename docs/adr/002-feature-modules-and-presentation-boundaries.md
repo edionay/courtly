@@ -8,7 +8,7 @@ The small challenge needs readable code and independently demonstrable page stat
 
 ## Decision
 
-Organize by feature. Backend uses tsoa controller, service, feature repository, and presenter. Frontend uses integration page/hooks, feature API/shared HTTP client, and presentational views with props/callbacks. Demonstrate views in Storybook with fixtures.
+Organize by feature. Backend uses tsoa controller, service, feature repository, and presenter. Repository contracts are interfaces in <feature>Repository.ts; Prisma implementations live in prisma<Feature>Repository.ts and explicitly implement them. Services consume the interface, and framework adapters reuse it or a narrow Pick. This convention was approved on November 23, 2026; it replaces service-local Store contracts without requiring a DI framework or in-memory implementation. Frontend uses integration page/hooks, feature API/shared HTTP client, and presentational views with props/callbacks. Demonstrate views in Storybook with fixtures.
 
 ## Alternatives
 
