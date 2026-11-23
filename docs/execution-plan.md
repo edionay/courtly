@@ -1,6 +1,6 @@
 # Courtly execution plan
 
-Status: consolidated specification for review on November 21, 2026. Application code is not implemented. This plan authorizes no automatic merge or challenge submission. The candidate must author the root README. Approved product decisions are closed; package/runtime checks and final visual tokens are implementation acceptance work, not evidence that implementation has already passed.
+Status: approved consolidated specification, maintained during incremental implementation through independently reviewed feature PRs. This plan authorizes no automatic merge or challenge submission. The candidate must author the root README. Approved product decisions are closed; delivery acceptance depends on executed checks and review evidence, not on this plan alone.
 
 ## Start here in another chat
 
@@ -115,7 +115,18 @@ Acceptance:
 
 #### D3.2 — Booking preview
 
-Branch: booking-preview. Depends on merged D3.1. Implement only POST /api/bookings/preview, its typed models/presentation and reusable selection preparation. Validate court/activity, absolute future whole-hour start, duration 1|2, opening interval and conflicts; return approved formatted date/start/end/total and durationHours. No writes, holds or quote lock. Focused preparation tests and direct HTTP and OpenAPI verification; creation remains a separate PR.
+Branch: booking-preview. Depends on merged D3.1. Implement only POST /api/bookings/preview, its typed models/presentation and reusable selection preparation. Creation remains a separate PR.
+
+Acceptance:
+
+- Authenticate with the existing JWT mechanism. Accept only courtId, startsAt and durationHours, with no client user/end/status/price. Return the exact Booking preview representation in api-contracts.md: court id/name/sportType, durationHours and display date/startsAt/endsAt/totalPrice, HTTP 200. No booking ID/status/canCancel or unused raw values.
+- Validate existence (COURT_NOT_FOUND/404), activity (COURT_INACTIVE/409), an explicit-offset absolute instant, a strictly future start, Facility-local whole-hour alignment, duration exactly 1 or 2 and the full resulting interval inside the court's daily opening hours. Return shared VALIDATION_ERROR/422 with appropriate fields; preserve the approved startsAt whole-hour message. Respect the supplied instant rather than replacing its zone or rounding it.
+- Check confirmed half-open overlaps (existing startsAt < requested end and existing endsAt > requested start); cancelled rows do not block preview and adjacent intervals are valid. Return BOOKING_CONFLICT/409 with the approved message. Keep business validation and queries separate from presentation/HTTP.
+- Read timezone from Facility and the current hourly price from Court. Calculate totals using integer cents and format English date, separate local time labels and generic dollar price in the presenter. Use the installed Luxon rather than new dependencies or fixed offsets.
+- Keep a small internal preparation function reusable by D3.3: independent of preview HTTP and presentation, returning the validated court, interval and cent total. Do not implement creation or trust/hold a prior preview. Use a feature repository interface/Prisma implementation and manual composition in dependencies.ts; add only read operations needed now.
+- Add a small deterministic unit set for the happy path, equivalent offset instants, duration/alignment/future rules, opening interval and confirmed conflict/adjacency. Keep existing tests passing; do not add concurrency/cancellation tests or frontend work in this PR.
+- Verify through direct HTTP and served OpenAPI, using isolated courtly_test fixtures. Confirm authentication/errors, the complete response and that repeated previews leave persisted booking counts unchanged. Build with the approved Docker runtime as applicable; preserve the main database, migrations and dependency pins. No browser automation is needed. Record actual results and clean temporary resources.
+
 
 #### D3.3 — Booking creation
 

@@ -1,6 +1,6 @@
 # Courtly approved decisions
 
-Consolidated on November 21, 2026. This is the current decision register; historical proposals are superseded by this document and the referenced specifications. Application implementation has not started.
+Consolidated on November 21, 2026. This is the current decision register; historical proposals are superseded by this document and the referenced specifications. Application implementation proceeds incrementally through feature PRs; follow execution-plan.md for delivery boundaries and acceptance criteria.
 
 ## How to continue
 
@@ -77,7 +77,7 @@ The normative operation shapes, examples, errors, validation, and display-field 
 
 ## Verification and delivery
 
-- D3 is split into six separately reviewed PRs: weekly-availability, booking-preview, booking-creation, own-bookings, booking-cancellation and daily-booking-report. Each starts from main after the user merges its dependency. Only D3.1 is currently authorized; do not bundle the later endpoints into the availability PR. See execution-plan.md for per-PR acceptance.
+- D3 is split into six separately reviewed PRs: weekly-availability, booking-preview, booking-creation, own-bookings, booking-cancellation and daily-booking-report. Each starts from main after the user merges its dependency. D3.1 has been merged; D3.2 booking preview is now authorized. Do not bundle creation, own bookings, cancellation or reporting into the preview PR. See execution-plan.md for per-PR acceptance.
 
 - Full applicable-rule checks are required at handoff, independent review, and orchestration. Scope, architecture, contracts/security, readability/comments, documentation, validation and workflow must be checked or explicitly marked not applicable/pending with evidence. A focus on one issue never waives another rule. Apply the model-driven Swagger policy above; descriptive JSDoc and hand-authored examples are not required to complete the documentation gate. See task-briefs.md.
 - Architecture verification is an explicit delivery gate for programmer, reviewer and orchestrator, including framework/authentication adapters. Inspect actual imports/ORM calls, trace an affected flow, and record file/symbol evidence against the approved boundary at the committed head. A runtime-success report does not establish architectural conformance. Resolve objective project-convention violations before readiness; mark unverified checks honestly. See architecture.md and task-briefs.md.
