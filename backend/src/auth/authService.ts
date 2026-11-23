@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import { createAccessToken } from "./accessToken";
 import type { AuthenticatedUser } from "./userIdentity";
 import type { AuthRepository } from "./authRepository";
-import { PrismaAuthRepository } from "./prismaAuthRepository";
 import { ApiError, validationError } from "../errors/apiError";
 
 export interface LoginInput {
@@ -16,7 +15,7 @@ export interface LoginResult {
 }
 
 export class AuthService {
-  public constructor(private readonly repository: AuthRepository = new PrismaAuthRepository()) {}
+  public constructor(private readonly repository: AuthRepository) {}
 
   public async login(input: LoginInput): Promise<LoginResult> {
     const fields = [];

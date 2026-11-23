@@ -1,6 +1,5 @@
 import { ApiError, validationError, type FieldError } from "../errors/apiError";
 import type { CourtRepository, CourtChanges } from "./courtRepository";
-import { PrismaCourtRepository } from "./prismaCourtRepository";
 import { presentCourt, type CourtRepresentation } from "./courtPresenter";
 
 export interface CreateCourtInput {
@@ -21,7 +20,7 @@ export interface UpdateCourtInput {
 }
 
 export class CourtService {
-  public constructor(private readonly repository: CourtRepository = new PrismaCourtRepository()) {}
+  public constructor(private readonly repository: CourtRepository) {}
 
   public async list(isAdmin: boolean): Promise<{ items: CourtRepresentation[] }> {
     const courts = await this.repository.list(!isAdmin);

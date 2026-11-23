@@ -1,7 +1,7 @@
 import type { Request } from "express";
 import jwt from "jsonwebtoken";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createExpressAuthentication } from "../../src/auth/authentication";
+import { createExpressAuthentication } from "../../src/auth/authenticationFactory";
 import type { AuthRepository } from "../../src/auth/authRepository";
 import type { AuthenticatedUser } from "../../src/auth/userIdentity";
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Request, Response, Route, Security, Tags } from "tsoa";
 import type { AuthenticatedRequest } from "../auth/authenticatedRequest";
 import type { AuthenticatedUser } from "../auth/userIdentity";
-import { AuthService } from "../auth/authService";
+import { authService } from "../dependencies";
 import type { ApiErrorResponse } from "../errors/apiError";
 
 interface LoginRequest {
@@ -23,7 +23,7 @@ export class AuthController extends Controller {
   @Response<ApiErrorResponse>(422, "Invalid request")
   @Response<ApiErrorResponse>(500, "Unexpected error")
   public async login(@Body() body: LoginRequest): Promise<LoginResponse> {
-    return new AuthService().login(body);
+    return authService.login(body);
   }
 
   @Get("me")

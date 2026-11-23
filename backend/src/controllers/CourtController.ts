@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Patch, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import type { AuthenticatedRequest } from "../auth/authenticatedRequest";
+import { courtService } from "../dependencies";
 import type { ApiErrorResponse } from "../errors/apiError";
-import { CourtService, type CreateCourtInput, type UpdateCourtInput } from "../courts/courtService";
+import type { CreateCourtInput, UpdateCourtInput } from "../courts/courtService";
 import type { CourtRepresentation } from "../courts/courtPresenter";
 
 interface CourtCollection {
@@ -17,7 +18,7 @@ export class CourtController extends Controller {
   @Response<ApiErrorResponse>(500, "Unexpected error")
   public async list(@Request() request: AuthenticatedRequest): Promise<CourtCollection> {
     if (!request.user) throw new Error("Authenticated user was not attached to the request");
-    return new CourtService().list(request.user.role === "admin");
+    return courtService.list(request.user.role === "admin");
   }
 
   @Post()
@@ -30,7 +31,7 @@ export class CourtController extends Controller {
   @Response<ApiErrorResponse>(500, "Unexpected error")
   public async create(@Body() body: CreateCourtInput): Promise<CourtRepresentation> {
     this.setStatus(201);
-    return new CourtService().create(body);
+    return courtService.create(body);
   }
 
   @Patch("{courtId}")
@@ -42,6 +43,6 @@ export class CourtController extends Controller {
   @Response<ApiErrorResponse>(422, "Invalid court")
   @Response<ApiErrorResponse>(500, "Unexpected error")
   public async update(@Path() courtId: string, @Body() body: UpdateCourtInput): Promise<CourtRepresentation> {
-    return new CourtService().update(courtId, body);
+    return courtService.update(courtId, body);
   }
 }
