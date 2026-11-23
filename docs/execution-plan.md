@@ -132,7 +132,7 @@ Acceptance:
 
 The user explicitly approved a temporary learning exception on November 23, 2026: first review ordinary booking creation without the atomic overlap guarantee, then authorize a separate implementation of that guarantee. This does not remove the challenge's mandatory concurrency requirement or change the final PostgreSQL design. Application-only check-then-insert is intentionally insufficient under concurrency and is not the final solution.
 
-##### D3.3a — Creation before atomic protection (currently authorized)
+##### D3.3a — Creation before atomic protection (reviewed and merged learning stage)
 
 Branch: booking-creation. Depends on merged D3.2. Implement only POST /api/bookings with the existing selection model and shared preparation. Obtain userId from authentication, freshly revalidate court/interval/current price, persist one confirmed booking with UTC instants and integer-cent contracted total, and return HTTP 201 using the approved personal booking representation. Compute canCancel from ownership/status and the inclusive two-hour boundary; a new booking inside two hours is not cancellable. Keep preview unchanged and read-only. Do not add list/cancellation/report endpoints.
 
@@ -142,9 +142,20 @@ The original D1 migration already creates bookings_no_confirmed_overlap. To make
 
 Acceptance: focused service/presentation tests for identity, fresh preparation, stored price and canCancel; authenticated HTTP 201 and error checks; served OpenAPI/docs; approved Docker build and isolated real-PostgreSQL checks. Adapt the current-state integration check intentionally to demonstrate the vulnerability rather than silently skip the old constraint assertion. A small deterministic test-only barrier may let both real repository prechecks finish before the real inserts, proving two successful creations and two stored overlapping bookings. Do not add production sleeps, race toggles or generic test frameworks. The PR and results must explicitly state that protection is pending, even if this demonstration test passes.
 
-##### D3.3b — Atomic overlap protection (not authorized until user approves D3.3a)
+##### D3.3b — Atomic overlap protection (currently authorized)
 
-Branch: booking-concurrency-protection. Start only from main after the user reviews/merges D3.3a and explicitly approves the follow-up. Restore the confirmed-only GiST exclusion constraint via a new versioned migration, and map the observed named-constraint PostgreSQL error to BOOKING_CONFLICT/409. Reuse the race demonstration with the final expected result: one success, one conflict, one persisted booking; add small partial-overlap/adjacency checks. Real migrated PostgreSQL remains authoritative, and the precheck is advisory.
+Branch: booking-concurrency-protection. The user merged PR #6 and authorized this follow-up on November 23, 2026. Start from the merged main. Restore the confirmed-only GiST exclusion constraint via a new versioned migration; never rewrite the D1 creation or D3.3a removal migration. The existing btree_gist extension remains in place.
+
+Acceptance:
+
+- Reinstate bookings_no_confirmed_overlap on equal court_id and overlapping tstzrange(starts_at, ends_at, '[)') for confirmed rows only. Preserve adjacent intervals, cancelled-row history, other constraints and indexes. No new API endpoints, request/response fields, dependencies, locks, production race toggles or retry/idempotency systems.
+- Map only the actual named-constraint violation observed with pinned Prisma/@prisma/adapter-pg to ApiError BOOKING_CONFLICT/409 with the approved message. Inspect the structured PostgreSQL SQLSTATE 23P01 and constraint identity in the observed error; do not classify every P2039 or every database failure as a booking conflict. Unknown/unrelated errors must propagate unchanged for normal generic handling. Keep Prisma-specific interpretation at the repository/infrastructure boundary; services must not import Prisma or concrete repositories.
+- Reuse the real-PostgreSQL test-only precheck barrier from D3.3a, changing the observed outcome from two successful overlapping bookings to one success, one BOOKING_CONFLICT and exactly one stored booking. Assert both operations completed and the rejected path is the mapped conflict. A stable test must not depend on which user wins. Add only small real-database partial-overlap/adjacency/confirmed-only checks and focused classifier behavior tests as necessary.
+- Keep the application precheck for ordinary sequential feedback; it is advisory, not the concurrency guarantee. Preview remains read-only. Do not change creation/presentation/cancellation eligibility semantics or implement list/cancel/report work.
+- Run relevant existing/unit/integration tests, generation/typecheck/build and an approved Docker build. Use isolated PostgreSQL 17.12 courtly_test, direct HTTP (including concurrent creation result/status), and programmatic OpenAPI/docs checks. Record actual named-driver-error evidence without credentials or tokens. No browser automation or main-database migration/data mutation.
+- Document the before/after proof and how the database makes INSERT enforce overlap even when both prechecks passed. Do not describe the mandatory concurrency requirement as complete until the migration, mapping and real database test pass and this PR is reviewed/merged.
+
+Real migrated PostgreSQL is authoritative. Restore migration validation must stop on existing conflicting records; never silently delete or cancel application bookings to make it pass. Review any such data explicitly with the user before applying to their application database.
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
