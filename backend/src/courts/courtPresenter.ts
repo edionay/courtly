@@ -1,5 +1,6 @@
 import type { Court } from "../../generated/prisma/client";
 
+/** Opening hours are whole-hour wall-clock values in the facility's America/Sao_Paulo timezone. */
 export interface CourtRepresentation {
   id: string;
   name: string;

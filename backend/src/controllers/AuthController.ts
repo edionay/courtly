@@ -17,9 +17,7 @@ interface LoginResponse {
 @Route("api/auth")
 @Tags("Authentication")
 export class AuthController extends Controller {
-  /**
-   * Authenticates a seeded account and returns a signed HS256 bearer token that expires after one hour.
-   * Invalid credentials return 401 INVALID_CREDENTIALS. Invalid fields return 422 VALIDATION_ERROR, malformed JSON returns 400 INVALID_JSON, and unexpected failures return 500 INTERNAL_ERROR.
+  /** Issues a one-hour JWT for a seeded account.
    * @example body {"email":"user@example.com","password":"..."}
    */
   @Post("login")
@@ -35,10 +33,6 @@ export class AuthController extends Controller {
     return new AuthService().login(body);
   }
 
-  /**
-   * Requires a valid, unexpired signed JWT and returns the current server-side identity and role.
-   * The role is loaded from the user record, not trusted from client input. Missing, invalid, or expired tokens return 401 UNAUTHENTICATED.
-   */
   @Get("me")
   @Security("jwt")
   @Example<AuthenticatedUser>({ id: "user-123", name: "Alex Morgan", role: "user" })
