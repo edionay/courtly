@@ -16,7 +16,7 @@ A separate Zod/OpenAPI registry duplicates contracts. A separate BFF service is 
 
 ## Consequences
 
-Swagger intentionally provides less narrative and no curated payload examples; those remain in the versioned contracts document. This supersedes the earlier rich-metadata policy and follows the typed-controller style of fiapx-api. Minimal decorators and generated artifacts still need build tooling; business-rule and authorization checks still require implementation/tests. Presenters add small mapping functions; Swagger verification remains part of every affected API PR. Stable tsoa 6.6.0 findings must be assessed during tooling validation.
+Swagger intentionally provides less narrative and no curated payload examples; those remain in the versioned contracts document. This supersedes the earlier rich-metadata policy and follows the typed-controller style of fiapx-api. Minimal decorators and generated artifacts still need build tooling; business-rule and authorization checks still require implementation/tests. Presenters add small mapping functions; Direct HTTP behavior checks and programmatic OpenAPI/documentation availability checks remain part of every affected API PR. Prefer curl or small scripts rather than browser automation; Swagger UI execution is no longer required. Reserve browser/manual verification for actual UI/rendering/accessibility concerns. Stable tsoa 6.6.0 findings must be assessed during tooling validation.
 
 ## Specification
 

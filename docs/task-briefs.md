@@ -34,7 +34,7 @@ Keep backend controller/service/repository/presenter boundaries and frontend con
 
 Before opening the PR, inspect changed imports and external access against the approved architecture, including framework/authentication adapters. Trace login or another affected request end-to-end and report file/symbol evidence that services do not import transport adapters and persistence goes through feature repositories. Connection lifecycle, migrations/seed and database-test setup are justified infrastructure exceptions. Do not add source-text tests or generic abstractions just for this review.
 
-Implement, regenerate, typecheck/build, and run only relevant focused checks. Follow the delivery's Swagger/manual/Storybook/Compose acceptance. Distinguish commands actually executed from planned or unavailable checks, and surface material blockers. Unit tests mock feature repositories; concurrency tests require real migrated PostgreSQL. Test setup must target courtly_test, never application data.
+Implement, regenerate, typecheck/build, and run only relevant focused checks. Prefer direct HTTP requests (curl or small scripts) for backend scenarios, checking statuses/payloads and the served OpenAPI. Confirm /api/docs availability without browser automation; Swagger UI/Try it out is not required. Use browser/manual/Storybook checks for actual frontend interaction/rendering/accessibility, and follow the delivery's Compose acceptance. Distinguish commands actually executed from planned or unavailable checks, and surface material blockers. Unit tests mock feature repositories; concurrency tests require real migrated PostgreSQL. Test setup must target courtly_test, never application data.
 
 Commit coherent work with the required format, push the feature branch, and open a PR with concrete behavior, specification references, actual validation and remaining limitations. Do not merge. Return PR URL, commit, changed ownership scope, checks/results, seed/URL information where relevant, and actionable handoff notes. If any requirement cannot be met, state it rather than marking the delivery complete.
 
@@ -54,7 +54,7 @@ Return findings, required rechecks, and whether delivery acceptance is met. Rout
 
 - D1 application-foundation: root tooling/compose/lockfile, backend database/bootstrap, minimal frontend/Storybook bootstrap. No product flow work.
 - D2 authentication-and-courts: backend auth/courts/errors/contracts and focused checks.
-- D3 booking-api: backend availability/bookings/report and mandatory real-DB/business-rule verification.
+- D3.1–D3.6: separate PRs for weekly availability, preview, creation, own list, cancellation and daily report, in the execution-plan.md order. Scope ownership and mandatory tests to the authorized subdelivery; wait for user merge before the next. Concurrency tests belong to creation and cancellation boundary tests to cancellation, not the initial read-only availability PR.
 - D4 frontend-foundation: frontend shell/auth/HTTP/court browsing/presentation/stories/tokens.
 - D5 booking-interface: frontend availability/review/own bookings/cancellation and stories/manual evidence.
 - D6 court-administration: frontend admin forms/report, final minimal fixes/evidence, candidate README review/handoff.
