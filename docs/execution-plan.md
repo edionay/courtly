@@ -128,13 +128,31 @@ Acceptance:
 - Verify through direct HTTP and served OpenAPI, using isolated courtly_test fixtures. Confirm authentication/errors, the complete response and that repeated previews leave persisted booking counts unchanged. Build with the approved Docker runtime as applicable; preserve the main database, migrations and dependency pins. No browser automation is needed. Record actual results and clean temporary resources.
 
 
-#### D3.3 — Booking creation
+#### D3.3 — Booking creation and concurrency protection: two review stages
 
-Branch: booking-creation. Depends on merged D3.2. Implement only POST /api/bookings using shared preparation and stored cent totals. Preserve the existing versioned exclusion constraint; map actual overlap to BOOKING_CONFLICT/409. Real migrated PostgreSQL tests prove two simultaneous attempts yield one success, one conflict and one persisted booking; include small partial-overlap/adjacency checks and focused opening/future rules. No cancellation/list/report implementation.
+The user explicitly approved a temporary learning exception on November 23, 2026: first review ordinary booking creation without the atomic overlap guarantee, then authorize a separate implementation of that guarantee. This does not remove the challenge's mandatory concurrency requirement or change the final PostgreSQL design. Application-only check-then-insert is intentionally insufficient under concurrency and is not the final solution.
+
+##### D3.3a — Creation before atomic protection (currently authorized)
+
+Branch: booking-creation. Depends on merged D3.2. Implement only POST /api/bookings with the existing selection model and shared preparation. Obtain userId from authentication, freshly revalidate court/interval/current price, persist one confirmed booking with UTC instants and integer-cent contracted total, and return HTTP 201 using the approved personal booking representation. Compute canCancel from ownership/status and the inclusive two-hour boundary; a new booking inside two hours is not cancellable. Keep preview unchanged and read-only. Do not add list/cancellation/report endpoints.
+
+Keep the existing application conflict precheck: an already-persisted overlapping booking still returns BOOKING_CONFLICT/409. However, two concurrent requests can both read no overlap and both persist. Do not add locks, serializable transactions, idempotency infrastructure, an atomic insert guard or database-error conflict mapping in this stage.
+
+The original D1 migration already creates bookings_no_confirmed_overlap. To make this stage genuinely unprotected, add a new forward migration dropping only that named exclusion constraint. Do not edit or delete historical migrations, the btree_gist extension, interval/price checks, foreign keys or indexes. No agent verification may apply migrations or modify data in the main application database; use only an ephemeral courtly_test database.
+
+Acceptance: focused service/presentation tests for identity, fresh preparation, stored price and canCancel; authenticated HTTP 201 and error checks; served OpenAPI/docs; approved Docker build and isolated real-PostgreSQL checks. Adapt the current-state integration check intentionally to demonstrate the vulnerability rather than silently skip the old constraint assertion. A small deterministic test-only barrier may let both real repository prechecks finish before the real inserts, proving two successful creations and two stored overlapping bookings. Do not add production sleeps, race toggles or generic test frameworks. The PR and results must explicitly state that protection is pending, even if this demonstration test passes.
+
+##### D3.3b — Atomic overlap protection (not authorized until user approves D3.3a)
+
+Branch: booking-concurrency-protection. Start only from main after the user reviews/merges D3.3a and explicitly approves the follow-up. Restore the confirmed-only GiST exclusion constraint via a new versioned migration, and map the observed named-constraint PostgreSQL error to BOOKING_CONFLICT/409. Reuse the race demonstration with the final expected result: one success, one conflict, one persisted booking; add small partial-overlap/adjacency checks. Real migrated PostgreSQL remains authoritative, and the precheck is advisory.
+
+Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
+
+D3.3 and the challenge concurrency requirement remain incomplete until D3.3b is reviewed, verified and merged. D3.4 depends on that completed stage, not just D3.3a.
 
 #### D3.4 — Own bookings
 
-Branch: own-bookings. Depends on merged D3.3. Implement only GET /api/bookings/me, owner scoping, descending start order, approved personal representation and computed canCancel. Preserve history/prices and exclude unused raw timestamps/numeric totals. Focused scoping/presentation tests and direct HTTP and OpenAPI verification.
+Branch: own-bookings. Depends on merged D3.3b. Implement only GET /api/bookings/me, owner scoping, descending start order, approved personal representation and computed canCancel. Preserve history/prices and exclude unused raw timestamps/numeric totals. Focused scoping/presentation tests and direct HTTP and OpenAPI verification.
 
 #### D3.5 — Booking cancellation
 
@@ -144,7 +162,7 @@ Branch: booking-cancellation. Depends on merged D3.4. Implement only PATCH /api/
 
 Branch: daily-booking-report. Depends on merged D3.5. Implement only admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Focused date/revenue/role checks and direct HTTP and OpenAPI verification.
 
-D3 is complete only after all six PRs have been reviewed and merged by the user. Each PR reports its own acceptance and does not claim future subdelivery tests passed. Preserve model-driven Swagger, manual composition and simple focused validation throughout. D4 continues to depend on completion of the full D3 milestone.
+D3 is complete only after all six feature deliveries, including both D3.3 review stages, have been reviewed and merged by the user. Each PR reports its own acceptance and does not claim future subdelivery tests passed. Preserve model-driven Swagger, manual composition and simple focused validation throughout. D4 continues to depend on completion of the full D3 milestone.
 
 ### D4 — Frontend foundation, authentication and court grid
 

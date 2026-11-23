@@ -10,6 +10,7 @@ export interface BookingSelection {
 
 export interface PreparedBooking {
   court: { id: string; name: string; sportType: string };
+  timezone: string;
   durationHours: number;
   startsAt: DateTime;
   endsAt: DateTime;
@@ -51,6 +52,7 @@ export async function prepareBooking(
 
   return {
     court: { id: court.id, name: court.name, sportType: court.sportType },
+    timezone: court.facility.timezone,
     durationHours: selection.durationHours,
     startsAt: localStart,
     endsAt: localEnd,
