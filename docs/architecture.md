@@ -23,6 +23,14 @@ flowchart LR
     Prisma --> Database[(PostgreSQL)]
 ```
 
+### Boundary verification
+
+Framework adapters are included in the repository boundary: expressAuthentication validates/extracts transport credentials and delegates authentication work; it does not query Prisma directly. JWT issuance/verification helpers and shared identity types must be usable without importing that transport adapter into a service. Reuse AuthRepository for current-user lookups as well as login lookups.
+
+Before handoff, inspect changed imports and direct database calls and trace an affected flow through its real consumers. For backend/src, inspect getPrismaClient/PrismaClient/Prisma model calls and classify each occurrence: feature repository or justified connection infrastructure. Schema/migrations/seed and real-database test setup are infrastructure, not examples permitting a controller/service/auth adapter bypass. This is a review check, not a reason for a generic repository, dependency-injection framework, or tests that merely grep source text.
+
+Review evidence must name the committed head, applicable architecture rule, and inspected file/symbol. A working endpoint and passing business tests do not establish this boundary. Report violations under project conventions and resolve them before calling the delivery ready. Mark uninspected criteria explicitly; do not turn an incomplete check into a blanket approval.
+
 ### Frontend: Container and Presentational Components
 
 - Integration pages and feature hooks coordinate application operations, loading, normalized errors, and navigation. Feature API modules use the shared HTTP client.

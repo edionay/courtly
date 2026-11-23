@@ -76,6 +76,7 @@ The normative operation shapes, examples, errors, validation, and display-field 
 
 ## Verification and delivery
 
+- Architecture verification is an explicit delivery gate for programmer, reviewer and orchestrator, including framework/authentication adapters. Inspect actual imports/ORM calls, trace an affected flow, and record file/symbol evidence against the approved boundary at the committed head. A runtime-success report does not establish architectural conformance. Resolve objective project-convention violations before readiness; mark unverified checks honestly. See architecture.md and task-briefs.md.
 - Programmer reasoning preference: Luna medium by default, or low for a simple task when a compatible configured profile is available. Verify the actual loaded profile before delegation rather than assuming a file edit changes an existing agent. Do not silently use high; reviewer settings are unchanged.
 - Vitest service unit tests use simulated repositories and controlled time for opening hours and the inclusive cancellation boundary. Real-PostgreSQL integration proves concurrent prevention; also verify partial overlap, adjacency, and rebooking after cancellation with small focused cases.
 - Use isolated courtly_test database on Docker PostgreSQL and the application migrations. test:unit needs no database; test:integration prepares its isolated database. Never reset application data for a test.
