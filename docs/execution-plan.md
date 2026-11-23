@@ -1,6 +1,6 @@
 # Courtly execution plan
 
-Status: consolidated specification for review on November 21, 2026. Application code is not implemented. This plan authorizes no automatic merge or challenge submission. The candidate must author the root README. Approved product decisions are closed; package/runtime checks and final visual tokens are implementation acceptance work, not evidence that implementation has already passed.
+Status: approved consolidated specification, maintained during incremental implementation through independently reviewed feature PRs. This plan authorizes no automatic merge or challenge submission. The candidate must author the root README. Approved product decisions are closed; delivery acceptance depends on executed checks and review evidence, not on this plan alone.
 
 ## Start here in another chat
 

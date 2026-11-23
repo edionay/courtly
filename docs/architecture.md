@@ -1,6 +1,6 @@
 # Courtly architecture
 
-Approved architecture and repository responsibilities. Read with [execution-plan.md](execution-plan.md), [api-contracts.md](api-contracts.md), and [decisions.md](decisions.md). No application code is implemented by this document.
+Approved architecture and repository responsibilities. Read with [execution-plan.md](execution-plan.md), [api-contracts.md](api-contracts.md), and [decisions.md](decisions.md). This document defines the architecture; delivery acceptance is tracked through the execution plan and feature PRs.
 
 ## Feature boundaries
 
