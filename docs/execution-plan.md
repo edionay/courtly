@@ -160,7 +160,7 @@ Real migrated PostgreSQL is authoritative. Restore migration validation must sto
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
-D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 and D3.5 have also been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report is now authorized; frontend work remains a later delivery.
+D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 and D3.5 have also been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report has been reviewed and merged as PR #10, completing D3. The high-fidelity visual screen pack is now authorized; D4 application implementation remains a later delivery.
 
 #### D3.4 — Own bookings
 
@@ -201,7 +201,9 @@ D3 is complete only after all six feature deliveries, including both D3.3 review
 
 ### D4 — Frontend foundation, authentication and court grid
 
-Branch: frontend-foundation. Depends on D3 (so real API is available). Own frontend shell/routing/auth/HTTP infrastructure, reusable native-styled components/tokens, auth/court presentation and containers, relevant stories and frontend docs. Complete the bounded final palette/type/token and sport illustration treatment while preserving approved layouts; document decisions without adding product requirements.
+Before frontend implementation, review the high-fidelity screen pack in `docs/mockups/aguinha/index.html` using the accepted Aguinha-derived baseline in `DESIGN.md`. The user authorized this visual extension; it does not authorize starting D4 application code or silently changing component libraries.
+
+Branch: frontend-foundation. Depends on D3 (so real API is available). Own frontend shell/routing/auth/HTTP infrastructure, reusable native-styled components/tokens, auth/court presentation and containers, relevant stories and frontend docs. Apply DESIGN.md and the reviewed high-fidelity screen pack, including the accepted photographic court-card treatment; preserve approved interaction behavior and document decisions without adding product requirements.
 
 Acceptance:
 
