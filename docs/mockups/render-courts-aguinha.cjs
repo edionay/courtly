@@ -15,7 +15,7 @@ s+=text(272,79,'Courts',34,ink,700)+text(272,112,'Choose a court to see availabl
 courts.forEach((c,i)=>{let x=272+i*368;s+=rect(x,150,344,527,'white',18,'filter="url(#shadow)"');s+=`<clipPath id="photo${i}"><rect x="${x+12}" y="162" width="320" height="224" rx="12"/></clipPath><image href="${images[i]}" x="${x+12}" y="162" width="320" height="224" preserveAspectRatio="${i===1?'xMidYMin':'xMidYMid'} slice" clip-path="url(#photo${i})"/>`;s+=text(x+20,424,c[0],22,ink,700)+rect(x+20,439,c[1]==='Basketball'?98:75,28,'#EAF3F8',14)+text(x+33,458,c[1],13,blue,600)+text(x+20,503,'Opening hours',14,muted,500)+text(x+20,528,'08:00 – 22:00',16,ink,600)+text(x+20,572,c[2],24,ink,700)+text(x+117,572,'/ hour',15,muted,400)+rect(x+20,606,304,48,blue,24)+text(x+172,636,'View availability',15,'white',600,'middle')});
 const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900"><style>text{font-family:Inter,sans-serif}</style>${s}</svg>`;
 fs.writeFileSync(path.join(out,'courts-aguinha.svg'),svg);
-const fonts=(process.env.MOCKUP_INTER_FONTS || '/Users/edionay/Dev/aguinha-app/assets/fonts/Inter.ttf,/Users/edionay/Dev/aguinha-app/assets/fonts/InterSemiBold.ttf,/Users/edionay/Dev/aguinha-app/assets/fonts/InterBold.ttf').split(',');
+const fonts=(process.env.MOCKUP_INTER_FONTS || ['Inter.ttf','InterSemiBold.ttf','InterBold.ttf'].map(name => path.join(__dirname, 'assets/fonts', name)).join(',')).split(',');
 const opts={font:{fontFiles:fonts,loadSystemFonts:true}};
 const renderer=new Resvg(svg,process.env.RESVG_MODULE?.endsWith('.node')?JSON.stringify(opts):opts);
 fs.writeFileSync(path.join(out,'courts-aguinha.png'),renderer.render().asPng());

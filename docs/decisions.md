@@ -88,7 +88,7 @@ PostgreSQL documents aborting a deadlock victim and retrying aborted transaction
 
 ## Verification and delivery
 
-- D3 is split into six separately reviewed PRs: weekly-availability, booking-preview, booking-creation, own-bookings, booking-cancellation and daily-booking-report. Each starts from main after the user merges its dependency. D3.1 and D3.2 have been merged. Both D3.3 learning stages have been reviewed and merged, including the database guarantee and conflict mapping in PR #7. D3.4 own-bookings and D3.5 booking-cancellation have been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report has also been reviewed and merged as PR #10, completing D3. The current authorized work is the high-fidelity visual screen pack; D4 application implementation remains a later delivery. See execution-plan.md for per-PR acceptance.
+- D3 is split into six separately reviewed PRs: weekly-availability, booking-preview, booking-creation, own-bookings, booking-cancellation and daily-booking-report. Each starts from main after the user merges its dependency. D3.1 and D3.2 have been merged. Both D3.3 learning stages have been reviewed and merged, including the database guarantee and conflict mapping in PR #7. D3.4 own-bookings and D3.5 booking-cancellation have been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report has also been reviewed and merged as PR #10, completing D3. The visual pack is approved and the current authorized work finalizes its local DS and frontend handoff. D4 application implementation remains a later delivery; verify PR #11 merge first. See execution-plan.md for per-PR acceptance.
 
 - Full applicable-rule checks are required at handoff, independent review, and orchestration. Scope, architecture, contracts/security, readability/comments, documentation, validation and workflow must be checked or explicitly marked not applicable/pending with evidence. A focus on one issue never waives another rule. Apply the model-driven Swagger policy above; descriptive JSDoc and hand-authored examples are not required to complete the documentation gate. See task-briefs.md.
 - Architecture verification is an explicit delivery gate for programmer, reviewer and orchestrator, including framework/authentication adapters. Inspect actual imports/ORM calls, trace an affected flow, and record file/symbol evidence against the approved boundary at the committed head. A runtime-success report does not establish architectural conformance. Resolve objective project-convention violations before readiness; mark unverified checks honestly. See architecture.md and task-briefs.md.
@@ -118,7 +118,7 @@ PostgreSQL documents aborting a deadlock victim and retrying aborted transaction
 These are tasks to verify during implementation, not undecided product requirements:
 
 - Verify package installation, exact pending stable supporting pins/lockfile, tsoa generation/watch/build, Swagger, adapter error mapping, and Docker migrations/seed against the approved stack. Raise real incompatibilities rather than silently changing pins or introducing prereleases.
-- Finalize visual tokens and sport illustrations within approved layouts; keep native semantics and document the small design system.
+- Implement the approved local DS, photographic sport assets/fallback and native semantics from design-system.md and frontend-plan.md; visual tokens and Tailwind are no longer pending choices.
 - Verify mandatory tests, manual acceptance, and candidate-authored README before final handoff.
 
 ## Technical references
@@ -155,4 +155,8 @@ These references support technical mechanisms; they do not replace the challenge
 
 ## Accepted visual baseline
 
-- The user accepted the Aguinha-derived Courts styling and authorized mockups for the remaining screens and dialogs. Use DESIGN.md for the self-contained color, typography, surface, navigation and control rules. The earlier gray/teal, Electric and Sport proposals were rejected. New screen compositions are review artifacts until individually accepted. This visual choice does not approve importing Aguinha components or changing frontend dependencies. See mockups/aguinha/index.html for the extended screen pack.
+- The user approved the complete Aguinha-derived screen pack with one correction: danger actions use white backgrounds, #E7000B text and #E7000B borders; never solid red fills. Non-destructive Cancel and Keep booking remain secondary blue outlines.
+- Root DESIGN.md points to the full copied, project-local design-system.md. The existing web Tailwind integration is selected; Mantine is superseded. Aguinha's NativeWind/gluestack/React Native components and features are not imported.
+- Approved PNGs, editable SVGs, Inter fonts/license and sport photographs/credits are committed locally. The pack is indexed by mockups/aguinha/REVIEW.md and does not require the original repositories or a live gallery server. Real API data overrides illustrative images.
+- frontend-plan.md closes the D4–D6 responsibility, route, transport/proxy, local-asset and verification contract; frontend-handoff.md supplies the portable start/resume prompt. Unknown free-text sports use a neutral image fallback; do not mislabel seeded Futsal.
+- D4 implements same-origin /api forwarding through both Vite dev and Compose-preview, using a server-only API_PROXY_TARGET; current setup has not implemented that proxy yet. No application code is authorized by this documentation task. Verify the design PR #11 is merged before dependent frontend work; only the user merges.

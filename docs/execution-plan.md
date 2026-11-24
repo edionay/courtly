@@ -4,9 +4,9 @@ Status: approved consolidated specification, maintained during incremental imple
 
 ## Start here in another chat
 
-1. Read AGENTS.md, this plan, challenge.md, decisions.md, api-contracts.md, ui-flows.md, architecture.md, wireframes/README.md, and the referenced ADRs. All paths in this document are relative to docs/ unless explicitly root-relative. All are repository files; no chat transcript is required.
+1. Read root AGENTS.md, PRODUCT.md and DESIGN.md; then this plan, challenge.md, decisions.md, api-contracts.md, ui-flows.md, architecture.md and the relevant ADRs. For frontend work also read frontend-plan.md, design-system.md, frontend-handoff.md and mockups/aguinha/REVIEW.md; the high-fidelity pack supersedes low-fidelity styling. All paths in this document are relative to docs/ unless explicitly root-relative. All are repository files; no chat transcript is required.
 2. Treat challenge.md as the mandatory requirement reference, decisions.md as approved project choices, api-contracts.md as normative wire contracts, and ui-flows.md plus canonical SVG/PNG as approved interaction/layout. ADRs explain consequences, not competing contracts. If they conflict, resolve against the latest approved consolidated choice and brief before implementation; do not infer an extra feature from an older image.
-3. Establish current repository state with git status, branch, and PR inspection. Local main was deliberately established at root commit c8ce1f8 through a one-time user-approved exception. Planning changes belong on planning and enter main only through its PR. Preserve unrelated local drafts, installed skill folders, and candidate work. Never merge on behalf of the user.
+3. Establish current repository state with git status, branch, and PR inspection. The historical main bootstrap at c8ce1f8 was a one-time exception. D0–D3 are now merged; current design/handoff changes are in PR #11 on interface-design. Inspect its actual merge state; future work uses its own feature branch and PR. Preserve unrelated local drafts, installed skill folders, and candidate work. Never merge on behalf of the user.
 4. Start application delivery only after the planning PR is reviewed and merged by the user. Each dependent delivery starts from the merged base. Use the configured programador and revisor roles with Luna; verify availability and give them the applicable brief in task-briefs.md. Do not silently substitute a model.
 5. Keep every delivery small and reviewable. Prefer happy-path implementation; discuss additional edge behavior before adding it. Routine pending dependency pins are delegated: latest stable compatible releases, exact versions/lockfile, no prereleases. Already-approved exact pins are in decisions.md.
 
@@ -201,12 +201,13 @@ D3 is complete only after all six feature deliveries, including both D3.3 review
 
 ### D4 — Frontend foundation, authentication and court grid
 
-Before frontend implementation, review the high-fidelity screen pack in `docs/mockups/aguinha/index.html` using the accepted Aguinha-derived baseline in `DESIGN.md`. The user authorized this visual extension; it does not authorize starting D4 application code or silently changing component libraries.
+The user approved the complete high-fidelity pack with outlined-danger buttons. Use root DESIGN.md, design-system.md, frontend-plan.md and the local mockups/aguinha/REVIEW.md. The implementation tool is existing web Tailwind, not Mantine. The complete frontend dispatch/transport/assets/ownership/manual-check contract is in frontend-plan.md; this section preserves milestone order and acceptance. PR #11 must be merged before dependent D4 work; the current documentation request does not start application coding.
 
 Branch: frontend-foundation. Depends on D3 (so real API is available). Own frontend shell/routing/auth/HTTP infrastructure, reusable native-styled components/tokens, auth/court presentation and containers, relevant stories and frontend docs. Apply DESIGN.md and the reviewed high-fidelity screen pack, including the accepted photographic court-card treatment; preserve approved interaction behavior and document decisions without adding product requirements.
 
 Acceptance:
 
+- Apply the complete local DS, outlined danger, local Inter/photo assets and free-sport fallback; configure same-origin /api proxy for both Vite dev and Compose preview as specified in frontend-plan.md.
 - Presentational pages depend on props/callbacks; Storybook renders meaningful states with fixtures and application styles without live API. Build application and Storybook successfully.
 - Shared HTTP client attaches JWT, preserves known typed errors/fields, distinguishes connection failures, and falls back to UNKNOWN_ERROR. Routing remains outside it; no mutation auto-retries.
 - Login, inline invalid credentials, sessionStorage reload through me, signout, and explicit authentication-error navigation match UI contracts. Backend authorization is not replaced by client role checks.
@@ -239,17 +240,17 @@ Acceptance:
 
 ## Command and startup contract
 
-No scripts exist yet; these are names the implementation must provide and verify, not checks claimed to have passed:
+These scripts and startup files already exist. Read their current manifests/Compose values and record actual verification for each delivery; documentation alone is not a passing check:
 
 - Root npm ci with the committed lockfile; root npm run build and npm run typecheck cover both workspaces.
 - Root npm run test:unit and npm run test:integration delegate to backend. Unit command never requires a DB; integration command prepares only courtly_test and runs Vitest against PostgreSQL.
 - Frontend npm run storybook and npm run build-storybook expose/build approved fixtures.
 - Backend development/build commands regenerate tsoa routes/spec automatically, including Docker build; controller changes trigger regeneration during development. Exact watch implementation belongs to D1.
 - docker compose up starts complete deliverable and applies migrations/seed without extra setup. Fail startup visibly if initialization fails rather than serving against an uninitialized schema. Test setup is isolated from application startup/data.
-- Read actual port mappings and seed accounts from D1 delivery notes when documenting URLs/credentials; this plan does not invent tested URLs or final secrets.
+- Current Compose mappings and demo seed accounts are recorded in frontend-plan.md and sourced from compose.yaml/backend/prisma/seed.ts. Verify actual overrides and login; mockup fixtures are not runtime values.
 
 ## Acceptance evidence and handoff
 
 Each PR body names the concrete delivered behavior, affected contract/spec sections, commands actually run/results, HTTP/OpenAPI and applicable UI/manual checks, and material unresolved limitations. No AI attribution/signatures/co-author trailers in PRs or commits. Review actual changed files and diff, not merely a developer summary. Recheck after fixes. Only the user merges, then start the next dependent branch from merged main.
 
-The root candidate README, package-install/runtime compatibility, noted tsoa applicability review, final visual tokens, and executed test/manual evidence remain visible delivery checkpoints. Existing wireframes are approved structure, not proof of a running accessible app. Deferred feature improvements are in decisions.md and ADRs; do not implement them as acceptance extras.
+The root candidate README, package-install/runtime compatibility, noted tsoa applicability review and executed test/manual evidence remain visible delivery checkpoints. Visual tokens and web Tailwind are now approved in design-system.md. Existing wireframes are approved structure, not proof of a running accessible app. Deferred feature improvements are in decisions.md and ADRs; do not implement them as acceptance extras.

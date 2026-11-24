@@ -1,6 +1,6 @@
 # Courtly interface review
 
-The user accepted the Aguinha-derived Courts direction and requested its application to the remaining screens and dialogs. This pack applies that visual baseline; individual new compositions remain proposed for review.
+The user approved the complete Aguinha-derived screen pack with outlined-danger buttons. This pack is the implementation visual reference, alongside the full local copy in ../../design-system.md and the implementation entry point in ../../frontend-plan.md.
 
 Open `index.html` locally to browse full previews and editable SVG sources. No server or application dependencies are required to review the PNGs.
 
@@ -67,7 +67,7 @@ Open `index.html` locally to browse full previews and editable SVG sources. No s
 - Sources and PNGs are visual studies. Layout inspection does not prove keyboard access, screen-reader behavior, native input semantics or dialog focus behavior.
 - Dates, people and amounts are illustrative fixtures. Real API data and authorization remain authoritative.
 - Native modal behavior and explicit recovery/navigation actions follow [ui-flows.md](../../ui-flows.md).
-- The user and admin/auth directories each contain their rendering script, manifest and contact sheet. Fonts and the renderer can be configured through environment variables; see their notes. No production dependency was added.
+- The user and admin/auth directories contain their rendering scripts and contact sheets; the shared index above enumerates every preview and the admin/auth manifest adds group-specific notes. Inter fonts and their license are committed at ../assets/fonts/; renderer font defaults use those local files. The optional Resvg renderer can be selected through RESVG_MODULE; screen review needs only the PNG/SVG files, not installed rendering tools. No production dependency was added.
 - The source Aguinha repositories were read only. Courtly does not reuse their product-specific components or branding.
 - Earlier non-Aguinha mockups are archived rejected alternatives and are not implementation inputs.
 
@@ -77,3 +77,17 @@ Open `index.html` locally to browse full previews and editable SVG sources. No s
 - All 34 new editable SVG files parsed successfully as XML; all 140 gallery file references resolve locally.
 - Both contact sheets and representative full-size desktop, mobile and modal renders were inspected. Corrections included mobile header consistency, disabled previous-week navigation, form breadcrumbs/helpers, icon paths, authentication-title fit and populated creation-success context.
 - No application dependency, backend contract or runtime behavior was changed. No automated application test or browser accessibility pass is claimed for these static studies.
+
+The outlined-danger correction is applied to both the personal-booking cancellation trigger and the final confirmation action; non-destructive Cancel/Keep booking remain blue outlines.
+
+## Re-rendering (optional)
+
+All renderers default to committed Inter files under docs/mockups/assets/fonts. They can load an installed @resvg/resvg-js, or a compatible module specified by RESVG_MODULE. MOCKUP_INTER_FONTS is an optional comma-separated override, not a requirement for another Aguinha checkout. Run from the repository root:
+
+```sh
+node docs/mockups/render-courts-aguinha.cjs
+node docs/mockups/aguinha/user/render.cjs
+node docs/mockups/aguinha/admin-auth/render.cjs
+```
+
+The native renderer used for the recorded local checks can be supplied through RESVG_MODULE. These are design tooling commands; they are not frontend runtime dependencies or required startup steps.

@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The backend has been implemented incrementally; the frontend still contains its foundation placeholder. Approved planning is consolidated in docs/execution-plan.md. The accepted visual baseline is recorded in DESIGN.md; a component-library change has not been approved.
+React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The backend has been implemented incrementally; the frontend still contains its foundation placeholder. Approved planning is consolidated in docs/execution-plan.md. The approved local DS is recorded in DESIGN.md and docs/design-system.md and will use the existing web Tailwind integration; the Mantine proposal is superseded.
 
 ## Users
 
@@ -56,4 +56,4 @@ Prefer native forms and controls with custom styling: radio inputs for choosing 
 
 ## Open Design Decisions
 
-The user accepted the Aguinha-derived Courts visual direction and requested extending it to the remaining screens and dialogs. DESIGN.md records the colors, Inter typography, rounded white surfaces, subtle shadows and coherent light navigation. The extended mockup pack is a review artifact; individual new compositions are not automatically approved. Low-fidelity artifacts retain value as flow evidence. The component-library choice remains separate from the accepted styling.
+The user approved the complete Aguinha-derived mockup pack with outlined-danger buttons. DESIGN.md and docs/design-system.md record the local Tailwind DS, Inter typography, rounded white surfaces, subtle shadows and coherent light navigation. PNGs, editable SVGs, fonts and image credits are committed locally; no Aguinha checkout or running gallery server is required. docs/frontend-plan.md and docs/frontend-handoff.md contain the implementation entry point and portable prompt. Low-fidelity artifacts retain value as flow evidence.
