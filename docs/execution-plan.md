@@ -160,7 +160,7 @@ Real migrated PostgreSQL is authoritative. Restore migration validation must sto
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
-D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 is now authorized; cancellation and the report remain later deliveries.
+D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 has also been reviewed and merged as PR #8; D3.5 cancellation is now authorized, and the report remains a later delivery.
 
 #### D3.4 — Own bookings
 
@@ -179,7 +179,19 @@ Acceptance:
 
 #### D3.5 — Booking cancellation
 
-Branch: booking-cancellation. Depends on merged D3.4. Implement only PATCH /api/bookings/{bookingId} accepting cancelled status. Enforce owner-only cancellation before and exactly at the inclusive two-hour cutoff, idempotent already-cancelled response and preserved history/prices. Deterministic boundary tests plus a small real-DB rebooking-after-cancellation check; verify errors/auth through direct HTTP and inspect served OpenAPI.
+Branch: booking-cancellation. Depends on merged D3.4 (PR #8). The user approved this delivery on November 23, 2026. Implement only PATCH /api/bookings/{bookingId}; reporting and frontend work remain separate PRs.
+
+Acceptance:
+
+- Require the existing JWT flow and accept only { status: "cancelled" }. Derive the requesting user from request.user; do not accept owner, court, dates, price or restoration to confirmed. Use typed tsoa input and the existing error envelope, without a parallel validation layer.
+- Load the booking through the repository, return BOOKING_NOT_FOUND/404 when absent, and enforce ownership before cancellation-window or idempotency decisions. Another owner, including an administrator, receives FORBIDDEN/403. This endpoint is not an administrative cancellation feature.
+- If already cancelled, return its current personal representation with HTTP 200 and canCancel false, without another write, even if the original start is now in the past or less than two hours away. Never let the client-supplied or previously returned canCancel authorize a mutation.
+- For a confirmed booking, freshly enforce the inclusive two-hour boundary with the shared eligibility rule: before and exactly at the cutoff succeed; after the cutoff returns CANCELLATION_WINDOW_CLOSED/409 with an understandable explanation. Preserve ordinary inactive-court history; court activity is not an additional cancellation condition.
+- Change only status to cancelled, keep the row and its owner/court/UTC interval/contracted total, and return HTTP 200 using the existing shared personal presenter/BookingResponse. Return status cancelled, display.status Cancelled and canCancel false; no raw timestamps/numeric prices or new fields. Preview, creation and own-list contracts remain compatible.
+- Keep controller/service/repository boundaries, required interface injection and manual composition. Add only needed booking lookup/status-update methods, no generic CRUD layer, dependencies or migrations. Preserve the restored confirmed-only exclusion constraint and the narrowly approved INSERT deadlock retry; do not extend that retry to cancellation.
+- Add a small deterministic unit set around before/exactly/after the cutoff, missing/foreign ownership and already-cancelled idempotency. A small real-PostgreSQL integration check must show the cancelled row remains and the same interval can be booked again by another user, with price/history preserved. Keep existing concurrency coverage intact.
+- Verify actual auth, 200/403/404/409/422 cases, response, idempotent repeat and OpenAPI/docs through direct HTTP against ephemeral PostgreSQL 17.12 courtly_test. Use gh CLI for the PR; no browser/Swagger automation. Run focused existing/new tests, typecheck/build, preserve the main database/stack and clean only owned temporary resources. Record actual commands/results and runtime versions.
+
 
 #### D3.6 — Daily booking report
 

@@ -473,7 +473,7 @@ This field is a presentation hint evaluated when the response is produced. On ca
 
 Approved request: `POST /api/bookings`, authenticated with the selected JWT bearer flow.
 
-Concurrency contract: the temporary D3.3a learning stage is reviewed and merged, and D3.3b is now authorized to restore the named PostgreSQL exclusion constraint. With both requests passing the advisory precheck, the database must permit only one overlapping confirmed insert: one request returns 201 and the other returns BOOKING_CONFLICT/409. Other request/response fields and validations remain unchanged. The earlier add/drop migrations remain historical; a new migration restores the guarantee. See execution-plan.md for the real-database acceptance proof.
+Concurrency contract: both D3.3 learning stages are reviewed and merged, and D3.3b restored the named PostgreSQL exclusion constraint. With both requests passing the advisory precheck, the database must permit only one overlapping confirmed insert: one request returns 201 and the other returns BOOKING_CONFLICT/409. Other request/response fields and validations remain unchanged. The earlier add/drop migrations remain historical; the restoration migration preserves the guarantee. See execution-plan.md for the real-database acceptance proof.
 
 Availability must retain a machine-readable UTC `startsAt` on each slot, alongside its presentation values. The backend calculates the instant using the facility's local opening hours and timezone. The client sends the selected slot's `startsAt` unchanged, rather than generating a timestamp or parsing its display label:
 
