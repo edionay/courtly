@@ -1,13 +1,13 @@
 import type { BookingRepository } from "./bookingRepository";
+import { canCancelBooking } from "./bookingEligibility";
 import { prepareBooking, type BookingSelection } from "./bookingPreparation";
 import {
-  presentBookingCreation,
+  presentPersonalBooking,
   presentBookingPreview,
-  type BookingCreationResponse,
   type BookingPreviewResponse,
+  type BookingResponse,
+  type MyBookingsResponse,
 } from "./bookingPresenter";
-
-const CANCELLATION_WINDOW_MS = 2 * 60 * 60 * 1000;
 
 export class BookingService {
   public constructor(private readonly repository: BookingRepository) {}
@@ -17,7 +17,7 @@ export class BookingService {
     return presentBookingPreview(prepared);
   }
 
-  public async create(userId: string, selection: BookingSelection): Promise<BookingCreationResponse> {
+  public async create(userId: string, selection: BookingSelection): Promise<BookingResponse> {
     const prepared = await prepareBooking(this.repository, selection);
     const booking = await this.repository.createBooking({
       courtId: prepared.court.id,
@@ -28,8 +28,20 @@ export class BookingService {
       totalPriceCents: prepared.totalPriceCents,
     });
 
-    const canCancel = booking.userId === userId && booking.status === "confirmed" &&
-      booking.startsAt.getTime() - Date.now() >= CANCELLATION_WINDOW_MS;
-    return presentBookingCreation(booking, prepared, canCancel);
+    const now = Date.now();
+    return presentPersonalBooking({
+      ...booking,
+      court: { id: prepared.court.id, name: prepared.court.name, facility: { timezone: prepared.timezone } },
+    }, canCancelBooking(booking, userId, now));
+  }
+
+  public async listMine(userId: string): Promise<MyBookingsResponse> {
+    const bookings = await this.repository.findBookingsForUser(userId);
+    const now = Date.now();
+    return {
+      items: bookings.map((booking) =>
+        presentPersonalBooking(booking, canCancelBooking(booking, userId, now)),
+      ),
+    };
   }
 }

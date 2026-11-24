@@ -6,10 +6,12 @@ export type PreviewCourt = Pick<Court, "id" | "name" | "sportType" | "hourlyPric
 
 export type BookingInterval = Pick<Booking, "startsAt" | "endsAt">;
 export type BookingRecord = Pick<Booking, "id" | "courtId" | "userId" | "startsAt" | "endsAt" | "status" | "totalPriceCents">;
+export type PersonalBookingRecord = BookingRecord & { court: Pick<Court, "id" | "name"> & { facility: { timezone: string } } };
 export type BookingCreate = Pick<Booking, "courtId" | "userId" | "startsAt" | "endsAt" | "status" | "totalPriceCents">;
 
 export interface BookingRepository {
   findCourt(id: string): Promise<PreviewCourt | null>;
   findConfirmedOverlap(courtId: string, startsAt: Date, endsAt: Date): Promise<BookingInterval | null>;
   createBooking(values: BookingCreate): Promise<BookingRecord>;
+  findBookingsForUser(userId: string): Promise<PersonalBookingRecord[]>;
 }

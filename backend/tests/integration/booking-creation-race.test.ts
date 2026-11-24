@@ -144,4 +144,8 @@ class PrecheckBarrierRepository implements BookingRepository {
   public createBooking(values: BookingCreate): Promise<BookingRecord> {
     return this.repository.createBooking(values);
   }
+
+  public findBookingsForUser(userId: string) {
+    return this.repository.findBookingsForUser(userId);
+  }
 }

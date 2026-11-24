@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PrismaBookingRepository } from "../../src/bookings/prismaBookingRepository";
 
-const { createBooking } = vi.hoisted(() => ({ createBooking: vi.fn() }));
+const { createBooking, findMany } = vi.hoisted(() => ({ createBooking: vi.fn(), findMany: vi.fn() }));
 
 vi.mock("../../src/database", () => ({
-  getPrismaClient: () => ({ booking: { create: createBooking } }),
+  getPrismaClient: () => ({ booking: { create: createBooking, findMany } }),
 }));
 
 const values = {
@@ -81,6 +81,25 @@ describe("PrismaBookingRepository.createBooking", () => {
 
     await expect(new PrismaBookingRepository().createBooking(values)).rejects.toBe(error);
     expect(createBooking).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("PrismaBookingRepository.findBookingsForUser", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("queries only the requested owner and orders by start descending", async () => {
+    const rows = [{ id: "booking-1" }];
+    findMany.mockResolvedValueOnce(rows);
+
+    await expect(new PrismaBookingRepository().findBookingsForUser(values.userId)).resolves.toBe(rows);
+    expect(findMany).toHaveBeenCalledWith({
+      where: { userId: values.userId },
+      orderBy: { startsAt: "desc" },
+      select: expect.objectContaining({
+        totalPriceCents: true,
+        court: { select: { id: true, name: true, facility: { select: { timezone: true } } } },
+      }),
+    });
   });
 });
 
