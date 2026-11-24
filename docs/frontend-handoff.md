@@ -5,6 +5,11 @@ Copy the following prompt into another agent/tool with the Courtly checkout. Rep
 ```text
 Work in the Courtly repository (this checkout; locally /Users/edionay/Dev/courtly).
 
+First inspect git status and the actual PR #11/merge state with gh. Locate
+the documentation on merged main or the existing interface-design branch
+without overwriting unrelated work. If the docs are absent from an older
+main, read the PR branch before planning; do not invent missing context.
+
 Read AGENTS.md, DESIGN.md, docs/frontend-plan.md, docs/design-system.md,
 docs/frontend-handoff.md, docs/execution-plan.md, docs/task-briefs.md,
 docs/challenge.md, docs/decisions.md, docs/architecture.md,
