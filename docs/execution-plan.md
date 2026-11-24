@@ -160,7 +160,7 @@ Real migrated PostgreSQL is authoritative. Restore migration validation must sto
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
-D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 has also been reviewed and merged as PR #8; D3.5 cancellation is now authorized, and the report remains a later delivery.
+D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 and D3.5 have also been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report is now authorized; frontend work remains a later delivery.
 
 #### D3.4 — Own bookings
 
@@ -195,7 +195,7 @@ Acceptance:
 
 #### D3.6 — Daily booking report
 
-Branch: daily-booking-report. Depends on merged D3.5. Implement only admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Focused date/revenue/role checks and direct HTTP and OpenAPI verification.
+Branch: daily-booking-report. Depends on merged D3.5 (PR #9). This delivery is authorized; D3 remains incomplete until its review and user merge. Implement only admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Focused date/revenue/role checks and direct HTTP and OpenAPI verification.
 
 D3 is complete only after all six feature deliveries, including both D3.3 review stages, have been reviewed and merged by the user. Each PR reports its own acceptance and does not claim future subdelivery tests passed. Preserve model-driven Swagger, manual composition and simple focused validation throughout. D4 continues to depend on completion of the full D3 milestone.
 
