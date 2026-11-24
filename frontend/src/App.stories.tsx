@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { App } from "./App";
 
 const meta = {
-  title: "Foundation/Application shell",
+  title: "Foundation/Bootstrap",
   component: App,
+  parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof App>;
 
 export default meta;
