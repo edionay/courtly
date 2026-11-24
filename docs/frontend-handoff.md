@@ -5,7 +5,7 @@ Copy the following prompt into another agent/tool with the Courtly checkout. Rep
 ```text
 Work in the Courtly repository (this checkout; locally /Users/edionay/Dev/courtly).
 
-First inspect git status and the actual PR #11/merge state with gh. Locate
+First inspect git status and the actual PR #11 and #12 merge states with gh. Locate
 the documentation on merged main or the existing interface-design branch
 without overwriting unrelated work. If the docs are absent from an older
 main, read the PR branch before planning; do not invent missing context.
@@ -22,6 +22,10 @@ Preserve unrelated local files and other workers' edits. PR #11 delivers the
 accepted visual system: if not merged, report that dependency and continue
 only review/fixes on its branch. Do not start frontend application work from
 an older main or merge it yourself.
+
+PR #12 contains the D4.1–D4.3 breakdown. If it is not merged, do not start
+frontend implementation; report that planning dependency. Only the user
+merges it.
 
 After dependencies are merged, start or resume the first incomplete delivery:
 D4.1 frontend-visual-foundation, D4.2 frontend-authentication, D4.3
