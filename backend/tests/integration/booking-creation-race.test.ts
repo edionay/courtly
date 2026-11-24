@@ -116,6 +116,48 @@ describe("confirmed booking exclusion constraint", () => {
     expect(saved.filter((booking) => booking.status === "confirmed")).toHaveLength(2);
     expect(saved.filter((booking) => booking.status === "cancelled")).toHaveLength(1);
   });
+
+  it("cancels through the service and allows another user to rebook the retained interval", async () => {
+    const service = new BookingService(new PrismaBookingRepository());
+    const selection = { courtId, startsAt: "2040-02-22T15:00:00.000Z", durationHours: 1 };
+    const created = await service.create(userIds[0], selection);
+
+    const cancelled = await service.cancel(userIds[0], created.id);
+    expect(cancelled).toMatchObject({
+      id: created.id,
+      status: "cancelled",
+      canCancel: false,
+      display: { totalPrice: "$50.00", status: "Cancelled" },
+    });
+
+    const rebooked = await service.create(userIds[1], selection);
+    expect(rebooked.status).toBe("confirmed");
+
+    const history = await prisma.booking.findMany({
+      where: { courtId, startsAt: new Date(selection.startsAt) },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, userId: true, status: true, startsAt: true, endsAt: true, totalPriceCents: true },
+    });
+    expect(history).toHaveLength(2);
+    expect(history).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: created.id,
+        userId: userIds[0],
+        status: "cancelled",
+        startsAt: new Date(selection.startsAt),
+        endsAt: new Date("2040-02-22T16:00:00.000Z"),
+        totalPriceCents: 5000,
+      }),
+      expect.objectContaining({
+        id: rebooked.id,
+        userId: userIds[1],
+        status: "confirmed",
+        startsAt: new Date(selection.startsAt),
+        endsAt: new Date("2040-02-22T16:00:00.000Z"),
+        totalPriceCents: 5000,
+      }),
+    ]));
+  });
 });
 
 class PrecheckBarrierRepository implements BookingRepository {
@@ -147,5 +189,13 @@ class PrecheckBarrierRepository implements BookingRepository {
 
   public findBookingsForUser(userId: string) {
     return this.repository.findBookingsForUser(userId);
+  }
+
+  public findBookingById(id: string) {
+    return this.repository.findBookingById(id);
+  }
+
+  public cancelBooking(id: string) {
+    return this.repository.cancelBooking(id);
   }
 }

@@ -137,6 +137,8 @@ function createRepository(
     findConfirmedOverlap: vi.fn(async () => overlap),
     createBooking: vi.fn(async (values) => ({ id: "00000000-0000-4000-8000-000000000040", ...values })),
     findBookingsForUser: vi.fn(async () => []),
+    findBookingById: vi.fn(async () => null),
+    cancelBooking: vi.fn(async (id) => ({ id, startsAt: new Date(), endsAt: new Date(), status: "cancelled" as const, courtId: court.id, userId: "user", totalPriceCents: 0, court: { id: court.id, name: court.name, facility: court.facility } })),
   };
 }
 

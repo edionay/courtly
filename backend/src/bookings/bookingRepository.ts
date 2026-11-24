@@ -14,4 +14,6 @@ export interface BookingRepository {
   findConfirmedOverlap(courtId: string, startsAt: Date, endsAt: Date): Promise<BookingInterval | null>;
   createBooking(values: BookingCreate): Promise<BookingRecord>;
   findBookingsForUser(userId: string): Promise<PersonalBookingRecord[]>;
+  findBookingById(id: string): Promise<PersonalBookingRecord | null>;
+  cancelBooking(id: string): Promise<PersonalBookingRecord>;
 }
