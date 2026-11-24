@@ -29,9 +29,19 @@ The registry audit for this exact pin set reports 10 transitive advisories (7 mo
 
 ## PostgreSQL overlap evidence
 
-This records the historical D1 check. The later D3.3a learning stage removed the constraint through a forward migration and was reviewed/merged. D3.3b is now authorized to restore it through another migration; its current-driver mapping and final protection must be verified again (see execution-plan.md).
+This records the historical D1 check. The later D3.3a learning stage removed the constraint through a forward migration and was reviewed/merged. D3.3b restores it through another migration; the current-branch verification is recorded below (see execution-plan.md for review/merge acceptance).
 
 The real PostgreSQL integration check confirmed that `btree_gist` and `bookings_no_confirmed_overlap` exist, an overlapping confirmed interval fails, and an adjacent interval is accepted. With Prisma 7.10.1 and `@prisma/adapter-pg` 7.10.1, the observed overlap is a `PrismaClientKnownRequestError` with code `P2039`, `meta.modelName: "Booking"`, and `meta.driverAdapterError.cause` containing PostgreSQL code `23P01` and a message naming `bookings_no_confirmed_overlap`. Map conflicts by the observed driver code and constraint identity; do not classify every `P2039` as a booking conflict. The D3.3b simultaneous-insert experiment additionally observed `P2034` with `cause.originalCode: "40P01"` (deadlock rollback). The approved recovery repeats only that autocommit INSERT once; it does not map deadlock directly to overlap or retry ambiguous outcomes. See decisions.md for the bounded policy.
+
+## Before/after booking concurrency proof
+
+The D3.3a checkpoint (PR #6) let two real repository prechecks both return no conflict, then inserted twice: both operations succeeded and two overlapping confirmed bookings were stored. The D3.3b checkpoint keeps that same test-only precheck barrier and genuine simultaneous INSERTs. With the restored constraint and narrow error handling, one creation succeeds, the other produces BOOKING_CONFLICT/409, and only one booking is persisted. The winner is not predetermined.
+
+The migration chain is preserved: initial constraint creation, the educational removal, then a new restoration migration. PostgreSQL enforces equal-court, confirmed-only half-open interval exclusion during INSERT, independently of which requests passed the earlier application query. Partial overlaps are rejected; adjacent intervals and cancelled history remain valid.
+
+Actual simultaneous INSERTs also exposed a deadlock rollback. The repository permits one retry only for observed Prisma P2034 / driver 40P01, using the same values. A named exclusion violation becomes BOOKING_CONFLICT; deadlock itself does not. The second deadlock or unrelated failure propagates. Network/timeout/ambiguous-commit errors are never retried. Thus the constraint provides integrity, while the bounded retry recovers one known-aborted operation.
+
+At this checkpoint, 49 unit tests and two real-PostgreSQL integration tests passed. A direct HTTP pair from two authenticated users returned 201 and 409, with one stored confirmed booking and the winning user's UTC interval/cent total verified. Docker build used Node 24.22.3; the isolated database used PostgreSQL 17.12. Verification did not apply migrations or modify data in the main application database. If an application database contains overlaps created during D3.3a, restoration must stop for explicit data review rather than delete or cancel records automatically.
 
 ## Seeded demonstration data
 
