@@ -135,7 +135,6 @@ describe("confirmed booking exclusion constraint", () => {
 
     const history = await prisma.booking.findMany({
       where: { courtId, startsAt: new Date(selection.startsAt) },
-      orderBy: { createdAt: "asc" },
       select: { id: true, userId: true, status: true, startsAt: true, endsAt: true, totalPriceCents: true },
     });
     expect(history).toHaveLength(2);
