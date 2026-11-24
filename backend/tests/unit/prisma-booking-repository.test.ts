@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PrismaBookingRepository } from "../../src/bookings/prismaBookingRepository";
 
-const { createBooking, findMany } = vi.hoisted(() => ({ createBooking: vi.fn(), findMany: vi.fn() }));
+const { createBooking, findMany, findUnique, update } = vi.hoisted(() => ({
+  createBooking: vi.fn(),
+  findMany: vi.fn(),
+  findUnique: vi.fn(),
+  update: vi.fn(),
+}));
 
 vi.mock("../../src/database", () => ({
-  getPrismaClient: () => ({ booking: { create: createBooking, findMany } }),
+  getPrismaClient: () => ({ booking: { create: createBooking, findMany, findUnique, update } }),
 }));
 
 const values = {
@@ -95,6 +100,39 @@ describe("PrismaBookingRepository.findBookingsForUser", () => {
     expect(findMany).toHaveBeenCalledWith({
       where: { userId: values.userId },
       orderBy: { startsAt: "desc" },
+      select: expect.objectContaining({
+        totalPriceCents: true,
+        court: { select: { id: true, name: true, facility: { select: { timezone: true } } } },
+      }),
+    });
+  });
+});
+
+describe("PrismaBookingRepository cancellation methods", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("loads the booking by ID with the personal presentation fields", async () => {
+    const booking = { id: values.userId };
+    findUnique.mockResolvedValueOnce(booking);
+
+    await expect(new PrismaBookingRepository().findBookingById(values.userId)).resolves.toBe(booking);
+    expect(findUnique).toHaveBeenCalledWith({
+      where: { id: values.userId },
+      select: expect.objectContaining({
+        totalPriceCents: true,
+        court: { select: { id: true, name: true, facility: { select: { timezone: true } } } },
+      }),
+    });
+  });
+
+  it("updates only the booking status and selects its presentation fields", async () => {
+    const booking = { id: values.userId, status: "cancelled" };
+    update.mockResolvedValueOnce(booking);
+
+    await expect(new PrismaBookingRepository().cancelBooking(values.userId)).resolves.toBe(booking);
+    expect(update).toHaveBeenCalledWith({
+      where: { id: values.userId },
+      data: { status: "cancelled" },
       select: expect.objectContaining({
         totalPriceCents: true,
         court: { select: { id: true, name: true, facility: { select: { timezone: true } } } },

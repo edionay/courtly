@@ -3,6 +3,23 @@ import { ApiError } from "../errors/apiError";
 import { isBookingOverlapConstraintViolation, isRetryableBookingDeadlock } from "./bookingDatabaseErrors";
 import type { BookingCreate, BookingRepository } from "./bookingRepository";
 
+const personalBookingSelect = {
+  id: true,
+  courtId: true,
+  userId: true,
+  startsAt: true,
+  endsAt: true,
+  status: true,
+  totalPriceCents: true,
+  court: {
+    select: {
+      id: true,
+      name: true,
+      facility: { select: { timezone: true } },
+    },
+  },
+} as const;
+
 export class PrismaBookingRepository implements BookingRepository {
   public findCourt(id: string) {
     return getPrismaClient().court.findUnique({
@@ -36,22 +53,22 @@ export class PrismaBookingRepository implements BookingRepository {
     return getPrismaClient().booking.findMany({
       where: { userId },
       orderBy: { startsAt: "desc" },
-      select: {
-        id: true,
-        courtId: true,
-        userId: true,
-        startsAt: true,
-        endsAt: true,
-        status: true,
-        totalPriceCents: true,
-        court: {
-          select: {
-            id: true,
-            name: true,
-            facility: { select: { timezone: true } },
-          },
-        },
-      },
+      select: personalBookingSelect,
+    });
+  }
+
+  public findBookingById(id: string) {
+    return getPrismaClient().booking.findUnique({
+      where: { id },
+      select: personalBookingSelect,
+    });
+  }
+
+  public cancelBooking(id: string) {
+    return getPrismaClient().booking.update({
+      where: { id },
+      data: { status: "cancelled" },
+      select: personalBookingSelect,
     });
   }
 

@@ -89,6 +89,8 @@ function createRepository(rows: PersonalBookingRecord[]): BookingRepository & { 
     findConfirmedOverlap: vi.fn(async () => null),
     createBooking: vi.fn(async (values) => ({ id: "created", ...values })),
     findBookingsForUser: vi.fn(async () => rows),
+    findBookingById: vi.fn(async () => null),
+    cancelBooking: vi.fn(async (id) => ({ id, ...rows[0]!, court: rows[0]!.court })),
   };
 }
 
