@@ -32,6 +32,29 @@ export class PrismaBookingRepository implements BookingRepository {
     });
   }
 
+  public findBookingsForUser(userId: string) {
+    return getPrismaClient().booking.findMany({
+      where: { userId },
+      orderBy: { startsAt: "desc" },
+      select: {
+        id: true,
+        courtId: true,
+        userId: true,
+        startsAt: true,
+        endsAt: true,
+        status: true,
+        totalPriceCents: true,
+        court: {
+          select: {
+            id: true,
+            name: true,
+            facility: { select: { timezone: true } },
+          },
+        },
+      },
+    });
+  }
+
   public async createBooking(values: BookingCreate) {
     try {
       return await insertBookingWithDeadlockRetry(values);

@@ -1,5 +1,6 @@
+import { DateTime } from "luxon";
 import type { PreparedBooking } from "./bookingPreparation";
-import type { BookingRecord } from "./bookingRepository";
+import type { PersonalBookingRecord } from "./bookingRepository";
 
 export interface BookingPreviewResponse {
   court: { id: string; name: string; sportType: string };
@@ -7,19 +8,23 @@ export interface BookingPreviewResponse {
   display: { date: string; startsAt: string; endsAt: string; totalPrice: string };
 }
 
-export interface BookingCreationResponse {
+export interface BookingResponse {
   id: string;
   court: { id: string; name: string };
-  status: "confirmed";
+  status: "confirmed" | "cancelled";
   canCancel: boolean;
   display: {
     date: string;
     startsAt: string;
     endsAt: string;
     timezone: string;
-    status: "Confirmed";
+    status: "Confirmed" | "Cancelled";
     totalPrice: string;
   };
+}
+
+export interface MyBookingsResponse {
+  items: BookingResponse[];
 }
 
 export function presentBookingPreview(preview: PreparedBooking): BookingPreviewResponse {
@@ -35,22 +40,25 @@ export function presentBookingPreview(preview: PreparedBooking): BookingPreviewR
   };
 }
 
-export function presentBookingCreation(
-  booking: BookingRecord,
-  prepared: PreparedBooking,
+export function presentPersonalBooking(
+  booking: PersonalBookingRecord,
   canCancel: boolean,
-): BookingCreationResponse {
+): BookingResponse {
+  const timezone = booking.court.facility.timezone;
+  const startsAt = DateTime.fromJSDate(booking.startsAt, { zone: "utc" }).setZone(timezone);
+  const endsAt = DateTime.fromJSDate(booking.endsAt, { zone: "utc" }).setZone(timezone);
+  const statusLabel = booking.status === "confirmed" ? "Confirmed" : "Cancelled";
   return {
     id: booking.id,
-    court: { id: prepared.court.id, name: prepared.court.name },
-    status: "confirmed",
+    court: { id: booking.court.id, name: booking.court.name },
+    status: booking.status,
     canCancel,
     display: {
-      date: prepared.startsAt.setLocale("en-US").toFormat("MMM d, yyyy"),
-      startsAt: prepared.startsAt.toFormat("HH:mm"),
-      endsAt: prepared.endsAt.toFormat("HH:mm"),
-      timezone: presentTimezone(prepared.timezone),
-      status: "Confirmed",
+      date: startsAt.setLocale("en-US").toFormat("MMM d, yyyy"),
+      startsAt: startsAt.toFormat("HH:mm"),
+      endsAt: endsAt.toFormat("HH:mm"),
+      timezone: presentTimezone(timezone),
+      status: statusLabel,
       totalPrice: formatPrice(booking.totalPriceCents),
     },
   };

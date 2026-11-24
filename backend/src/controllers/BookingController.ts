@@ -1,7 +1,7 @@
-import { Body, Controller, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import type { AuthenticatedRequest } from "../auth/authenticatedRequest";
 import { bookingService } from "../dependencies";
-import type { BookingCreationResponse, BookingPreviewResponse } from "../bookings/bookingPresenter";
+import type { BookingPreviewResponse, BookingResponse, MyBookingsResponse } from "../bookings/bookingPresenter";
 import type { BookingSelection } from "../bookings/bookingPreparation";
 import type { ApiErrorResponse } from "../errors/apiError";
 
@@ -9,6 +9,14 @@ import type { ApiErrorResponse } from "../errors/apiError";
 @Tags("Bookings")
 @Security("jwt")
 export class BookingController extends Controller {
+  @Get("me")
+  @Response<ApiErrorResponse>(401, "Unauthenticated")
+  @Response<ApiErrorResponse>(500, "Unexpected error")
+  public listMine(@Request() request: AuthenticatedRequest): Promise<MyBookingsResponse> {
+    if (!request.user) throw new Error("Authenticated user was not attached to the request");
+    return bookingService.listMine(request.user.id);
+  }
+
   @Post("preview")
   @Response<ApiErrorResponse>(400, "Malformed JSON")
   @Response<ApiErrorResponse>(401, "Unauthenticated")
@@ -31,7 +39,7 @@ export class BookingController extends Controller {
   public async create(
     @Request() request: AuthenticatedRequest,
     @Body() body: BookingSelection,
-  ): Promise<BookingCreationResponse> {
+  ): Promise<BookingResponse> {
     if (!request.user) throw new Error("Authenticated user was not attached to the request");
     this.setStatus(201);
     return bookingService.create(request.user.id, body);
