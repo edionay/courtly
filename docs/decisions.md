@@ -76,6 +76,16 @@ The normative operation shapes, examples, errors, validation, and display-field 
 - Visually compose time labels with a spaced dash, hidden from assistive technology; provide a visually hidden until separator so it is not announced twice. Verify native dialog naming/focus restoration and state announcements manually.
 - Low-fidelity layouts are approved, not a final production identity. Palette, typography, tokens, and sport illustration refinement remain a bounded design task within the frontend delivery; do not infer a finished brand from grayscale previews.
 
+## Confirmed deadlock recovery for booking creation
+
+Real simultaneous GiST inserts with the pinned stack produced Prisma P2034 with meta.driverAdapterError.cause.originalCode 40P01 (deadlock), distinct from the named P2039/23P01 exclusion violation. PostgreSQL aborts one operation, preserving the no-overlap invariant. On November 23, 2026 the user approved exactly one retry of the autocommit booking INSERT after this confirmed rollback.
+
+Keep the recovery in the Prisma repository. Only the observed P2034/40P01 combination qualifies; retry the same values once, then return the actual result or translate a named exclusion violation to BOOKING_CONFLICT/409. A deadlock alone is not an overlap verdict. A second deadlock or any unrelated error propagates unchanged; never retry network errors, timeouts, ambiguous commits or every P2034. Do not add a generic retry framework, backoff, locks, production/test insert serialization, or client mutation retries.
+
+The genuine concurrent integration test must retain simultaneous inserts and prove one success, one mapped conflict and one stored booking. Add small focused tests proving eligible retry, the two-attempt maximum and unknown-error propagation. The constraint is the integrity guarantee; the retry only recovers from a known-aborted insert to produce the appropriate outcome. This approved exception supersedes the earlier blanket no-retry policy for this operation only.
+
+PostgreSQL documents aborting a deadlock victim and retrying aborted transactions: [PostgreSQL 17 deadlocks](https://www.postgresql.org/docs/17/explicit-locking.html#LOCKING-DEADLOCKS). See the [SQLSTATE reference](https://www.postgresql.org/docs/17/errcodes-appendix.html) for 40P01.
+
 ## Verification and delivery
 
 - D3 is split into six separately reviewed PRs: weekly-availability, booking-preview, booking-creation, own-bookings, booking-cancellation and daily-booking-report. Each starts from main after the user merges its dependency. D3.1 and D3.2 have been merged. D3.3a has also been reviewed and merged, and the user has authorized D3.3b to restore the database guarantee and conflict mapping in a separate PR. Do not bundle own bookings, cancellation or reporting into either stage. See execution-plan.md for per-PR acceptance.
