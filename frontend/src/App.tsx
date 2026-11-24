@@ -2,9 +2,9 @@ import { CourtlyMark } from "./shared/ui/CourtlyMark";
 
 export function App() {
   return (
-    <main className="bootstrap-screen">
+    <main className="min-h-screen grid place-content-center justify-items-center gap-3 p-6 text-center">
       <CourtlyMark />
-      <p>Application setup is in progress.</p>
+      <p className="m-0 text-muted-foreground">Application setup is in progress.</p>
     </main>
   );
 }

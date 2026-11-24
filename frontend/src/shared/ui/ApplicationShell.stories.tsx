@@ -14,8 +14,12 @@ const meta = {
     onSignOut: () => undefined,
     children: (
       <>
-        <h1 className="page-heading">Courts</h1>
-        <p className="page-description">Choose a court to see its availability.</p>
+        <h1 className="text-[28px] md:text-[34px] font-bold tracking-tight text-foreground m-0 leading-tight">
+          Courts
+        </h1>
+        <p className="mt-2 text-base text-muted-foreground leading-normal">
+          Choose a court to see its availability.
+        </p>
       </>
     ),
   },

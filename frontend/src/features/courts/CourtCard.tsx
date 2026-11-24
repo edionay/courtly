@@ -35,16 +35,22 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
   const image = getCourtImage(court.sportType);
 
   return (
-    <article className="court-card" aria-labelledby={`court-${court.id}`}>
-      <img className="court-card-image" src={image} alt="" />
-      <h2 id={`court-${court.id}`} className="court-card-heading">
-        {court.name}
-      </h2>
-      <p className="court-card-sport">{court.sportType}</p>
-      <div className="court-card-meta">
-        <div>
-          <span className="court-card-hours-label">Opening hours</span>
-          <span className="court-card-hours">
+    <article className="min-w-0 p-3 bg-surface rounded-card shadow-card flex flex-col justify-between h-full">
+      <div>
+        <img
+          className="block w-full aspect-[10/7] object-cover rounded-xl"
+          src={image}
+          alt=""
+        />
+        <h2 className="mt-3.5 text-foreground text-xl font-bold leading-snug">
+          {court.name}
+        </h2>
+        <p className="inline-flex items-center min-h-[28px] mt-2 px-3.5 text-primary bg-[#e5f0f5] rounded-full text-sm font-semibold">
+          {court.sportType}
+        </p>
+        <div className="mt-4.5">
+          <span className="block text-muted-foreground text-sm">Opening hours</span>
+          <span className="block mt-1 text-foreground text-base font-semibold tabular-nums whitespace-nowrap">
             <span>{court.opensAt}</span>
             <span aria-hidden="true"> – </span>
             <span className="sr-only"> until </span>
@@ -52,18 +58,22 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
           </span>
         </div>
       </div>
-      <p className="court-card-price-line">
-        <span className="court-card-price">{court.display.hourlyPrice}</span>
-        <span className="court-card-price-unit">/ hour</span>
-      </p>
-      <Button
-        className="court-card-action"
-        aria-label={`View availability for ${court.name}`}
-        disabled={!onViewAvailability}
-        onClick={() => onViewAvailability?.(court)}
-      >
-        View availability
-      </Button>
+      <div>
+        <p className="flex items-baseline gap-2.5 mt-4 mb-0">
+          <span className="text-primary text-2xl font-bold tabular-nums whitespace-nowrap">
+            {court.display.hourlyPrice}
+          </span>
+          <span className="text-muted-foreground text-sm">/ hour</span>
+        </p>
+        <Button
+          className="w-full mt-6 rounded-full"
+          aria-label={`View availability for ${court.name}`}
+          disabled={!onViewAvailability}
+          onClick={() => onViewAvailability?.(court)}
+        >
+          View availability
+        </Button>
+      </div>
     </article>
   );
 }

@@ -4,7 +4,9 @@ type CourtlyMarkProps = {
 
 export function CourtlyMark({ className = "" }: CourtlyMarkProps) {
   return (
-    <span className={`courtly-mark ${className}`.trim()}>
+    <span
+      className={`inline-flex items-center gap-2.5 text-primary text-xl font-bold tracking-tight no-underline ${className}`.trim()}
+    >
       <svg
         aria-hidden="true"
         width="32"
