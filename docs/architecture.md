@@ -72,6 +72,8 @@ Review evidence must name the committed head, applicable architecture rule, and 
 
 ### Frontend: Container and Presentational Components
 
+Use existing web Tailwind with the approved local DS in root DESIGN.md and docs/design-system.md. The complete frontend entry point is docs/frontend-plan.md, including routing, same-origin dev/preview proxy, local assets, D4–D6 ownership and verification. Mantine and importing NativeWind/gluestack/React Native are superseded proposals. Native controls and an outlined-danger button variant remain part of the UI contract.
+
 - Integration pages and feature hooks coordinate application operations, loading, normalized errors, and navigation. Feature API modules use the shared HTTP client.
 - Presentational views and components receive data, state, and callbacks through typed props. They do not access HTTP, tokens, or routing. Local interface state, such as input values, is allowed without moving business rules into presentation.
 - For court creation, CreateCourtPage connects useCreateCourt to CreateCourtView and CourtForm. The page owns routing, the hook coordinates the operation, courtsApi defines the endpoint call, and httpClient handles transport and error normalization.

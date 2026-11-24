@@ -2,6 +2,10 @@
 
 Consolidated approved interaction specification. Read with [challenge.md](challenge.md), [decisions.md](decisions.md), [api-contracts.md](api-contracts.md), and [execution-plan.md](execution-plan.md). Canonical low-fidelity images are indexed in [wireframes/README.md](wireframes/README.md). No browser clock or formatted-label parsing supplies API action inputs.
 
+## Approved visual authority
+
+Use root DESIGN.md and docs/design-system.md with the approved PNG/SVG pack indexed in mockups/aguinha/REVIEW.md. The complete pack is accepted with outlined danger actions: white background, red text and red border for Cancel booking; Keep booking and non-destructive form Cancel remain blue secondary outlines. The existing web Tailwind integration implements these styles. This visual decision supersedes earlier pending-style language and grayscale styling while preserving the interaction rules below. frontend-plan.md is the fresh-agent implementation entry point.
+
 ## Weekly date and slot selection — approved
 
 1. The user selects a court. Fetch its weekly availability without `weekStart` to load the current week using the Facility timezone.
@@ -27,13 +31,13 @@ Desktop uses a left sidebar with Courts, My bookings, and Sign out; mobile uses 
 
 Preserve the approved week strip and slot grid. On desktop place the compact Selected time/price/Continue to review block high on the right, alongside court metadata and hourly price. On mobile retain the selection/price area below the slots. Use the same slot fixture and states in both layouts. The previews illustrate two consecutive selected hours, past days, and occupied slots; they are static planning artifacts, not a functional interface or a completed accessibility test.
 
-The grayscale wireframes approve structure and hierarchy only. Final visual tokens, typography, colors, and production Tailwind components remain a later design block. Use a low-consumption agent with narrow visual context for static wireframes and let the orchestrator review them; application implementation still follows the configured programmer/reviewer workflow.
+The grayscale wireframes record structure and hierarchy; the approved high-fidelity pack and local DS now define colors, typography and component styling. Use a low-consumption agent with narrow visual context for static wireframes and let the orchestrator review them; application implementation still follows the configured programmer/reviewer workflow.
 
 ## Booking review wireframe — approved
 
 Use `wireframes/booking-review-desktop.svg` and `.png`, and `wireframes/booking-review-mobile.svg` and `.png` as the canonical review layouts. Show court and sport, a grouped Date and time section with date, separate start/end display values and duration, and the total price. Put Change at the right of the Date and time section header, with the accessible name Change date and time. Return to the same court and date, reload weekly availability, and leave the slots unselected.
 
-Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; result dialogs are approved below; final visual styling remains a later implementation task.
+Place Confirm booking outside and below the card: align its right edge to the card's outer right edge on desktop, and use the card's full outer width on mobile. The Courts / Court 1 / Review breadcrumb keeps the existing navigation; Review is current. Do not use the discarded footer-edit alternative. The grayscale artifacts approve layout only; result dialogs are approved below; the approved high-fidelity pack now supplies the final visual styling.
 
 ## Booking result dialogs — approved
 
@@ -49,9 +53,9 @@ Implement both with native `<dialog>`, `showModal()`, and `close()`, an accessib
 
 The court-list entry screen is approved. Use `/courts` and the approved authenticated `GET /api/courts` response. For regular users, list active courts in backend-provided name order. Show name, sport, opening and closing times, and `display.hourlyPrice` with a per-hour label. Do not add filters, pagination, dates, ratings, or availability claims.
 
-The desktop layout uses a grid of court cards, with one column on mobile. Each card shows the same fields and a View availability action. A sport illustration can be considered during visual refinement; it does not introduce a court-image field or change the free-text sport contract. The action navigates to the selected court's booking time-selection step without a week query, letting the backend supply the current week. Its accessible name identifies the court. Reuse separate opening/closing fields and the approved accessible time separator. An empty collection shows No courts available.
+The desktop layout uses a grid of court cards, with one column on mobile. Each card shows the same fields and a View availability action. Use the approved local sport photographs and neutral fallback from the DS; this does not introduce a court-image field or change the free-text sport contract. The action navigates to the selected court's booking time-selection step without a week query, letting the backend supply the current week. Its accessible name identifies the court. Reuse separate opening/closing fields and the approved accessible time separator. An empty collection shows No courts available.
 
-Canonical SVG/PNG previews are `wireframes/court-list-desktop` and `wireframes/court-list-mobile`. This approval covers structure and navigation; final visual styling remains a later block.
+Canonical SVG/PNG previews are `wireframes/court-list-desktop` and `wireframes/court-list-mobile`. This approval covers structure and navigation; the approved high-fidelity pack supplies its final visual styling.
 
 ## My bookings wireframe — approved
 

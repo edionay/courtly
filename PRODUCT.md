@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The application has not been implemented; approved planning is consolidated in docs/execution-plan.md.
+React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The backend has been implemented incrementally; the frontend still contains its foundation placeholder. Approved planning is consolidated in docs/execution-plan.md. The approved local DS is recorded in DESIGN.md and docs/design-system.md and will use the existing web Tailwind integration; the Mantine proposal is superseded.
 
 ## Users
 
@@ -56,4 +56,4 @@ Prefer native forms and controls with custom styling: radio inputs for choosing 
 
 ## Open Design Decisions
 
-The low-fidelity desktop/mobile structures are approved. Final colors, typography, visual tokens, and detailed styling remain implementation design work. Wireframes use neutral structural styling; do not infer a finished production identity from them.
+The user approved the complete Aguinha-derived mockup pack with outlined-danger buttons. DESIGN.md and docs/design-system.md record the local Tailwind DS, Inter typography, rounded white surfaces, subtle shadows and coherent light navigation. PNGs, editable SVGs, fonts and image credits are committed locally; no Aguinha checkout or running gallery server is required. docs/frontend-plan.md and docs/frontend-handoff.md contain the implementation entry point and portable prompt. Low-fidelity artifacts retain value as flow evidence.
