@@ -36,6 +36,8 @@ Before opening the PR, inspect changed imports and external access against the a
 
 Implement, regenerate, typecheck/build, and run only relevant focused checks. Prefer direct HTTP requests (curl or small scripts) for backend scenarios, checking statuses/payloads and the served OpenAPI. Confirm /api/docs availability without browser automation; Swagger UI/Try it out is not required. Use browser/manual/Storybook checks for actual frontend interaction/rendering/accessibility, and follow the delivery's Compose acceptance. Distinguish commands actually executed from planned or unavailable checks, and surface material blockers. Unit tests mock feature repositories; concurrency tests require real migrated PostgreSQL. Test setup must target courtly_test, never application data.
 
+Use the GitHub CLI (gh) for PR operations; do not use the browser interface as an authentication/tool fallback. Report CLI blockers to the orchestrator for resolution in the available execution context.
+
 Commit coherent work with the required format, push the feature branch, and open a PR with concrete behavior, specification references, actual validation and remaining limitations. Do not merge. Return PR URL, commit, changed ownership scope, checks/results, seed/URL information where relevant, and actionable handoff notes. If any requirement cannot be met, state it rather than marking the delivery complete.
 
 ## Reviewer dispatch template
