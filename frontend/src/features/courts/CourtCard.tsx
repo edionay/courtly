@@ -56,15 +56,14 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
         <span className="court-card-price">{court.display.hourlyPrice}</span>
         <span className="court-card-price-unit">/ hour</span>
       </p>
-      {onViewAvailability ? (
-        <Button
-          className="court-card-action"
-          aria-label={`View availability for ${court.name}`}
-          onClick={() => onViewAvailability(court)}
-        >
-          View availability
-        </Button>
-      ) : null}
+      <Button
+        className="court-card-action"
+        aria-label={`View availability for ${court.name}`}
+        disabled={!onViewAvailability}
+        onClick={() => onViewAvailability?.(court)}
+      >
+        View availability
+      </Button>
     </article>
   );
 }
