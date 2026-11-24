@@ -1,5 +1,7 @@
 import { getPrismaClient } from "../database";
-import type { BookingRepository } from "./bookingRepository";
+import { ApiError } from "../errors/apiError";
+import { isBookingOverlapConstraintViolation, isRetryableBookingDeadlock } from "./bookingDatabaseErrors";
+import type { BookingCreate, BookingRepository } from "./bookingRepository";
 
 export class PrismaBookingRepository implements BookingRepository {
   public findCourt(id: string) {
@@ -30,7 +32,30 @@ export class PrismaBookingRepository implements BookingRepository {
     });
   }
 
-  public createBooking(values: Parameters<BookingRepository["createBooking"]>[0]) {
-    return getPrismaClient().booking.create({ data: values });
+  public async createBooking(values: BookingCreate) {
+    try {
+      return await insertBookingWithDeadlockRetry(values);
+    } catch (error: unknown) {
+      if (isBookingOverlapConstraintViolation(error)) throw bookingConflictError();
+      throw error;
+    }
   }
+}
+
+async function insertBookingWithDeadlockRetry(values: BookingCreate) {
+  try {
+    return await insertBooking(values);
+  } catch (error: unknown) {
+    if (!isRetryableBookingDeadlock(error)) throw error;
+  }
+
+  return insertBooking(values);
+}
+
+function insertBooking(values: BookingCreate) {
+  return getPrismaClient().booking.create({ data: values });
+}
+
+function bookingConflictError(): ApiError {
+  return new ApiError(409, "BOOKING_CONFLICT", "This time slot is no longer available.");
 }
