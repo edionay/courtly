@@ -142,7 +142,7 @@ The original D1 migration already creates bookings_no_confirmed_overlap. To make
 
 Acceptance: focused service/presentation tests for identity, fresh preparation, stored price and canCancel; authenticated HTTP 201 and error checks; served OpenAPI/docs; approved Docker build and isolated real-PostgreSQL checks. Adapt the current-state integration check intentionally to demonstrate the vulnerability rather than silently skip the old constraint assertion. A small deterministic test-only barrier may let both real repository prechecks finish before the real inserts, proving two successful creations and two stored overlapping bookings. Do not add production sleeps, race toggles or generic test frameworks. The PR and results must explicitly state that protection is pending, even if this demonstration test passes.
 
-##### D3.3b — Atomic overlap protection (currently authorized)
+##### D3.3b — Atomic overlap protection (reviewed and merged)
 
 Branch: booking-concurrency-protection. The user merged PR #6 and authorized this follow-up on November 23, 2026. Start from the merged main. Restore the confirmed-only GiST exclusion constraint via a new versioned migration; never rewrite the D1 creation or D3.3a removal migration. The existing btree_gist extension remains in place.
 
@@ -160,11 +160,22 @@ Real migrated PostgreSQL is authoritative. Restore migration validation must sto
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
-D3.3 and the challenge concurrency requirement remain incomplete until D3.3b is reviewed, verified and merged. D3.4 depends on that completed stage, not just D3.3a.
+D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 is now authorized; cancellation and the report remain later deliveries.
 
 #### D3.4 — Own bookings
 
-Branch: own-bookings. Depends on merged D3.3b. Implement only GET /api/bookings/me, owner scoping, descending start order, approved personal representation and computed canCancel. Preserve history/prices and exclude unused raw timestamps/numeric totals. Focused scoping/presentation tests and direct HTTP and OpenAPI verification.
+Branch: own-bookings. Depends on merged D3.3b (PR #7). Implement only GET /api/bookings/me. The user approved this delivery on November 23, 2026; cancellation and reporting remain separate PRs.
+
+Acceptance:
+
+- Authenticate through the existing JWT flow and derive the owner from request.user. No client-supplied owner selector or request body. Query the repository with that userId, including for administrators; this endpoint is not the administrator report.
+- Return HTTP 200 with { items: [...] } in descending persisted startsAt order, including upcoming, past and cancelled bookings and history of inactive courts. No active-only, confirmed-only or future-only filter. Empty collection is { items: [] }, not 404. No pagination or new filters.
+- Each item uses the approved personal booking representation: id, court id/name, machine status, canCancel and display date/separate startsAt/endsAt/timezone/status/totalPrice. Omit raw instants, numeric totals, owner IDs and unused court fields. Use stored totalPriceCents rather than the current court rate, and read timezone from the related Facility.
+- Reuse a small shared presenter/response contract and cancellation-eligibility calculation for creation and listing. Preserve the creation 201 payload and preview behavior. For each result, canCancel requires requesting ownership, confirmed status and startsAt at least two hours after the response's server time, with exact equality allowed. Past/cancelled rows remain visible with canCancel false.
+- Keep controller/service/repository/presenter boundaries and manual dependency composition. Add only the read method and internal relation types needed for this feature; no concrete repository defaults, generic CRUD abstractions, migrations, new dependencies or cancellation/report endpoints.
+- Add a small focused unit set for the owner argument, presentation/stored price, eligibility and empty collection. Verify actual PostgreSQL filtering/descending order through direct HTTP with two authenticated users and isolated courtly_test fixtures, including past/cancelled/inactive-court history. Fetch OpenAPI/docs programmatically; no browser automation.
+- Run relevant existing/new unit tests, typecheck/build and the existing concurrency integration tests if shared repository/presenter changes affect their contracts. Verify creation remains compatible. Preserve the main database and stack; clean only owned temporary resources and record actual commands/results and runtime versions.
+
 
 #### D3.5 — Booking cancellation
 
