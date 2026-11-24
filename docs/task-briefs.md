@@ -57,7 +57,9 @@ Return findings, required rechecks, and whether delivery acceptance is met. Rout
 - D1 application-foundation: root tooling/compose/lockfile, backend database/bootstrap, minimal frontend/Storybook bootstrap. No product flow work.
 - D2 authentication-and-courts: backend auth/courts/errors/contracts and focused checks.
 - D3.1–D3.6: separate PRs for weekly availability, preview, creation, own list, cancellation and daily report, in the execution-plan.md order. Scope ownership and mandatory tests to the authorized subdelivery; wait for user merge before the next. Creation is split into D3.3a (intentional race demonstration) and D3.3b (final concurrency guarantee after approval). Cancellation boundary tests belong to cancellation; future-delivery tests are not acceptance for an earlier PR.
-- D4 frontend-foundation: frontend shell/auth/HTTP/court browsing/presentation/stories/tokens.
+- D4.1 frontend-visual-foundation: design tokens/assets, responsive presentation shell and court grid with props-only Storybook fixtures; no product routes or API integration.
+- D4.2 frontend-authentication: login/authentication-error/access-denied screens and stories, HTTP/auth/session integration, and only their routes/proxy setup.
+- D4.3 court-browsing: protected `/courts` route, role-aware shell and live courts collection integration, with isolated Storybook view states.
 - D5 booking-interface: frontend availability/review/own bookings/cancellation and stories/manual evidence.
 - D6 court-administration: frontend admin forms/report, final minimal fixes/evidence, candidate README review/handoff.
 

@@ -1,20 +1,21 @@
 # Frontend implementation plan
 
-This is the frontend entry point for a fresh chat, agent or coding tool. It is self-contained with the repository documents linked below: no earlier conversation, Aguinha checkout, local gallery server or unavailable screenshot is required. The current request adopts the design system and prepares implementation; it does not start application coding.
+This is the frontend entry point for a fresh chat, agent or coding tool. It is self-contained with the repository documents linked below: no earlier conversation, Aguinha checkout, local gallery server or unavailable screenshot is required. PR #11 adopted the design system; the current implementation sequence begins with D4.1.
 
 ## Current state and authority
 
-- D1–D3 are implemented and merged, including PR #10's administrator report. The React frontend remains a bootstrap placeholder with Vite, Tailwind and Storybook tooling.
+- D1–D3 and design PR #11 are implemented and merged, including the administrator report and approved frontend design system. The React frontend remains a bootstrap placeholder with Vite, Tailwind and Storybook tooling.
+- D1 already initialized the React/Vite/Tailwind/Storybook workspace. D4.1 finishes that existing foundation with Courtly's local design system and presentational views; it must not scaffold a second frontend or replace the approved tooling.
 - The user approved the complete Aguinha-derived mockup pack, with one correction: danger actions have white backgrounds, red text and red borders. The complete local copy is [design-system.md](design-system.md); root [DESIGN.md](../DESIGN.md) points to it.
-- Design documentation is delivered in PR #11 on `interface-design`. Inspect its real state before starting D4; if it is not merged, review/update that branch rather than creating a dependent application branch from an older main. This status is a checkpoint, not a permanently hardcoded next task.
+- Design documentation was merged in PR #11. The frontend implementation plan is split into three dependent D4 deliveries so the design foundation, authentication screens and courts screen can each be reviewed separately.
 - Read [AGENTS.md](../AGENTS.md), [challenge.md](challenge.md), [decisions.md](decisions.md), [architecture.md](architecture.md), [api-contracts.md](api-contracts.md), [ui-flows.md](ui-flows.md), [execution-plan.md](execution-plan.md) and [task-briefs.md](task-briefs.md). These are all committed project context. The challenge owns mandatory scope, approved decisions own choices, API contracts own JSON, UI flows own behavior, and the DS/mockups own appearance. Do not invent features from an illustrative image.
-- Only the user merges. Use one PR for each D4, D5 and D6 milestone, each based on the user's merge of its dependency. Do not implement all three at once. Inspect git/PR state to resume existing work without recreating it.
+- Only the user merges. Use one PR for each D4.1, D4.2, D4.3, D5 and D6 delivery, each based on the user's merge of its dependency. Do not implement later screens before their prior delivery is merged. Inspect git/PR state to resume existing work without recreating it.
 
 ## Implementation choices
 
 Keep strict TypeScript, React/react-dom 19.3.1, Vite 8.3.8, Tailwind CSS/@tailwindcss/vite 4.3.5, Storybook/@storybook/react-vite 10.6.8 and Node 24.22.3. The root lockfile and workspace manifests are authoritative. Preserve approved pins; supporting packages must be latest stable compatible versions, pinned exactly with the root lockfile. Version selection is an implementation check, not an unresolved product decision.
 
-Use Tailwind's CSS-first theme for the project DS and small native React primitives. Mantine is superseded. Do not import NativeWind, gluestack, React Native or Aguinha components. Use React Router in declarative browser mode, native fetch and React context/hooks; a custom routing engine, Redux, a query framework and form/validation framework are unnecessary here. Select and verify the compatible stable router version in D4. Retain the existing Storybook setup rather than replacing the build system.
+Use Tailwind's CSS-first theme for the project DS and small native React primitives. Mantine is superseded. Do not import NativeWind, gluestack, React Native or Aguinha components. Use React Router in declarative browser mode, native fetch and React context/hooks; a custom routing engine, Redux, a query framework and form/validation framework are unnecessary here. Select and verify the compatible stable router version in D4.2. Retain the existing Storybook setup rather than replacing the build system.
 
 Use BrowserRouter-style routes and links with URLSearchParams for query state. Keep presentation separate from integration:
 
@@ -33,13 +34,13 @@ Names may follow existing conventions, but these responsibilities are fixed. Pag
 
 The full [gallery index](mockups/aguinha/REVIEW.md) links 35 local PNG/SVG studies. Its HTML gallery is optional convenience; implementing the app never requires the mockup renderer or a running gallery server.
 
-Use `docs/mockups/assets/fonts/Inter*.ttf` and the accompanying OFL license as the source for local frontend fonts. Copy into `frontend/src/assets/fonts/` during D4. Copy the approved sport photos and their credits into frontend assets. Match Tennis/Basketball/Padel by trimmed, case-insensitive sport text; unknown sports use the committed `docs/mockups/assets/sport-neutral.svg` (light blue 10:7 surface and blue generic court mark, no photograph) without pretending to be another sport. The actual seed includes Futsal, not Padel. Display actual API names, hours and prices; mockup fixture values are not seed requirements. Do not add photo upload, court-image API fields, filters or ratings.
+Use `docs/mockups/assets/fonts/Inter*.ttf` and the accompanying OFL license as the source for local frontend fonts. Copy into `frontend/src/assets/fonts/` during D4.1. Copy the approved sport photos and their credits into frontend assets during D4.1. Match Tennis/Basketball/Padel by trimmed, case-insensitive sport text; unknown sports use the committed `docs/mockups/assets/sport-neutral.svg` (light blue 10:7 surface and blue generic court mark, no photograph) without pretending to be another sport. The actual seed includes Futsal, not Padel. Display actual API names, hours and prices; mockup fixture values are not seed requirements. Do not add photo upload, court-image API fields, filters or ratings.
 
 Implement all token values, radii, shadows, outline-danger variants and responsive behavior from [design-system.md](design-system.md). A regular form Cancel is secondary navigation; Cancel booking is a destructive action. Use one small consistent outline icon set, or the existing authored SVG geometry, never Unicode stand-ins. Do not install an icon dependency unless needed and justified.
 
 ## API transport and environment
 
-The browser calls relative `/api/...` URLs on the frontend origin. In D4 configure both Vite dev and preview proxy behavior, preserving the `/api` prefix. Read a server-only `API_PROXY_TARGET` in Vite configuration; it is not a browser secret or a `VITE_` client variable.
+The browser calls relative `/api/...` URLs on the frontend origin. In D4.2 configure both Vite dev and preview proxy behavior, preserving the `/api` prefix. Read a server-only `API_PROXY_TARGET` in Vite configuration; it is not a browser secret or a `VITE_` client variable.
 
 - Local frontend with the existing Compose API: default proxy target `http://127.0.0.1:3100`, adjusted when COURTLY_API_PORT is overridden.
 - Compose frontend: set `API_PROXY_TARGET=http://backend:3000` on the frontend service. Both browser-visible web and API calls then use the web origin, while Docker resolves backend internally.
@@ -47,7 +48,7 @@ The browser calls relative `/api/...` URLs on the frontend origin. In D4 configu
 - Existing Compose mappings are web `http://localhost:4174`, direct API `http://localhost:3100`, Swagger `http://localhost:3100/api/docs`; overrides are COURTLY_WEB_PORT and COURTLY_API_PORT. Local Vite dev defaults to 5173; check actual output rather than assuming a free port.
 - Never put DATABASE_URL or JWT_SECRET into browser code. This is a local HTTP challenge setup, not a TLS deployment task.
 
-D4 owns the minimal `frontend/vite.config.ts` proxy and frontend-service environment changes in `compose.yaml`; backend contracts and application database initialization remain unchanged. Verify the browser login/court requests through the proxy in both dev and Compose preview. A curl-only check cannot establish browser integration or native accessibility.
+D4.2 owns the minimal `frontend/vite.config.ts` proxy and frontend-service environment changes in `compose.yaml`; backend contracts and application database initialization remain unchanged. Verify the browser login/court requests through the proxy in both dev and Compose preview. A curl-only check cannot establish browser integration or native accessibility.
 
 ## Shared authentication and error behavior
 
@@ -61,23 +62,33 @@ Never automatically retry a mutation. Disable repeat submit while pending. For a
 
 ## Routes and delivery ownership
 
-### D4 — frontend-foundation
+### D4.1 — Frontend visual foundation
 
-Dependency: merged D3 and merged approved design documentation. Own the app/shared/auth/court-browsing folders, `styles.css`, local assets, related stories, Vite proxy and minimal frontend Compose wiring. No booking or admin functionality in this PR.
+Branch: `frontend-visual-foundation`. Dependency: merged D3 and approved design documentation in PR #11. This first frontend PR completes the existing bootstrap without adding product routes or live API behavior.
 
-Incremental work:
+Own the Tailwind CSS-first theme, local font and sport-photo assets, native shared presentation primitives, responsive application shell as a props-driven view, court-card/grid views with fixtures, and the corresponding Storybook stories. Keep `App` as a small bootstrap entry; do not add router/auth/proxy infrastructure or pretend fixture data is live application data. Use props and callbacks only in presentation. The views must be renderable in Storybook without fetch, auth context, tokens, or routing hooks.
 
-1. Add local DS tokens/fonts and minimal primitives, then the responsive sidebar/header shell and court-grid presentational view with fixtures. Reproduce the approved Courts screen and outlined danger variant in relevant component stories.
-2. Add the shared HTTP/auth storage boundary, auth provider, React Router composition and API proxy. Feature functions consume typed JSON models from the existing contract.
-3. Connect `/login`, `/authentication-error`, `/courts` and protected/admin access boundaries. Login goes to `/courts` for either role. The initial `/` entry follows the same auth state to login or courts; direct URL reloads must load the SPA correctly.
-4. Connect active-court browsing and role-aware shell. The API returns admin courts too; retain inactive history/status when present but do not offer availability for inactive courts. Admin create/edit/report functionality and navigation destinations belong to D6; avoid dead clickable links before they exist.
-5. Demonstrate sign-in initial/pending/invalid credentials, court-grid loading/empty/error and representative shell/focus states with isolated Storybook props. Do not require live API, tokens or router globals for views.
+Acceptance: the local design tokens, typography, card treatment, outlined danger variant and neutral sport fallback match `design-system.md`; court cards and the responsive shell have representative fixture stories; Storybook and application builds pass; keyboard semantics and 390/1440px visual layouts are manually inspected. No frontend automated tests.
 
-Acceptance: successful and failed seeded login, reload restoration, logout, explicit 401 recovery, readable court data/actions and same-origin API in dev/Compose. Verify keyboard labels/autocomplete, focus, mobile menu and 390/1440px layouts. Build the app and Storybook. Capture meaningful screenshots/check evidence; no automated frontend suite is required.
+### D4.2 — Authentication screens and routes
+
+Branch: `frontend-authentication`. Dependency: user's merge of D4.1. Implement the shared native-fetch HTTP/error boundary, sessionStorage token adapter, auth state/provider, React Router composition and the sign-in/authentication-error/access-denied presentation views with Storybook fixtures. Add only the `/`, `/login` and `/authentication-error` routes needed by these screens and auth behavior. Keep route/page containers separate from props-only views. Add the Vite dev and preview proxy plus minimal Compose `API_PROXY_TARGET` wiring here because authentication screens need a same-origin API. Until D4.3 supplies `/courts`, successful login renders a minimal authenticated handoff at `/` with a sign-out action; D4.3 replaces it with the approved courts redirect. Do not show fixture courts as live data.
+
+Acceptance: seeded login success and invalid credentials, pending state, token-only session persistence, reload restoration via `/api/auth/me`, logout, protected 401 recovery with explicit Go to login, and 403 access denied match `ui-flows.md` and `api-contracts.md`. Before D4.3, login success reaches only the temporary authenticated handoff, not a fake courts page. Browser HTTP uses same-origin `/api`; verify Vite dev and Compose preview proxies. Storybook views work with fixtures and no router/API context. Build app and Storybook; manually inspect native labels/autocomplete, focus and mobile layout. No automated frontend tests.
+
+### D4.3 — Courts screen and protected application navigation
+
+Branch: `court-browsing`. Dependency: user's merge of D4.2. Implement the courts feature API/container and screen integration, finish the application shell and route guards, and add the `/courts` route. Keep court grid/card views from D4.1 presentational; API request, loading/error/empty state and navigation live in the integration layer. Root routing follows current auth state to login or courts. A successful login for either role lands on courts. The API includes inactive courts for administrators; user views only active courts. Show an inactive court's status/history to admin but do not offer availability. Do not add create/edit/report routes or dead clickable admin destinations; those belong to D6.
+
+Acceptance: direct `/courts` load and refresh restore auth and request courts; both roles see the correct court data/actions; inactive courts are not bookable; loading/empty/connection/error states are understandable and recoverable. Do not show an active-court booking link until its D5 destination exists. Verify responsive behavior, keyboard/focus and browser proxy integration. Storybook covers isolated court grid states and shell variants with fixtures. Build app and Storybook; no automated frontend tests.
+
+### D4 completion
+
+D4 is complete only after D4.1, D4.2 and D4.3 have each passed review and been merged by the user. D5 depends on merged D4.3. Do not combine these PRs or implement booking/admin screens early.
 
 ### D5 — booking-interface
 
-Dependency: user's merge of D4. Own booking feature modules/views/hooks/dialogs/stories and only needed shared primitive refinements. Use existing backend endpoints; do not add slot entities or new API fields.
+Dependency: user's merge of D4.3. Own booking feature modules/views/hooks/dialogs/stories and only needed shared primitive refinements. Use existing backend endpoints; do not add slot entities or new API fields.
 
 - `/courts/{courtId}/booking/slots`: resolve the court header (name, sport, hours and hourly price) from the existing GET `/api/courts` collection on route entry/reload; availability alone does not contain that metadata. Do not depend on a previously visited grid or add a detail endpoint. Request the default backend week unless URL has weekStart; follow backend navigation links. Select the first non-past day (not the first free day). Changing a loaded day uses existing data. Disable past days, hide past slots and show Booked disabled. One or two adjacent native checkboxes; after two, other choices disable until deselected.
 - Keep court/date/week in URL. Send the earliest selected slot's unchanged UTC startsAt and durationHours 1 or 2. Preview price comes from POST `/api/bookings/preview`; discard stale responses and show pending price without submitting incomplete data.
