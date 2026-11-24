@@ -32,7 +32,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const restoreSession = useCallback(async () => {
     const token = tokenStorage.getToken();
-    if (!token) {
+    const hasNoStoredToken = !token;
+
+    if (hasNoStoredToken) {
       setUser(null);
       setStatus("unauthenticated");
       setError(null);
@@ -41,22 +43,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setStatus("loading");
     setError(null);
+
     try {
       const restoredUser = await authApi.getMe();
       setUser(restoredUser);
       setStatus("authenticated");
     } catch (err) {
-      if (err instanceof ApiClientError && err.isNetworkError) {
-        // Transport failure is not proof that credentials expired: do not clear token
+      const isApiClientError = err instanceof ApiClientError;
+      const isConnectionFailure = isApiClientError && err.isNetworkError;
+
+      if (isConnectionFailure) {
         setError(err);
         setStatus("error");
-      } else {
-        // Token is invalid, expired, or rejected
-        tokenStorage.clearToken();
-        setUser(null);
-        setError(err instanceof ApiClientError ? err : null);
-        setStatus("unauthenticated");
+        return;
       }
+
+      const normalizedAuthError = isApiClientError ? err : null;
+      tokenStorage.clearToken();
+      setUser(null);
+      setError(normalizedAuthError);
+      setStatus("unauthenticated");
     }
   }, []);
 
@@ -64,14 +70,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     restoreSession();
   }, [restoreSession]);
 
-  const login = useCallback(async (credentials: LoginCredentials): Promise<AuthUser> => {
-    const response = await authApi.login(credentials);
-    tokenStorage.setToken(response.accessToken);
-    setUser(response.user);
-    setStatus("authenticated");
-    setError(null);
-    return response.user;
-  }, []);
+  const login = useCallback(
+    async (credentials: LoginCredentials): Promise<AuthUser> => {
+      const response = await authApi.login(credentials);
+      tokenStorage.setToken(response.accessToken);
+      setUser(response.user);
+      setStatus("authenticated");
+      setError(null);
+      return response.user;
+    },
+    []
+  );
 
   const logout = useCallback(() => {
     tokenStorage.clearToken();
@@ -86,11 +95,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("unauthenticated");
   }, []);
 
+  const isUserAuthenticated = status === "authenticated";
+  const isAuthLoading = status === "loading";
+
   const value: AuthContextValue = {
     user,
     status,
-    isAuthenticated: status === "authenticated",
-    isLoading: status === "loading",
+    isAuthenticated: isUserAuthenticated,
+    isLoading: isAuthLoading,
     error,
     login,
     logout,
@@ -103,7 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
-  if (!context) {
+  const isContextMissing = !context;
+  if (isContextMissing) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

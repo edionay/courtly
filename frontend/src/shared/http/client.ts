@@ -8,6 +8,24 @@ export type RequestOptions = {
   signal?: AbortSignal;
 };
 
+async function parseJsonSafely(response: Response): Promise<unknown> {
+  const rawText = await response.text();
+  const isEmptyBody = rawText.trim().length === 0;
+  if (isEmptyBody) {
+    return null;
+  }
+  try {
+    const parsedData: unknown = JSON.parse(rawText);
+    return parsedData;
+  } catch (error) {
+    const isMalformedJson = error instanceof SyntaxError;
+    if (isMalformedJson) {
+      return null;
+    }
+    throw error;
+  }
+}
+
 export async function request<T>(
   path: string,
   options: RequestOptions = {}
@@ -15,31 +33,36 @@ export async function request<T>(
   const { method = "GET", headers = {}, body, signal } = options;
 
   const resolvedHeaders: Record<string, string> = { ...headers };
+  const hasBody = body !== undefined;
+  const isFormData = body instanceof FormData;
 
-  if (body !== undefined && !(body instanceof FormData)) {
+  if (hasBody && !isFormData) {
     resolvedHeaders["Content-Type"] = "application/json";
   }
 
   const token = tokenStorage.getToken();
-  if (token && !resolvedHeaders["Authorization"]) {
+  const hasAuthHeader = Boolean(resolvedHeaders["Authorization"]);
+  if (token && !hasAuthHeader) {
     resolvedHeaders["Authorization"] = `Bearer ${token}`;
   }
+
+  const serializedBody = hasBody
+    ? isFormData
+      ? (body as FormData)
+      : JSON.stringify(body)
+    : undefined;
 
   let response: Response;
   try {
     response = await fetch(path, {
       method,
       headers: resolvedHeaders,
-      body:
-        body !== undefined
-          ? body instanceof FormData
-            ? body
-            : JSON.stringify(body)
-          : undefined,
+      body: serializedBody,
       signal,
     });
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
+    const isAborted = error instanceof DOMException && error.name === "AbortError";
+    if (isAborted) {
       throw error;
     }
     throw new ApiClientError({
@@ -48,35 +71,38 @@ export async function request<T>(
     });
   }
 
-  if (!response.ok) {
-    let payload: unknown = null;
-    try {
-      payload = await response.json();
-    } catch {
-      // Body is not JSON
-    }
-    throw normalizeError(payload, response.status);
+  const isSuccess = response.ok;
+  if (!isSuccess) {
+    const errorPayload = await parseJsonSafely(response);
+    throw normalizeError(errorPayload, response.status);
   }
 
-  if (response.status === 204 || response.headers.get("content-length") === "0") {
+  const isNoContent =
+    response.status === 204 || response.headers.get("content-length") === "0";
+  if (isNoContent) {
     return undefined as unknown as T;
   }
 
-  try {
-    return (await response.json()) as T;
-  } catch {
-    return undefined as unknown as T;
-  }
+  const data = await parseJsonSafely(response);
+  return data as T;
 }
 
 export const httpClient = {
   get<T>(path: string, options?: Omit<RequestOptions, "method" | "body">): Promise<T> {
     return request<T>(path, { ...options, method: "GET" });
   },
-  post<T>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">): Promise<T> {
+  post<T>(
+    path: string,
+    body?: unknown,
+    options?: Omit<RequestOptions, "method" | "body">
+  ): Promise<T> {
     return request<T>(path, { ...options, method: "POST", body });
   },
-  patch<T>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">): Promise<T> {
+  patch<T>(
+    path: string,
+    body?: unknown,
+    options?: Omit<RequestOptions, "method" | "body">
+  ): Promise<T> {
     return request<T>(path, { ...options, method: "PATCH", body });
   },
   delete<T>(path: string, options?: Omit<RequestOptions, "method" | "body">): Promise<T> {
