@@ -6,7 +6,7 @@ Status: approved consolidated specification, maintained during incremental imple
 
 1. Read root AGENTS.md, PRODUCT.md and DESIGN.md; then this plan, challenge.md, decisions.md, api-contracts.md, ui-flows.md, architecture.md and the relevant ADRs. For frontend work also read frontend-plan.md, design-system.md, frontend-handoff.md and mockups/aguinha/REVIEW.md; the high-fidelity pack supersedes low-fidelity styling. All paths in this document are relative to docs/ unless explicitly root-relative. All are repository files; no chat transcript is required.
 2. Treat challenge.md as the mandatory requirement reference, decisions.md as approved project choices, api-contracts.md as normative wire contracts, and ui-flows.md plus canonical SVG/PNG as approved interaction/layout. ADRs explain consequences, not competing contracts. If they conflict, resolve against the latest approved consolidated choice and brief before implementation; do not infer an extra feature from an older image.
-3. Establish current repository state with git status, branch, and PR inspection. The historical main bootstrap at c8ce1f8 was a one-time exception. D0–D3 are now merged; current design/handoff changes are in PR #11 on interface-design. Inspect its actual merge state; future work uses its own feature branch and PR. Preserve unrelated local drafts, installed skill folders, and candidate work. Never merge on behalf of the user.
+3. Establish current repository state with git status, branch, and PR inspection. The historical main bootstrap at c8ce1f8 was a one-time exception. D0–D3 and design/handoff PR #11 are merged. The D4 breakdown is in PR #12; verify that the user has merged it before starting D4.1. Future work uses its own feature branch and PR. Preserve unrelated local drafts, installed skill folders, and candidate work. Never merge on behalf of the user.
 4. Start application delivery only after the planning PR is reviewed and merged by the user. Each dependent delivery starts from the merged base. Use the configured programador and revisor roles with Luna; verify availability and give them the applicable brief in task-briefs.md. Do not silently substitute a model.
 5. Keep every delivery small and reviewable. Prefer happy-path implementation; discuss additional edge behavior before adding it. Routine pending dependency pins are delegated: latest stable compatible releases, exact versions/lockfile, no prereleases. Already-approved exact pins are in decisions.md.
 
@@ -201,22 +201,31 @@ D3 is complete only after all six feature deliveries, including both D3.3 review
 
 ### D4 — Frontend foundation, authentication and court grid
 
-The user approved the complete high-fidelity pack with outlined-danger buttons. Use root DESIGN.md, design-system.md, frontend-plan.md and the local mockups/aguinha/REVIEW.md. The implementation tool is existing web Tailwind, not Mantine. The complete frontend dispatch/transport/assets/ownership/manual-check contract is in frontend-plan.md; this section preserves milestone order and acceptance. PR #11 must be merged before dependent D4 work; the current documentation request does not start application coding.
+The user approved the complete high-fidelity pack with outlined-danger buttons. Use root DESIGN.md, design-system.md, frontend-plan.md and the local mockups/aguinha/REVIEW.md. The implementation tool is existing web Tailwind, not Mantine. The complete frontend dispatch/transport/assets/ownership/manual-check contract is in frontend-plan.md. PR #11 is merged; deliver D4 as three dependent PRs below. Add routes with the screen/integration being developed, not all future screens up front.
 
-Branch: frontend-foundation. Depends on D3 (so real API is available). Own frontend shell/routing/auth/HTTP infrastructure, reusable native-styled components/tokens, auth/court presentation and containers, relevant stories and frontend docs. Apply DESIGN.md and the reviewed high-fidelity screen pack, including the accepted photographic court-card treatment; preserve approved interaction behavior and document decisions without adding product requirements.
+#### D4.1 — Frontend visual foundation
 
-Acceptance:
+Branch: `frontend-visual-foundation`. Depends on merged D3 and design PR #11. Implement the local DS/Tailwind tokens, assets, small native presentation primitives, responsive shell view, court card/grid views and isolated Storybook fixtures. Do not add product routes, auth, proxy or live API behavior. Presentation accepts props/callbacks and contains no fetch, session access or router hooks.
 
-- Apply the complete local DS, outlined danger, local Inter/photo assets and free-sport fallback; configure same-origin /api proxy for both Vite dev and Compose preview as specified in frontend-plan.md.
-- Presentational pages depend on props/callbacks; Storybook renders meaningful states with fixtures and application styles without live API. Build application and Storybook successfully.
-- Shared HTTP client attaches JWT, preserves known typed errors/fields, distinguishes connection failures, and falls back to UNKNOWN_ERROR. Routing remains outside it; no mutation auto-retries.
-- Login, inline invalid credentials, sessionStorage reload through me, signout, and explicit authentication-error navigation match UI contracts. Backend authorization is not replaced by client role checks.
-- Responsive court grid shows approved data and View availability; user sees active courts; admin controls are introduced in D6. No filters/pagination/image API added.
-- Manually verify keyboard labels/autocomplete/focus and loading/error/empty states; no automated frontend tests introduced.
+Acceptance: local fonts/photos/fallback and outlined danger match the approved DS; shell and court views render in Storybook from fixtures; application and Storybook builds pass; inspect keyboard semantics and 390/1440px layouts. No automated frontend tests.
+
+#### D4.2 — Authentication screens and routes
+
+Branch: `frontend-authentication`. Depends on user's merge of D4.1. Implement login/authentication-error/access-denied views and stories, shared HTTP/error handling, token-only sessionStorage and auth state/provider. Add React Router composition and only `/`, `/login` and `/authentication-error` behavior needed by these screens. Configure same-origin Vite dev and preview proxy plus Compose `API_PROXY_TARGET`. Keep route/page integration out of the props-only views. Until D4.3 supplies the courts route, successful login renders a minimal authenticated handoff at `/` with a sign-out action; D4.3 replaces that temporary state with the approved courts redirect. Do not add a nonfunctional courts route or show fixture courts as live data.
+
+Acceptance: valid/invalid seeded login, reload via `/api/auth/me`, logout, explicit protected-401 login action and 403 view match contracts; before D4.3, login success reaches only the temporary authenticated handoff, not a fake courts page. Proxy works in dev and Compose preview; Storybook views work with fixture props and no router/API context; builds pass and native labels/autocomplete/focus/mobile layout are inspected. No automated frontend tests.
+
+#### D4.3 — Courts screen and protected navigation
+
+Branch: `court-browsing`. Depends on user's merge of D4.2. Add the courts collection API/container and `/courts` route, route guards, root redirect and finished role-aware shell. The presentation view remains isolated; integration owns API, loading/error/empty state and navigation. Login lands both roles on courts. Users see active courts; admins can see inactive status/history but cannot open availability for inactive courts. Do not add D6 routes or dead admin destinations.
+
+Acceptance: direct `/courts` load and refresh restore auth and fetch the correct role-aware data; API failures are recoverable; inactive courts are not bookable. Do not show an active-court booking link until its D5 destination exists. Shell and grid states have Storybook fixture stories; builds, keyboard/focus and 390/1440px layouts are verified manually. No automated frontend tests.
+
+D4 completes only after the user has reviewed and merged all three PRs. D5 depends on merged D4.3. Do not combine the dependent deliveries or implement booking/admin screens early.
 
 ### D5 — User booking flow and own bookings
 
-Branch: booking-interface. Depends on D4. Own frontend selection/review/result dialogs/own-booking/cancellation containers, hooks, views, API functions, stories and associated docs.
+Branch: booking-interface. Depends on D4.3. Own frontend selection/review/result dialogs/own-booking/cancellation containers, hooks, views, API functions, stories and associated docs.
 
 Acceptance:
 

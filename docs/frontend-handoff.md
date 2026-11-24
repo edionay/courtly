@@ -5,7 +5,7 @@ Copy the following prompt into another agent/tool with the Courtly checkout. Rep
 ```text
 Work in the Courtly repository (this checkout; locally /Users/edionay/Dev/courtly).
 
-First inspect git status and the actual PR #11/merge state with gh. Locate
+First inspect git status and the actual PR #11 and #12 merge states with gh. Locate
 the documentation on merged main or the existing interface-design branch
 without overwriting unrelated work. If the docs are absent from an older
 main, read the PR branch before planning; do not invent missing context.
@@ -23,14 +23,23 @@ accepted visual system: if not merged, report that dependency and continue
 only review/fixes on its branch. Do not start frontend application work from
 an older main or merge it yourself.
 
-After dependencies are merged, start or resume the first incomplete milestone
-D4 frontend-foundation, then D5 booking-interface, then D6 court-administration.
+PR #12 contains the D4.1–D4.3 breakdown. If it is not merged, do not start
+frontend implementation; report that planning dependency. Only the user
+merges it.
+
+After dependencies are merged, start or resume the first incomplete delivery:
+D4.1 frontend-visual-foundation, D4.2 frontend-authentication, D4.3
+court-browsing, D5 booking-interface, then D6 court-administration. Each is a
+separate PR and the user's merge unlocks the next.
 Implement ONLY the current milestone in one feature PR; wait for the user's
 merge before the next. Resume an existing branch/PR rather than duplicating
 work. Treat this prompt as authorization for that next eligible milestone.
 
 Use React, strict TypeScript and existing Tailwind web tooling with Courtly's
-local Aguinha-derived DS. No Mantine/NativeWind/gluestack migration. Danger
+local Aguinha-derived DS. Views are dumb props/callback components with
+fixture stories; keep fetch, auth/session, and router hooks in integration
+containers. Add a route only with the screen being implemented. No
+Mantine/NativeWind/gluestack migration. Danger
 actions have white backgrounds with red text and red outlines. Keep native
 inputs and dialog.showModal(), exact API contracts, role enforcement,
 sessionStorage reload, explicit auth-error navigation, no mutation retries,
