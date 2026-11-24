@@ -13,7 +13,6 @@ export type CourtCardData = {
   display: {
     hourlyPrice: string;
   };
-  availabilityHref: string;
 };
 
 type CourtCardProps = {
@@ -60,15 +59,12 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
       {onViewAvailability ? (
         <Button
           className="court-card-action"
+          aria-label={`View availability for ${court.name}`}
           onClick={() => onViewAvailability(court)}
         >
           View availability
         </Button>
-      ) : (
-        <a className="court-card-action" href={court.availabilityHref}>
-          View availability
-        </a>
-      )}
+      ) : null}
     </article>
   );
 }

@@ -8,7 +8,6 @@ export const courtFixtures: CourtCardData[] = [
     opensAt: "08:00",
     closesAt: "22:00",
     display: { hourlyPrice: "$50.00" },
-    availabilityHref: "/courts/court-tennis/availability",
   },
   {
     id: "court-basketball",
@@ -17,7 +16,6 @@ export const courtFixtures: CourtCardData[] = [
     opensAt: "08:00",
     closesAt: "22:00",
     display: { hourlyPrice: "$40.00" },
-    availabilityHref: "/courts/court-basketball/availability",
   },
   {
     id: "court-padel",
@@ -26,7 +24,6 @@ export const courtFixtures: CourtCardData[] = [
     opensAt: "08:00",
     closesAt: "22:00",
     display: { hourlyPrice: "$60.00" },
-    availabilityHref: "/courts/court-padel/availability",
   },
   {
     id: "court-futsal",
@@ -35,6 +32,5 @@ export const courtFixtures: CourtCardData[] = [
     opensAt: "08:00",
     closesAt: "22:00",
     display: { hourlyPrice: "$40.00" },
-    availabilityHref: "/courts/court-futsal/availability",
   },
 ];

@@ -6,7 +6,7 @@ const meta = {
   title: "Courts/Court grid",
   component: CourtGrid,
   parameters: { layout: "fullscreen" },
-  args: { courts: courtFixtures },
+  args: { courts: courtFixtures, onViewAvailability: () => undefined },
 } satisfies Meta<typeof CourtGrid>;
 
 export default meta;

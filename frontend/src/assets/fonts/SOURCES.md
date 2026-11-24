@@ -5,4 +5,4 @@ The three unmodified Inter TTF files were copied from the user-supplied Aguinha 
 Upstream: https://github.com/rsms/inter
 License reference: https://github.com/google/fonts/blob/main/ofl/inter/OFL.txt
 
-Inter.ttf is the regular face, InterSemiBold.ttf is semibold, and InterBold.ttf is bold. D4 should load these locally through @font-face with weights 400, 600 and 700 and font-display: swap.
+Inter.ttf is the regular face, InterSemiBold.ttf is semibold, and InterBold.ttf is bold. D4.1 loads these local files through `@font-face` with weights 400, 600 and 700 and `font-display: swap`.
