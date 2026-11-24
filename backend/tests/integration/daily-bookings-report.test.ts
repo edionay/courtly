@@ -41,7 +41,7 @@ describe("daily booking report", () => {
     }
     await prisma.booking.createMany({
       data: [
-        booking(bookingIds[0]!, courtIds[0]!, "2040-02-22T02:59:59.999Z", "confirmed", 1100),
+        booking(bookingIds[0]!, courtIds[1]!, "2040-02-22T02:59:59.999Z", "confirmed", 1100),
         booking(bookingIds[1]!, courtIds[0]!, "2040-02-22T03:00:00.000Z", "confirmed", 8250),
         booking(bookingIds[2]!, courtIds[1]!, "2040-02-22T15:00:00.000Z", "cancelled", 4000),
         booking(bookingIds[3]!, courtIds[1]!, "2040-02-23T03:00:00.000Z", "confirmed", 2200),
