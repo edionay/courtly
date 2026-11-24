@@ -1,7 +1,10 @@
+import { CourtlyMark } from "./shared/ui/CourtlyMark";
+
 export function App() {
   return (
-    <main className="app-shell">
-      <h1>Courtly</h1>
+    <main className="bootstrap-screen">
+      <CourtlyMark />
+      <p>Application setup is in progress.</p>
     </main>
   );
 }
