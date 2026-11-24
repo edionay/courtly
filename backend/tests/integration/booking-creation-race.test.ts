@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { getPrismaClient } from "../../src/database";
+import { ApiError } from "../../src/errors/apiError";
 import { BookingService } from "../../src/bookings/bookingService";
 import { PrismaBookingRepository } from "../../src/bookings/prismaBookingRepository";
 import type { BookingRepository, BookingInterval, BookingCreate, BookingRecord, PreviewCourt } from "../../src/bookings/bookingRepository";
@@ -18,7 +19,7 @@ const userIds = [randomUUID(), randomUUID()];
 const courtId = randomUUID();
 const startsAt = new Date("2040-02-20T15:00:00.000Z");
 
-describe("D3.3a temporary check-then-insert behavior", () => {
+describe("confirmed booking exclusion constraint", () => {
   beforeAll(async () => {
     await prisma.facility.create({ data: { id: facilityId, name: "Test Facility", timezone: "America/Sao_Paulo" } });
     for (const userId of userIds) {
@@ -45,25 +46,81 @@ describe("D3.3a temporary check-then-insert behavior", () => {
     await prisma.$disconnect();
   });
 
-  it("can persist two overlapping requests after both real prechecks find no booking", async () => {
+  it("allows one concurrent creation and maps the losing database conflict", async () => {
     const repository = new PrecheckBarrierRepository(new PrismaBookingRepository(), 2);
     const service = new BookingService(repository);
     const selection = { courtId, startsAt: startsAt.toISOString(), durationHours: 1 };
 
-    const created = await Promise.all(userIds.map((userId) => service.create(userId, selection)));
+    const outcomes = await Promise.allSettled(userIds.map((userId) => service.create(userId, selection)));
 
-    expect(created).toHaveLength(2);
-    expect(created.every((booking) => booking.status === "confirmed")).toBe(true);
+    const created = outcomes.filter((outcome) => outcome.status === "fulfilled");
+    const failed = outcomes.find((outcome) => outcome.status === "rejected");
+    expect(created).toHaveLength(1);
+    expect(failed).toBeDefined();
+    if (!failed || failed.status !== "rejected") throw new Error("A concurrent request should be rejected");
+    expect(failed.reason).toBeInstanceOf(ApiError);
+    expect(failed.reason).toMatchObject({ status: 409, code: "BOOKING_CONFLICT" });
+    expect(repository.observedPrechecks).toEqual([null, null]);
+
     const persisted = await prisma.booking.findMany({ where: { courtId, startsAt }, select: { userId: true, startsAt: true, endsAt: true } });
-    expect(persisted).toHaveLength(2);
-    expect(persisted.map((booking) => booking.userId).sort()).toEqual([...userIds].sort());
+    expect(persisted).toHaveLength(1);
+    expect(userIds).toContain(persisted[0].userId);
     expect(persisted.every((booking) => booking.startsAt.getTime() === startsAt.getTime())).toBe(true);
     expect(persisted.every((booking) => booking.endsAt.getTime() === startsAt.getTime() + 60 * 60 * 1000)).toBe(true);
+  });
+
+  it("rejects partial overlaps, permits adjacency, and ignores cancelled bookings", async () => {
+    const repository = new PrismaBookingRepository();
+    const intervalStart = new Date("2040-02-21T15:00:00.000Z");
+    const intervalEnd = new Date(intervalStart.getTime() + 60 * 60 * 1000);
+
+    await repository.createBooking({
+      courtId,
+      userId: userIds[1],
+      startsAt: intervalStart,
+      endsAt: intervalEnd,
+      status: "cancelled",
+      totalPriceCents: 5000,
+    });
+    await repository.createBooking({
+      courtId,
+      userId: userIds[0],
+      startsAt: intervalStart,
+      endsAt: intervalEnd,
+      status: "confirmed",
+      totalPriceCents: 5000,
+    });
+    await expect(repository.createBooking({
+      courtId,
+      userId: userIds[1],
+      startsAt: new Date(intervalStart.getTime() + 30 * 60 * 1000),
+      endsAt: new Date(intervalStart.getTime() + 90 * 60 * 1000),
+      status: "confirmed",
+      totalPriceCents: 5000,
+    })).rejects.toMatchObject({ status: 409, code: "BOOKING_CONFLICT" });
+
+    await repository.createBooking({
+      courtId,
+      userId: userIds[1],
+      startsAt: intervalEnd,
+      endsAt: new Date(intervalEnd.getTime() + 60 * 60 * 1000),
+      status: "confirmed",
+      totalPriceCents: 5000,
+    });
+
+    const saved = await prisma.booking.findMany({
+      where: { courtId, startsAt: { gte: intervalStart, lt: new Date(intervalEnd.getTime() + 60 * 60 * 1000) } },
+      select: { status: true },
+    });
+    expect(saved).toHaveLength(3);
+    expect(saved.filter((booking) => booking.status === "confirmed")).toHaveLength(2);
+    expect(saved.filter((booking) => booking.status === "cancelled")).toHaveLength(1);
   });
 });
 
 class PrecheckBarrierRepository implements BookingRepository {
   private arrivals = 0;
+  public readonly observedPrechecks: Array<BookingInterval | null> = [];
   private releasePrechecks!: () => void;
   private readonly prechecksComplete = new Promise<void>((resolve) => {
     this.releasePrechecks = resolve;
@@ -77,6 +134,7 @@ class PrecheckBarrierRepository implements BookingRepository {
 
   public async findConfirmedOverlap(courtId: string, start: Date, end: Date): Promise<BookingInterval | null> {
     const overlap = await this.repository.findConfirmedOverlap(courtId, start, end);
+    this.observedPrechecks.push(overlap);
     this.arrivals += 1;
     if (this.arrivals === this.requestCount) this.releasePrechecks();
     await this.prechecksComplete;
