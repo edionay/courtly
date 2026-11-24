@@ -45,44 +45,32 @@ export class ApiClientError extends Error {
 }
 
 export function isApiErrorPayload(value: unknown): value is ApiErrorPayload {
-  if (typeof value !== "object" || value === null) {
+  const isObject = typeof value === "object" && value !== null;
+  if (!isObject) {
     return false;
   }
   const candidate = value as Record<string, unknown>;
-  return (
-    typeof candidate.code === "string" &&
-    typeof candidate.message === "string" &&
-    (candidate.fields === undefined || Array.isArray(candidate.fields))
-  );
+  const hasCode = typeof candidate.code === "string";
+  const hasMessage = typeof candidate.message === "string";
+  const hasValidFields =
+    candidate.fields === undefined || Array.isArray(candidate.fields);
+
+  return hasCode && hasMessage && hasValidFields;
 }
 
-export function normalizeError(error: unknown, status?: number): ApiClientError {
-  if (error instanceof ApiClientError) {
-    return error;
+export function normalizeError(payload: unknown, status?: number): ApiClientError {
+  const isAlreadyApiClientError = payload instanceof ApiClientError;
+  if (isAlreadyApiClientError) {
+    return payload;
   }
 
-  if (isApiErrorPayload(error)) {
+  const isApiResponse = isApiErrorPayload(payload);
+  if (isApiResponse) {
     return new ApiClientError({
-      code: error.code,
-      message: error.message,
+      code: payload.code,
+      message: payload.message,
       status,
-      fields: error.fields,
-    });
-  }
-
-  if (status === 401) {
-    return new ApiClientError({
-      code: "UNAUTHENTICATED",
-      message: "Authentication required.",
-      status: 401,
-    });
-  }
-
-  if (status === 403) {
-    return new ApiClientError({
-      code: "FORBIDDEN",
-      message: "Access denied.",
-      status: 403,
+      fields: payload.fields,
     });
   }
 
