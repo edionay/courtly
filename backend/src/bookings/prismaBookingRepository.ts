@@ -1,7 +1,7 @@
 import { getPrismaClient } from "../database";
 import { ApiError } from "../errors/apiError";
 import { isBookingOverlapConstraintViolation, isRetryableBookingDeadlock } from "./bookingDatabaseErrors";
-import type { BookingRepository } from "./bookingRepository";
+import type { BookingCreate, BookingRepository } from "./bookingRepository";
 
 export class PrismaBookingRepository implements BookingRepository {
   public findCourt(id: string) {
@@ -32,16 +32,9 @@ export class PrismaBookingRepository implements BookingRepository {
     });
   }
 
-  public async createBooking(values: Parameters<BookingRepository["createBooking"]>[0]) {
+  public async createBooking(values: BookingCreate) {
     try {
-      return await insertBooking(values);
-    } catch (error: unknown) {
-      if (isBookingOverlapConstraintViolation(error)) throw bookingConflictError();
-      if (!isRetryableBookingDeadlock(error)) throw error;
-    }
-
-    try {
-      return await insertBooking(values);
+      return await insertBookingWithDeadlockRetry(values);
     } catch (error: unknown) {
       if (isBookingOverlapConstraintViolation(error)) throw bookingConflictError();
       throw error;
@@ -49,7 +42,17 @@ export class PrismaBookingRepository implements BookingRepository {
   }
 }
 
-function insertBooking(values: Parameters<BookingRepository["createBooking"]>[0]) {
+async function insertBookingWithDeadlockRetry(values: BookingCreate) {
+  try {
+    return await insertBooking(values);
+  } catch (error: unknown) {
+    if (!isRetryableBookingDeadlock(error)) throw error;
+  }
+
+  return insertBooking(values);
+}
+
+function insertBooking(values: BookingCreate) {
   return getPrismaClient().booking.create({ data: values });
 }
 
