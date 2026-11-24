@@ -8,6 +8,16 @@ export type RequestOptions = {
   signal?: AbortSignal;
 };
 
+function serializeRequestBody(body: unknown): BodyInit | undefined {
+  if (body === undefined) {
+    return undefined;
+  }
+  if (body instanceof FormData) {
+    return body;
+  }
+  return JSON.stringify(body);
+}
+
 async function parseJsonSafely(response: Response): Promise<unknown> {
   const rawText = await response.text();
   const isEmptyBody = rawText.trim().length === 0;
@@ -46,11 +56,7 @@ export async function request<T>(
     resolvedHeaders["Authorization"] = `Bearer ${token}`;
   }
 
-  const serializedBody = hasBody
-    ? isFormData
-      ? (body as FormData)
-      : JSON.stringify(body)
-    : undefined;
+  const serializedBody = serializeRequestBody(body);
 
   let response: Response;
   try {
