@@ -11,6 +11,7 @@ const meta = {
     onSignOut: () => undefined,
     onRetry: () => undefined,
     onCreateCourt: () => undefined,
+    onEditCourt: () => undefined,
   },
 } satisfies Meta<typeof CourtsView>;
 

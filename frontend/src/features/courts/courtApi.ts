@@ -13,6 +13,15 @@ export type CreateCourtRequest = {
   closesAt: string;
 };
 
+export type UpdateCourtRequest = {
+  name?: string;
+  sportType?: string;
+  hourlyPriceCents?: number;
+  opensAt?: string;
+  closesAt?: string;
+  isActive?: boolean;
+};
+
 export const courtApi = {
   async listCourts(): Promise<CourtCardData[]> {
     const response = await httpClient.get<CourtCollectionResponse>("/api/courts");
@@ -21,5 +30,12 @@ export const courtApi = {
 
   async createCourt(payload: CreateCourtRequest): Promise<CourtCardData> {
     return httpClient.post<CourtCardData>("/api/courts", payload);
+  },
+
+  async updateCourt(
+    courtId: string,
+    payload: UpdateCourtRequest
+  ): Promise<CourtCardData> {
+    return httpClient.patch<CourtCardData>(`/api/courts/${courtId}`, payload);
   },
 };
