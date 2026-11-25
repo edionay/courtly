@@ -81,6 +81,10 @@ export type BookingResponse = {
   };
 };
 
+export type MyBookingsResponse = {
+  items: BookingResponse[];
+};
+
 export const bookingApi = {
   async getAvailability(
     courtId: string,
@@ -114,5 +118,13 @@ export const bookingApi = {
     return httpClient.post<BookingResponse>("/api/bookings", selection, {
       signal,
     });
+  },
+
+  async listMyBookings(signal?: AbortSignal): Promise<BookingResponse[]> {
+    const response = await httpClient.get<MyBookingsResponse>(
+      "/api/bookings/me",
+      { signal },
+    );
+    return response.items;
   },
 };

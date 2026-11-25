@@ -4,6 +4,7 @@ import { AuthenticationErrorPage } from "../features/auth/pages/AuthenticationEr
 import { CourtsPage } from "../features/courts/pages/CourtsPage";
 import { BookingSlotsPage } from "../features/bookings/pages/BookingSlotsPage";
 import { BookingReviewPage } from "../features/bookings/pages/BookingReviewPage";
+import { MyBookingsPage } from "../features/bookings/pages/MyBookingsPage";
 
 export function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export function AppRoutes() {
       <Route path="/courts" element={<CourtsPage />} />
       <Route path="/courts/:courtId/booking/slots" element={<BookingSlotsPage />} />
       <Route path="/courts/:courtId/booking/review" element={<BookingReviewPage />} />
+      <Route path="/bookings" element={<MyBookingsPage />} />
       <Route path="/" element={<Navigate to="/courts" replace />} />
       <Route path="*" element={<Navigate to="/courts" replace />} />
     </Routes>
