@@ -7,6 +7,7 @@ import { CourtEditPage } from "../features/courts/pages/CourtEditPage";
 import { BookingSlotsPage } from "../features/bookings/pages/BookingSlotsPage";
 import { BookingReviewPage } from "../features/bookings/pages/BookingReviewPage";
 import { MyBookingsPage } from "../features/bookings/pages/MyBookingsPage";
+import { DailyBookingsReportPage } from "../features/reports/pages/DailyBookingsReportPage";
 
 export function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export function AppRoutes() {
       <Route path="/courts/:courtId/booking/slots" element={<BookingSlotsPage />} />
       <Route path="/courts/:courtId/booking/review" element={<BookingReviewPage />} />
       <Route path="/bookings" element={<MyBookingsPage />} />
+      <Route path="/reports/daily-bookings" element={<DailyBookingsReportPage />} />
       <Route path="/" element={<Navigate to="/courts" replace />} />
       <Route path="*" element={<Navigate to="/courts" replace />} />
     </Routes>
