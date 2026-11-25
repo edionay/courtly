@@ -1,6 +1,10 @@
 import { type MouseEvent } from "react";
 import { ApplicationShell } from "../../shared/ui/ApplicationShell";
 import { Button } from "../../shared/ui/Button";
+import {
+  BookingConfirmedDialog,
+  TimeUnavailableDialog,
+} from "./BookingResultDialogs";
 
 export type BookingReviewData = {
   courtName: string;
@@ -15,7 +19,16 @@ export type BookingReviewData = {
 export type BookingReviewViewProps = {
   review?: BookingReviewData | null;
   isLoading?: boolean;
+  isSubmitting?: boolean;
+  isConfirmed?: boolean;
   errorMessage?: string | null;
+  conflictMessage?: string | null;
+  isSuccessDialogOpen?: boolean;
+  isConflictDialogOpen?: boolean;
+  onCloseSuccessDialog?: () => void;
+  onGoToBookings?: () => void;
+  onCloseConflictDialog?: () => void;
+  onChooseAnotherTime?: () => void;
   onRetry?: () => void;
   onChange?: () => void;
   onConfirm?: () => void;
@@ -152,7 +165,16 @@ function ReviewCard({
 export function BookingReviewView({
   review,
   isLoading = false,
+  isSubmitting = false,
+  isConfirmed = false,
   errorMessage,
+  conflictMessage,
+  isSuccessDialogOpen = false,
+  isConflictDialogOpen = false,
+  onCloseSuccessDialog,
+  onGoToBookings,
+  onCloseConflictDialog,
+  onChooseAnotherTime,
   onRetry,
   onChange,
   onConfirm,
@@ -173,7 +195,15 @@ export function BookingReviewView({
       ];
 
   const courtName = review?.courtName ?? "Court";
-  const isConfirmDisabled = isLoading || Boolean(errorMessage) || !review;
+  const isConfirmDisabled =
+    isLoading ||
+    isSubmitting ||
+    isConfirmed ||
+    Boolean(errorMessage) ||
+    Boolean(conflictMessage) ||
+    !review;
+
+  const recoveryAction = onChooseAnotherTime ?? onChange;
 
   return (
     <ApplicationShell
@@ -227,6 +257,27 @@ export function BookingReviewView({
           <div className="mt-6">
             <ReviewCard review={review} onChange={onChange} />
 
+            {conflictMessage && (
+              <div
+                role="alert"
+                className="mt-6 p-6 bg-surface rounded-card shadow-card space-y-4 border border-border"
+              >
+                <div>
+                  <p className="text-foreground font-bold text-base m-0">
+                    Time no longer available
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-1 mb-0">
+                    {conflictMessage}
+                  </p>
+                </div>
+                {recoveryAction && (
+                  <Button variant="primary" onClick={recoveryAction}>
+                    Choose another time
+                  </Button>
+                )}
+              </div>
+            )}
+
             <div className="mt-6 flex justify-end">
               <Button
                 className="w-full md:w-auto min-w-[226px] rounded-full"
@@ -234,11 +285,24 @@ export function BookingReviewView({
                 disabled={isConfirmDisabled}
                 onClick={onConfirm}
               >
-                Confirm booking
+                {isSubmitting ? "Confirming..." : "Confirm booking"}
               </Button>
             </div>
           </div>
         )}
+
+        <BookingConfirmedDialog
+          isOpen={isSuccessDialogOpen}
+          onClose={onCloseSuccessDialog ?? (() => undefined)}
+          onGoToBookings={onGoToBookings ?? (() => undefined)}
+        />
+
+        <TimeUnavailableDialog
+          isOpen={isConflictDialogOpen}
+          message={conflictMessage ?? undefined}
+          onClose={onCloseConflictDialog ?? (() => undefined)}
+          onChooseAnotherTime={recoveryAction ?? (() => undefined)}
+        />
       </div>
     </ApplicationShell>
   );
