@@ -13,5 +13,14 @@ services:
 
   frontend:
 
+  k6:
+    image: grafana/k6:2.4.0
+    profiles: [performance]
+    entrypoint: ["k6"]
+    command: ["version"]
+    volumes:
+      - ./docs/performance/k6:/scripts:ro
+      - ./docs/performance/results:/results
+
 volumes:
   performance-data:

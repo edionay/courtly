@@ -53,13 +53,21 @@ Provide an additive Compose override or equivalent documented wrapper, leaving o
 
 Own benchmark setup/override, infrastructure scripts, fixture manifest and usage documentation. Verify the guard rejects other database names before connecting; exact 1,000/12,000 counts; stable generation; valid schedules and constraint retained. Inspect representative records and normal startup behavior. Do not introduce application optimization.
 
-### P2 — k6 scenarios and SQL evidence
+### P2 — k6 configuration and runtime smoke
 
-Own the pinned k6 container/configuration, scenario definitions, raw exports and baseline report. Provide a reproducible Docker command without requiring a hosted account or a custom measurement engine. Execute all scenarios at both sizes and capture query plans. Evidence must include commands actually executed, environment and provenance. Preserve raw samples and readable summaries under `docs/performance/`; use a small CSV/JSON format and text plans. Exclude credentials and bulky database dumps. Identify a concrete bottleneck, or record that no change is justified.
+Pin an exact stable Grafana k6 image in the opt-in `performance` Compose profile. Mount scenario files read-only and results to a host-visible output directory. Document version verification and a minimal offline smoke scenario proving the runtime executes and failed checks produce a failed run. This delivery creates no authentication, endpoint scenarios, measurement runs, or SQL plans. Normal Compose startup must not start k6.
 
-### P3 — Evidence-based change and demonstration
+### P3 — Endpoint scenarios and response checks
 
-Only if P2 identifies a justified change, modify the smallest affected repository query or add an index through a versioned migration. Explain read benefit, storage/write overhead and rollback. Preserve the constraint and historical migrations. Compare unchanged 12,000-row data and identical scenarios before/after, including the migration/schema revision. If there is no justified change, this delivery documents the no-change decision and final evidence instead.
+Add k6 scenarios for weekly availability, a busy-day administrator report, and an empty-day report, using the verified dataset manifests. Authenticate seeded user/admin accounts in setup, exclude setup traffic from scenario metrics, tag endpoints, validate response shape/counts and status, and configure thresholds so failed checks fail the run. Do not execute the full comparison yet.
+
+### P4 — Measurements and SQL evidence
+
+Execute all scenarios at both sizes under the agreed measurement protocol. Save raw exports, readable per-scenario medians/p95 and response-byte/error data under `docs/performance/`. Capture actual SQL and representative `EXPLAIN (ANALYZE, BUFFERS)` output. Include environment/provenance and identify a bottleneck, or record why no change is justified.
+
+### P5 — Evidence-based change and demonstration
+
+Only if P4 identifies a justified change, modify the smallest affected repository query or add an index through a versioned migration. Explain read benefit, storage/write overhead and rollback. Preserve the constraint and historical migrations. Compare unchanged 12,000-row data and identical scenarios before/after, including the migration/schema revision. If there is no justified change, document the no-change decision and prepare the demonstration from P4 evidence.
 
 Run affected correctness tests, existing concurrency/cancellation/opening-hours coverage, typecheck and builds when application/schema code changes. Explain plans supplement correctness tests. Reviewer inspects actual diff and evidence; user merges each PR before the next dependent delivery. Use programador (Luna medium) and revisor according to AGENTS.md; confirm model availability, never silently substitute. Planning is complete before code execution begins.
 
