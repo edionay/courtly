@@ -2,6 +2,7 @@ import type {
   AvailabilityDay,
   AvailabilityResponse,
   BookingPreviewResponse,
+  BookingResponse,
 } from "./bookingApi";
 import type { BookingReviewData } from "./BookingReviewView";
 
@@ -23,6 +24,51 @@ export const mockReviewData: BookingReviewData = {
   durationLabel: "2 hours",
   totalPrice: "$100.00",
 };
+
+export const mockBookings: BookingResponse[] = [
+  {
+    id: "booking-1",
+    court: { id: "court-1", name: "Court 1" },
+    status: "confirmed",
+    canCancel: true,
+    display: {
+      date: "Tuesday, December 1, 2026",
+      startsAt: "14:00",
+      endsAt: "16:00",
+      timezone: "São Paulo time",
+      status: "Confirmed",
+      totalPrice: "$100.00",
+    },
+  },
+  {
+    id: "booking-2",
+    court: { id: "court-2", name: "Court 2" },
+    status: "confirmed",
+    canCancel: false,
+    display: {
+      date: "Tuesday, November 24, 2026",
+      startsAt: "10:00",
+      endsAt: "12:00",
+      timezone: "São Paulo time",
+      status: "Confirmed",
+      totalPrice: "$80.00",
+    },
+  },
+  {
+    id: "booking-3",
+    court: { id: "court-3", name: "Court 3" },
+    status: "cancelled",
+    canCancel: false,
+    display: {
+      date: "Monday, November 23, 2026",
+      startsAt: "17:00",
+      endsAt: "18:00",
+      timezone: "São Paulo time",
+      status: "Cancelled",
+      totalPrice: "$60.00",
+    },
+  },
+];
 
 export const mockAvailabilityDays: AvailabilityDay[] = [
   {
