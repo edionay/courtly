@@ -52,7 +52,7 @@ Representative `EXPLAIN (ANALYZE, BUFFERS)` outputs, captured after `VACUUM FULL
 
 For availability, the exclusion GiST index narrows the read to confirmed rows for one court, while the scalar start/end overlap predicates remain filters in these plans. The day report returns the same 140 rows but its busy-date query scans the complete booking table at both sizes. Its plan cost and execution time increase with the table size, while HTTP medians remain around 5–6 ms in these runs. The empty-date plan is not identical across sizes.
 
-The report query is the clearest candidate for a follow-up index/query experiment because it scans all history to select a date. At this dataset size its observed SQL time remains below one millisecond on a warm local cache, and the three HTTP rounds do not show a large latency increase. P4 makes no application or schema change and does not claim a production bottleneck or arbitrary SLO. P5 should decide whether a narrow index experiment is justified, then compare identical fixtures and scenarios before and after.
+The report query is the clearest future index/query candidate because it scans history to select a date. At this dataset size its observed SQL time remains below one millisecond on a warm local cache, and the three HTTP rounds do not show a large latency increase. The P5 decision retains the current query and schema: the evidence does not justify an application change or claim a production bottleneck. Re-evaluate if representative workloads, an agreed latency target, or production evidence show this query is materially slow. See [ADR 006](../adr/006-performance-measurement-and-no-change.md).
 
 ## Environment and limits
 

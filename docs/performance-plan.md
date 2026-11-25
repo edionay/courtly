@@ -4,7 +4,7 @@
 
 The user approved the optional performance bonus on November 25, 2026, on the separate `booking-performance` branch. This supersedes the earlier exclusion of all bonuses for this exercise only. The challenge permits at most one bonus and asks for more than 10,000 seeded bookings plus measured availability and administrator day-view query performance. Realtime updates and waitlists remain excluded.
 
-This document is the self-contained specification and execution plan. Read `challenge.md`, `api-contracts.md`, `architecture.md`, and `AGENTS.md` for existing rules. Preserve all API contracts, authorization, facility timezone semantics, cancellation rules, and the `bookings_no_confirmed_overlap` database constraint. The candidate remains the README author. This planning delivery does not implement the benchmark or claim results.
+This document is the self-contained specification and execution record. Read `challenge.md`, `api-contracts.md`, `architecture.md`, and `AGENTS.md` for existing rules. Preserve all API contracts, authorization, facility timezone semantics, cancellation rules, and the `bookings_no_confirmed_overlap` database constraint. The candidate remains the README author. P1–P5 are complete; measured results and their limits are linked below.
 
 ## Questions and hypotheses
 
@@ -63,33 +63,21 @@ Add k6 scenarios for weekly availability, a busy-day administrator report, and a
 
 ### P4 — Measurements and SQL evidence (complete)
 
-Executed all three scenarios at both sizes with three rounds each under the agreed protocol. The final report, compressed raw exports, sanitized summaries, response bytes, captured Prisma SQL/parameters, query counts and representative plans are linked from `docs/performance/measurements.md`. The day report's busy-day read scans the booking table at both sizes; this is a candidate for a narrow P5 experiment, not a change made in P4. Availability is not a pure scaling comparison because the selected week's booked/available slot distribution differs between fixtures.
+Executed all three scenarios at both sizes with three rounds each under the agreed protocol. The final report, compressed raw exports, sanitized summaries, response bytes, captured Prisma SQL/parameters, query counts and representative plans are linked from `docs/performance/measurements.md`. The busy-day report scans the booking table at both sizes. Availability is not a pure scaling comparison because the selected week's booked/available slot distribution differs between fixtures.
 
-### P5 — Evidence-based change and demonstration
+### P5 — Evidence-based decision (complete: retain current queries)
 
-Only if P4 identifies a justified change, modify the smallest affected repository query or add an index through a versioned migration. Explain read benefit, storage/write overhead and rollback. Preserve the constraint and historical migrations. Compare unchanged 12,000-row data and identical scenarios before/after, including the migration/schema revision. If there is no justified change, document the no-change decision and prepare the demonstration from P4 evidence.
+The P4 evidence does not justify an application or schema optimization at the tested scale. Keep the current availability and daily-report repository queries and indexes. The busy-day full scan is a scaling consideration, but its measured HTTP latency does not establish a present bottleneck; no user-facing latency target was approved. The weekly slot distribution differs between dataset sizes, so it is not a pure scaling comparison. See [ADR 006](adr/006-performance-measurement-and-no-change.md) for the decision, alternatives, evidence and reevaluation triggers.
 
-Run affected correctness tests, existing concurrency/cancellation/opening-hours coverage, typecheck and builds when application/schema code changes. Explain plans supplement correctness tests. Reviewer inspects actual diff and evidence; user merges each PR before the next dependent delivery. Use programador (Luna medium) and revisor according to AGENTS.md; confirm model availability, never silently substitute. Planning is complete before code execution begins.
+P5 makes no application or schema changes, so no tests, typecheck, build or before/after optimization run is required. No presentation, script or chart is required to complete the optional challenge bonus; the report is the reproducible evidence. The bonus is complete after this decision PR is reviewed and merged.
 
-## Acceptance and demonstration
+## Acceptance
 
-The exercise is complete when another agent can reproduce setup from a clean isolated volume, generate more than 10,000 valid bookings, run both endpoint measurements, inspect SQL plans and understand the outcome without this chat. A result is acceptable without an optimization when supported by evidence. No benchmark infrastructure runs during normal application startup.
-
-Prepare a five-to-seven-minute candidate demonstration:
-
-1. State the workload and question: growing booking history while users browse availability and admins inspect a day.
-2. Show the architecture path: HTTP controller → service → repository → Prisma → PostgreSQL; identify which costs HTTP and SQL measurements include.
-3. Show the deterministic dataset manifest and prove the count exceeds 10,000.
-4. Execute the documented k6 command and open the saved per-scenario median/p95 results. Demonstrate correctness with one busy and one empty response.
-5. Compare representative query plans and explain what the chosen scan/index actually does. Show before/after measurements if a change was warranted.
-6. Explain the trade-off: indexes cost storage and writes; cache/distributed infrastructure require evidence and are outside this experiment. State single-client/warm-cache/local-machine limits.
-7. Close with the conclusion supported by observations, not a claim that 12,000 rows proves production scalability.
-
-Use static exported charts only if they clarify measured results: median/p95 by scenario and dataset size, plus before/after where applicable. Do not create fictional sample results. Record the final architectural rationale in a short ADR after measurement, including context, options, evidence, decision and consequences. This demonstrates an architectural process: define a quality concern, measure, choose a proportional intervention, and verify its consequences. It does not by itself claim proficiency or production readiness.
+The exercise is complete when another agent can reproduce setup from a clean isolated volume, generate more than 10,000 valid bookings, run both endpoint measurements, inspect SQL plans and understand the outcome without this chat. A result is acceptable without an optimization when supported by evidence. No benchmark infrastructure runs during normal application startup. The measurements report and ADR contain the result; no separate demo or chart deliverable is required.
 
 ## Tool decision and learning connection
 
-The user approved k6 on November 25, 2026, replacing the proposed custom HTTP measurement runner. This applies performance/load-testing concepts from the postgraduate curriculum while keeping SQL diagnosis in PostgreSQL. k6 owns measurement and aggregation; project code owns only workload definitions and fixtures. The initial experiment remains sequential; adopting k6 does not silently add a stress, capacity or distributed-load exercise. Explain this separation and the measured limits during the demonstration.
+The user approved k6 on November 25, 2026, replacing the proposed custom HTTP measurement runner. This applies performance/load-testing concepts from the postgraduate curriculum while keeping SQL diagnosis in PostgreSQL. k6 owns measurement and aggregation; project code owns only workload definitions and fixtures. The initial experiment remains sequential; adopting k6 does not silently add a stress, capacity or distributed-load exercise. The measurements report documents this separation and the limits of the evidence.
 
 Implementation references:
 
