@@ -39,21 +39,21 @@ export const options = {
   },
 };
 
-function login(email, password, role) {
-  if (!email || !password) throw new Error(`${role} credentials are required`);
+function login(email, password, expectedRole) {
+  if (!email || !password) throw new Error(`${expectedRole} credentials are required`);
   const response = http.post(`${baseUrl}/api/auth/login`, JSON.stringify({ email, password }), {
     headers: { "Content-Type": "application/json" },
     timeout: requestTimeout,
-    tags: { phase: "setup", endpoint: "authentication", role },
+    tags: { phase: "setup", endpoint: "authentication", role: expectedRole },
   });
   let body;
   try {
     body = response.json();
   } catch {
-    throw new Error(`${role} authentication returned invalid JSON with status ${response.status}`);
+    throw new Error(`${expectedRole} authentication returned invalid JSON with status ${response.status}`);
   }
-  if (response.status !== 200 || !body?.accessToken) {
-    throw new Error(`${role} authentication failed with status ${response.status}`);
+  if (response.status !== 200 || !body?.accessToken || body.user?.role !== expectedRole) {
+    throw new Error(`${expectedRole} authentication failed role or token validation with status ${response.status}`);
   }
   return body.accessToken;
 }
