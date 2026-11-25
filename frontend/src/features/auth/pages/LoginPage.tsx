@@ -26,7 +26,7 @@ export function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   if (isAuthenticated && !isLoading) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/courts" replace />;
   }
 
   const handleSubmit = async (credentials: LoginCredentials) => {
@@ -36,7 +36,7 @@ export function LoginPage() {
 
     try {
       await login(credentials);
-      navigate("/", { replace: true });
+      navigate("/courts", { replace: true });
     } catch (err) {
       const isApiError = err instanceof ApiClientError;
       if (isApiError) {

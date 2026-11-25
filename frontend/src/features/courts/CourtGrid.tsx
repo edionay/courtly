@@ -3,10 +3,15 @@ import { CourtCard } from "./CourtCard";
 
 type CourtGridProps = {
   courts: CourtCardData[];
+  isAdmin?: boolean;
   onViewAvailability?: (court: CourtCardData) => void;
 };
 
-export function CourtGrid({ courts, onViewAvailability }: CourtGridProps) {
+export function CourtGrid({
+  courts,
+  isAdmin = false,
+  onViewAvailability,
+}: CourtGridProps) {
   return (
     <ul
       role="list"
@@ -17,6 +22,7 @@ export function CourtGrid({ courts, onViewAvailability }: CourtGridProps) {
         <li key={court.id} className="min-w-0">
           <CourtCard
             court={court}
+            isAdmin={isAdmin}
             onViewAvailability={onViewAvailability}
           />
         </li>
