@@ -157,7 +157,7 @@ function createManifest(configuration: DatasetConfiguration, timezone: string, c
     bookingsByCourt,
     busyDayBookingCount: busyBookings,
     emptyDayBookingCount: emptyBookings,
-    busyAvailability: { courtId: courts[0].id, weekStart: configuration.anchorDate },
+    busyAvailability: { courtId: courts[1].id, weekStart: configuration.anchorDate },
     busyReportDate: configuration.anchorDate,
     emptyReportDate: addDays(configuration.anchorDate, Math.ceil(configuration.bookingCount / 140) + 2),
     deterministicIds: true,
