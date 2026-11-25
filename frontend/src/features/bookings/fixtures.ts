@@ -3,6 +3,7 @@ import type {
   AvailabilityResponse,
   BookingPreviewResponse,
 } from "./bookingApi";
+import type { BookingReviewData } from "./BookingReviewView";
 
 export const mockCourtSummary = {
   id: "court-1",
@@ -11,6 +12,16 @@ export const mockCourtSummary = {
   opensAt: "08:00",
   closesAt: "22:00",
   hourlyPrice: "$50.00",
+};
+
+export const mockReviewData: BookingReviewData = {
+  courtName: "Court 1",
+  sportType: "Tennis",
+  dateLabel: "Tuesday, November 24, 2026",
+  startsAt: "14:00",
+  endsAt: "16:00",
+  durationLabel: "2 hours",
+  totalPrice: "$100.00",
 };
 
 export const mockAvailabilityDays: AvailabilityDay[] = [
