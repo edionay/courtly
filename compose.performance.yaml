@@ -20,6 +20,7 @@ services:
     command: ["version"]
     volumes:
       - ./docs/performance/k6:/scripts:ro
+      - ./docs/performance/manifests:/manifests:ro
       - ./docs/performance/results:/results
 
 volumes:
