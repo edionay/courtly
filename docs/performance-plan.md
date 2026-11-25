@@ -33,16 +33,16 @@ For every scenario record the request URL, role, expected result count or slot d
 
 Use a dedicated Compose project and volume, with application services pointing only to a benchmark database named `courtly_performance`. Do not reset, migrate, seed, or benchmark the user's application database or the integration database `courtly_test`. Create a separate benchmark migration command rather than relaxing the existing integration-test guard. Generator and cleanup commands must reject any other database name. Cleanup must target only the dedicated project/volume and require an explicit action.
 
-Provide an additive Compose override or equivalent documented wrapper, leaving ordinary `docker compose up` unchanged. Use the pinned project runtime/dependencies, production builds, and a small Node/TypeScript runner rather than introducing a load-testing platform. Scripts may access Prisma as infrastructure tooling, like seeds and integration setup; production request flows retain repository boundaries. Expose one documented command for setup, generation, measurement, and cleanup once implementation establishes exact names. No runnable commands are claimed in this planning document.
+Provide an additive Compose override or equivalent documented wrapper, leaving ordinary `docker compose up` unchanged. Use production builds and Grafana k6 as the HTTP measurement tool. At implementation time, verify and pin a stable k6 container version compatible with the environment. Write small scenario definitions for authentication, requests, response checks and tags; let k6 collect timings and calculate statistics. Keep the deterministic data generator in the existing Node/TypeScript tooling. Prometheus, Grafana dashboards, OpenTelemetry, Jaeger and hosted services are outside this delivery; revisit instrumentation only if measurements leave a concrete diagnostic question unanswered. Scripts may access Prisma as infrastructure tooling, like seeds and integration setup; production request flows retain repository boundaries. Expose one documented command for setup, generation, measurement, and cleanup once implementation establishes exact names. No runnable commands are claimed in this planning document.
 
 ## Measurement protocol
 
-- Authenticate seeded accounts before timing; use a normal account for availability and admin for reports. Never write JWTs or passwords into evidence files.
+- Authenticate seeded accounts in k6 setup before scenario execution; exclude authentication and setup requests from scenario aggregates through explicit tags/metric filters; use a normal account for availability and admin for reports. Never write JWTs or passwords into evidence files.
 - Run over the same local transport for every comparison. Record whether the frontend proxy is included; prefer direct API measurements to isolate backend work.
-- For each scenario, perform 10 unmeasured warmups followed by 100 sequential requests, repeated in three rounds. Record raw timings, HTTP status, response bytes and failures. Fail the run on unexpected status/content.
-- Report median and p95 per round using a documented nearest-rank percentile calculation. Do not average percentiles or present one run as a universal latency guarantee.
-- Measure elapsed HTTP time with a monotonic clock. Do not call it database query duration or browser rendering time.
-- Record commit SHA, dirty tracked-file state, UTC timestamp, dataset manifest, Node/PostgreSQL versions, build mode, Docker resource limits, machine/OS, concurrency, warmups and sample counts. Keep resource settings and background activity comparable.
+- For each scenario, run 10 warmup requests followed by 100 measured sequential requests with one virtual user, repeated in three separate rounds. Tag warmups separately and exclude them from measured aggregates. Record raw timings, HTTP status, response bytes and failures using k6 output. Add response checks and thresholds that make unexpected statuses or content fail the run; checks alone must not leave a successful exit status. Keep each endpoint/scenario identifiable in exported metrics.
+- Report k6 median and p95 per scenario and round, using the same pinned tool version and its percentile implementation throughout. Do not implement a separate percentile calculator, average percentiles, or present one run as a universal latency guarantee.
+- Use k6 `http_req_duration` as the primary latency metric: sending + waiting + receiving, excluding initial connection/DNS/TLS setup. Label that scope explicitly; it is neither SQL duration nor browser rendering time. Preserve connection-related metrics separately when relevant.
+- Record commit SHA, dirty tracked-file state, UTC timestamp, dataset manifest, Node/PostgreSQL/k6 versions, build mode, Docker resource limits, machine/OS, concurrency, warmups and sample counts. Keep resource settings and background activity comparable.
 - The baseline is a warmed-cache, single-client latency experiment, not a throughput or production-capacity test. Avoid OS cache flushing. State these limits explicitly.
 - Run `ANALYZE` after generation and before each baseline/comparison. Capture actual SQL and parameters for affected reads, then `EXPLAIN (ANALYZE, BUFFERS)` for representative queries. Record actual/estimated rows, scan type, filtering, buffer activity, planning/execution time and query count. EXPLAIN timings are separate from HTTP samples.
 - No arbitrary latency SLO is required by the challenge. Describe observed scaling and bottlenecks. A small dataset may legitimately favor a sequential scan.
@@ -53,9 +53,9 @@ Provide an additive Compose override or equivalent documented wrapper, leaving o
 
 Own benchmark setup/override, infrastructure scripts, fixture manifest and usage documentation. Verify the guard rejects other database names before connecting; exact 1,000/12,000 counts; stable generation; valid schedules and constraint retained. Inspect representative records and normal startup behavior. Do not introduce application optimization.
 
-### P2 — Baseline runner and SQL evidence
+### P2 — k6 scenarios and SQL evidence
 
-Own runner, raw sample format and baseline report. Execute all scenarios at both sizes and capture query plans. Evidence must include commands actually executed, environment and provenance. Preserve raw samples and readable summaries under `docs/performance/`; use a small CSV/JSON format and text plans. Exclude credentials and bulky database dumps. Identify a concrete bottleneck, or record that no change is justified.
+Own the pinned k6 container/configuration, scenario definitions, raw exports and baseline report. Provide a reproducible Docker command without requiring a hosted account or a custom measurement engine. Execute all scenarios at both sizes and capture query plans. Evidence must include commands actually executed, environment and provenance. Preserve raw samples and readable summaries under `docs/performance/`; use a small CSV/JSON format and text plans. Exclude credentials and bulky database dumps. Identify a concrete bottleneck, or record that no change is justified.
 
 ### P3 — Evidence-based change and demonstration
 
@@ -72,9 +72,20 @@ Prepare a five-to-seven-minute candidate demonstration:
 1. State the workload and question: growing booking history while users browse availability and admins inspect a day.
 2. Show the architecture path: HTTP controller → service → repository → Prisma → PostgreSQL; identify which costs HTTP and SQL measurements include.
 3. Show the deterministic dataset manifest and prove the count exceeds 10,000.
-4. Execute the documented runner and open the saved median/p95 results. Demonstrate correctness with one busy and one empty response.
+4. Execute the documented k6 command and open the saved per-scenario median/p95 results. Demonstrate correctness with one busy and one empty response.
 5. Compare representative query plans and explain what the chosen scan/index actually does. Show before/after measurements if a change was warranted.
 6. Explain the trade-off: indexes cost storage and writes; cache/distributed infrastructure require evidence and are outside this experiment. State single-client/warm-cache/local-machine limits.
 7. Close with the conclusion supported by observations, not a claim that 12,000 rows proves production scalability.
 
 Use static exported charts only if they clarify measured results: median/p95 by scenario and dataset size, plus before/after where applicable. Do not create fictional sample results. Record the final architectural rationale in a short ADR after measurement, including context, options, evidence, decision and consequences. This demonstrates an architectural process: define a quality concern, measure, choose a proportional intervention, and verify its consequences. It does not by itself claim proficiency or production readiness.
+
+## Tool decision and learning connection
+
+The user approved k6 on November 25, 2026, replacing the proposed custom HTTP measurement runner. This applies performance/load-testing concepts from the postgraduate curriculum while keeping SQL diagnosis in PostgreSQL. k6 owns measurement and aggregation; project code owns only workload definitions and fixtures. The initial experiment remains sequential; adopting k6 does not silently add a stress, capacity or distributed-load exercise. Explain this separation and the measured limits during the demonstration.
+
+Implementation references:
+
+- k6 metrics: https://grafana.com/docs/k6/latest/using-k6/metrics/
+- HTTP metric definitions: https://grafana.com/docs/k6/latest/using-k6/metrics/reference/
+- Results and exports: https://grafana.com/docs/k6/latest/get-started/results-output/
+- Summary statistics configuration: https://grafana.com/docs/k6/latest/using-k6/k6-options/reference/

@@ -160,3 +160,7 @@ These references support technical mechanisms; they do not replace the challenge
 - Approved PNGs, editable SVGs, Inter fonts/license and sport photographs/credits are committed locally. The pack is indexed by mockups/aguinha/REVIEW.md and does not require the original repositories or a live gallery server. Real API data overrides illustrative images.
 - frontend-plan.md closes the D4–D6 responsibility, route, transport/proxy, local-asset and verification contract; frontend-handoff.md supplies the portable start/resume prompt. Unknown free-text sports use a neutral image fallback; do not mislabel seeded Futsal.
 - D4 implements same-origin /api forwarding through both Vite dev and Compose-preview, using a server-only API_PROXY_TARGET; current setup has not implemented that proxy yet. No application code is authorized by this documentation task. Verify the design PR #11 is merged before dependent frontend work; only the user merges.
+
+## Performance measurement tooling
+
+- On November 25, 2026, the user approved Grafana k6 instead of a custom HTTP measurement runner for the separately approved performance bonus. Follow performance-plan.md for isolated fixtures, filtered warmup/authentication metrics, endpoint scenarios, SQL plans and reproducible evidence. Additional observability services are deferred unless a concrete diagnostic need justifies revisiting the scope.
