@@ -272,6 +272,7 @@ These scripts and startup files exist in the merged application. Their historica
 - Frontend npm run storybook and npm run build-storybook expose/build approved fixtures.
 - Backend development/build commands regenerate tsoa routes/spec automatically, including Docker build; controller changes trigger regeneration during development. Exact watch implementation belongs to D1.
 - docker compose up starts complete deliverable and applies migrations/seed without extra setup. Fail startup visibly if initialization fails rather than serving against an uninitialized schema. Test setup is isolated from application startup/data.
+- Storybook's Compose service uses only the opt-in `storybook` profile and is not part of ordinary `docker compose up`; its host port is configurable with `COURTLY_STORYBOOK_PORT`. Starting the Storybook-only service does not require the backend or application database.
 - Current Compose mappings and demo seed accounts are recorded in frontend-plan.md and sourced from compose.yaml/backend/prisma/seed.ts. Verify actual overrides and login; mockup fixtures are not runtime values.
 
 ## Acceptance evidence and handoff

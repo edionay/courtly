@@ -38,5 +38,23 @@ services:
     ports:
       - "${COURTLY_WEB_PORT:-4174}:4173"
 
+  storybook:
+    profiles: ["storybook"]
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    command:
+      - npm
+      - run
+      - storybook
+      - --workspace
+      - frontend
+      - --
+      - --ci
+      - --no-open
+      - --exact-port
+    ports:
+      - "${COURTLY_STORYBOOK_PORT:-6006}:6006"
+
 volumes:
   postgres-data:
