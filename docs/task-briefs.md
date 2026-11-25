@@ -1,10 +1,10 @@
 # Courtly implementation and review briefs
 
-Use these briefs with [execution-plan.md](execution-plan.md). They are sufficient with the referenced repository specifications in a fresh chat; do not depend on earlier conversation. No application task is started merely by writing this document.
+These are reusable workflow and historical D1–D6 task briefs for [execution-plan.md](execution-plan.md). All D1–D6 deliveries are merged. The briefs provide context for review or an explicitly assigned future change; they are not active tasks and do not authorize replaying a completed milestone. Do not infer the next task from their ordering. A new implementation needs explicit scope, ownership and acceptance from the orchestrator/user; do not depend on earlier conversation.
 
 ## Required context for either role
 
-Read root AGENTS.md and PRODUCT.md; docs/challenge.md, docs/decisions.md, docs/execution-plan.md, docs/architecture.md, docs/api-contracts.md, docs/ui-flows.md, the relevant ADR and, for frontend work, DESIGN.md, docs/design-system.md, docs/frontend-plan.md, docs/frontend-handoff.md and docs/mockups/aguinha/REVIEW.md. The high-fidelity pack is approved with outlined-danger actions; old wireframes remain flow evidence, not visual authority. File ownership, dependencies, and acceptance for each task are D1–D6 in execution-plan.md. The configured roles programador/revisor use Luna; verify availability before dispatch, never silently substitute.
+For an explicit task, read root AGENTS.md and PRODUCT.md; docs/challenge.md, docs/decisions.md, docs/execution-plan.md, docs/architecture.md, docs/api-contracts.md, docs/ui-flows.md, and the relevant ADR. For frontend work also read DESIGN.md, docs/design-system.md, docs/frontend-plan.md, docs/frontend-handoff.md and docs/mockups/aguinha/REVIEW.md. The high-fidelity pack is approved with outlined-danger actions; old wireframes remain flow evidence, not visual authority. Use D1–D6 only as historical specifications. The configured roles programador/revisor use Luna; verify availability before dispatch, never silently substitute.
 
 All code/UI/docs are English. Feature-only lowercase kebab-case branches, Google-style type: imperative subject without scope parentheses, no AI/agent attribution/co-author trailers. No direct main commits except the already-completed initial-base exception; no agent merges or challenge submission. The candidate authors the root README. Preserve other workers' and candidate changes; you are not alone in the repository.
 

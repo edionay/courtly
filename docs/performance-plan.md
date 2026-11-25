@@ -49,23 +49,23 @@ Provide an additive Compose override or equivalent documented wrapper, leaving o
 
 ## Incremental deliveries
 
-### P1 — Reproducible dataset and isolated environment
+### P1 — Reproducible dataset and isolated environment (complete; PR #25)
 
 Own benchmark setup/override, infrastructure scripts, fixture manifest and usage documentation. Verify the guard rejects other database names before connecting; exact 1,000/12,000 counts; stable generation; valid schedules and constraint retained. Inspect representative records and normal startup behavior. Do not introduce application optimization.
 
-### P2 — k6 configuration and runtime smoke
+### P2 — k6 configuration and runtime smoke (complete; PR #26)
 
 Pin an exact stable Grafana k6 image in the opt-in `performance` Compose profile. Mount scenario files read-only and results to a host-visible output directory. Document version verification and a minimal offline smoke scenario proving the runtime executes and failed checks produce a failed run. This delivery creates no authentication, endpoint scenarios, measurement runs, or SQL plans. Normal Compose startup must not start k6.
 
-### P3 — Endpoint scenarios and response checks
+### P3 — Endpoint scenarios and response checks (complete; PR #27)
 
 Add k6 scenarios for weekly availability, a busy-day administrator report, and an empty-day report, using the verified dataset manifests. Authenticate seeded user/admin accounts in setup, tag setup/warmup/measured phases and endpoints, validate response shape/counts and status, and configure thresholds so failed checks fail the run. Add one measured-only Trend per endpoint for duration so authentication/warmup are excluded from the endpoint latency summaries. Report median and p95, without an arbitrary latency SLO. Run only short contract validation for this delivery; do not execute the full comparison or capture SQL plans yet.
 
-### P4 — Measurements and SQL evidence (complete)
+### P4 — Measurements and SQL evidence (complete; PR #28)
 
 Executed all three scenarios at both sizes with three rounds each under the agreed protocol. The final report, compressed raw exports, sanitized summaries, response bytes, captured Prisma SQL/parameters, query counts and representative plans are linked from `docs/performance/measurements.md`. The busy-day report scans the booking table at both sizes. Availability is not a pure scaling comparison because the selected week's booked/available slot distribution differs between fixtures.
 
-### P5 — Evidence-based decision (complete: retain current queries)
+### P5 — Evidence-based decision (complete; retain current queries; PR #29)
 
 The P4 evidence does not justify an application or schema optimization at the tested scale. Keep the current availability and daily-report repository queries and indexes. The busy-day full scan is a scaling consideration, but its measured HTTP latency does not establish a present bottleneck; no user-facing latency target was approved. The weekly slot distribution differs between dataset sizes, so it is not a pure scaling comparison. See [ADR 006](adr/006-performance-measurement-and-no-change.md) for the decision, alternatives, evidence and reevaluation triggers.
 

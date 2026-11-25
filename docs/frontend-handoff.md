@@ -1,67 +1,63 @@
-# Frontend start/resume prompt
+# Frontend context handoff
 
-Copy the following prompt into another agent/tool with the Courtly checkout. Replace only the checkout path if different. It authorizes the next frontend milestone after its dependencies have actually been merged, not all remaining milestones at once.
+Use this self-contained context prompt only with a separately assigned, explicit frontend task. It supplies repository guidance; it does not authorize a milestone, select a next task or permit replaying a completed delivery. D4.1–D4.3, D5 and D6 are implemented and merged. The candidate writes the root `README.md`; agents may review candidate text but must not author it or submit the challenge.
 
 ```text
-Work in the Courtly repository (this checkout; locally /Users/edionay/Dev/courtly).
+Work in the Courtly repository at the checkout supplied for this task.
 
-First inspect git status and the actual PR #11 and #12 merge states with gh. Locate
-the documentation on merged main or the existing interface-design branch
-without overwriting unrelated work. If the docs are absent from an older
-main, read the PR branch before planning; do not invent missing context.
+First inspect git status, current branch, current code and relevant PR state with
+the GitHub CLI. Preserve unrelated local work. Do not assume historical PRs are
+pending. The D4.1–D4.3, D5 and D6 frontend deliveries are already complete; do
+not repeat them. Implement only the exact, separately authorized task. If no
+task with explicit scope and acceptance criteria was supplied, stop before
+editing and report that missing task.
 
-Read AGENTS.md, DESIGN.md, docs/frontend-plan.md, docs/design-system.md,
-docs/frontend-handoff.md, docs/execution-plan.md, docs/task-briefs.md,
+Read AGENTS.md, PRODUCT.md, DESIGN.md, docs/execution-plan.md,
 docs/challenge.md, docs/decisions.md, docs/architecture.md,
-docs/api-contracts.md and docs/ui-flows.md. Inspect the local approved
-mockups through docs/mockups/aguinha/REVIEW.md. These files are the task
-context; do not require previous chats, a running gallery server or Aguinha.
+docs/api-contracts.md, docs/ui-flows.md, docs/frontend-plan.md,
+docs/design-system.md, docs/task-briefs.md, and the relevant ADRs. For design
+references inspect docs/mockups/aguinha/REVIEW.md. These repository files are
+the context; do not depend on prior chats, the Aguinha checkout, a gallery
+server or unavailable files.
 
-First inspect git status, current branch and actual PR/merge state using gh.
-Preserve unrelated local files and other workers' edits. PR #11 delivers the
-accepted visual system: if not merged, report that dependency and continue
-only review/fixes on its branch. Do not start frontend application work from
-an older main or merge it yourself.
+Current frontend implementation: React with strict TypeScript, existing web
+Tailwind, React Router, native fetch and Storybook. `frontend/src/app/AppRoutes.tsx`
+contains the delivered routes; feature pages/hooks own integration and
+navigation, while presentation views receive props and callbacks and have
+fixture stories. Inspect the implementation before changing it. Keep API,
+authentication storage and routing out of presentational views. Keep native
+controls and `<dialog>.showModal()` behavior. Danger actions use white
+backgrounds with red text and red borders. Use local Inter fonts and court
+photos/fallback from `frontend/src/assets`; never require the Aguinha checkout.
 
-PR #12 contains the D4.1–D4.3 breakdown. If it is not merged, do not start
-frontend implementation; report that planning dependency. Only the user
-merges it.
+Honor the existing HTTP/business contracts, role enforcement, sessionStorage
+behavior, timezone and money rules, database overlap constraint and error
+handling. Do not add a new feature, API field, automated frontend test suite or
+mutation retry unless the explicit task authorizes that change. Do not migrate,
+reset or modify the application database for verification. Use `courtly_test`
+for authorized backend integration checks; use the isolated performance stack
+only for a task specifically about that completed exercise.
 
-After dependencies are merged, start or resume the first incomplete delivery:
-D4.1 frontend-visual-foundation, D4.2 frontend-authentication, D4.3
-court-browsing, D5 booking-interface, then D6 court-administration. Each is a
-separate PR and the user's merge unlocks the next.
-Implement ONLY the current milestone in one feature PR; wait for the user's
-merge before the next. Resume an existing branch/PR rather than duplicating
-work. Treat this prompt as authorization for that next eligible milestone.
-
-Use React, strict TypeScript and existing Tailwind web tooling with Courtly's
-local Aguinha-derived DS. Views are dumb props/callback components with
-fixture stories; keep fetch, auth/session, and router hooks in integration
-containers. Add a route only with the screen being implemented. No
-Mantine/NativeWind/gluestack migration. Danger
-actions have white backgrounds with red text and red outlines. Keep native
-inputs and dialog.showModal(), exact API contracts, role enforcement,
-sessionStorage reload, explicit auth-error navigation, no mutation retries,
-and separate container/hooks/API versus props-only presentation.
-
-Follow docs/frontend-plan.md for scope/ownership, same-origin Vite dev AND
-preview proxy, local fonts/photos, sport fallback, routes, D4-D6 acceptance,
-existing commands and isolated verification. Do not add frontend automated
-tests; demonstrate states in Storybook and verify browser accessibility.
-Do not implement optional features or modify the user's application DB.
-
-Act as orchestrator and follow the configured programmer/reviewer workflow
-in AGENTS.md. Verify Luna profiles; report missing availability instead of
-silently substituting. Give workers the necessary specifications, ownership
-and acceptance criteria and tell them they are not alone. Independently
-review the actual committed diff, route fixes back, then recheck.
-
-Write code/UI/docs in English; use a feature-only kebab-case branch, commits
-like feat: add frontend authentication (no parenthesized scope or AI
-attribution), and gh CLI for the PR. Only the user merges and writes the
-root README. Never submit the challenge. Finish with the PR URL, commit,
-actual checks/screenshots, limitations and next dependency.
+Follow the configured programmer/reviewer workflow in AGENTS.md for an
+authorized implementation. Use a feature-only kebab-case branch, Google-style
+commit subject without scope parentheses, and `gh` CLI to open a review PR.
+Preserve candidate and other workers' files. Agents do not merge; only the
+user merges. Do not write the root README or submit the challenge. Report the
+PR URL, commit, actual verification, limitations and any dependency for the
+assigned task.
 ```
 
-The prompt deliberately verifies live state instead of assuming D4 is always next. It also preserves the current model/workflow constraint across coding tools; report any unavailable runtime capability before dependent implementation.
+The current local Compose defaults are the frontend at `http://localhost:4174`,
+the direct API at `http://localhost:3100`, Swagger UI at
+`http://localhost:3100/api/docs`, OpenAPI JSON at
+`http://localhost:3100/api/openapi.json`, and API health at
+`http://localhost:3100/api/health`. The normal Compose frontend proxies `/api`
+to `http://backend:3000`; the Vite development proxy defaults to the direct
+API's host port and can be adjusted through `COURTLY_API_PORT`. Run Storybook
+with `npm run storybook --workspace frontend`; its configured host port is
+`6006`. Performance Compose uses the separate host ports 3121 and 4191 and is
+documented in `docs/performance/README.md`.
+
+Seeded demo accounts: admin `admin@courtly.test` / `CourtlyAdmin2026!`;
+users `alex@courtly.test` and `jordan@courtly.test` / `CourtlyUser2026!`.
+These credentials are local demonstration data, not production credentials.

@@ -2,6 +2,10 @@
 
 Approved project-local design system. The user accepted the complete Aguinha-derived mockup pack, with destructive actions changed to outlined red buttons. This document and the local assets are sufficient without the Aguinha repositories or earlier chats. Paths below are repository-root-relative unless stated otherwise.
 
+## Current implementation
+
+The Tailwind theme and local Inter font faces are implemented in `frontend/src/styles.css`; the font files and license are in `frontend/src/assets/fonts/`. The D4.1 delivery copied the approved sport images and neutral fallback to `frontend/src/assets/courts/`, with source credits alongside them. The token values and guidance below are the approved design reference. A documentation update does not certify that visual or accessibility behavior has been rechecked.
+
 ## Identity
 
 Use a coherent light interface: a pale blue canvas, white rounded surfaces, blue actions and dark blue text. Navigation and content share the same surface treatment. Courtly keeps its own name and court-line mark. Real sport photographs provide character in court cards; they are illustrative rather than photographs of the seeded facility.
@@ -40,7 +44,7 @@ Use Inter with regular, semibold and bold weights and a sans-serif fallback. The
 
 Use the existing Tailwind CSS 4.3.5 and @tailwindcss/vite 4.3.5 with React 19.3.1 and Vite 8.3.8. Aguinha uses Tailwind through NativeWind and gluestack; Courtly uses web Tailwind and native HTML. The earlier Mantine proposal is superseded. Do not install Mantine, NativeWind, gluestack or React Native to reproduce this appearance.
 
-Define tokens once in `frontend/src/styles.css`, using Tailwind 4's CSS-first theme. The following is an implementation specification, not code already added to the frontend:
+Tokens are defined once in `frontend/src/styles.css` using Tailwind 4's CSS-first theme. The following declaration reflects the implemented theme:
 
 ```css
 @import "tailwindcss";
@@ -59,7 +63,7 @@ Define tokens once in `frontend/src/styles.css`, using Tailwind 4's CSS-first th
 }
 ```
 
-Register local Inter faces at 400, 600 and 700 using @font-face and font-display: swap. Source files and OFL license are committed at `docs/mockups/assets/fonts/`. D4 copies them to `frontend/src/assets/fonts/` and references those assets from CSS; no local Aguinha path or remote font service is required.
+Register local Inter faces at 400, 600 and 700 using @font-face and font-display: swap. Source files and the OFL license are committed at `docs/mockups/assets/fonts/` and copied to `frontend/src/assets/fonts/`; `frontend/src/styles.css` references the local files. No local Aguinha path or remote font service is required.
 
 Create only the reusable native primitives the screens need: button/link styling, labeled field/error text, card, page shell, status presentation and native dialog. Use a small button variant API rather than scattered contradictory class sets. Presentational primitives must not fetch, navigate programmatically or read session storage.
 
@@ -90,7 +94,7 @@ The backend prepares display values according to `docs/api-contracts.md`. This s
 
 ## Verification and handoff
 
-The screen pack consists of editable SVG sources and rendered PNG studies. Inspect desktop and mobile compositions, text overflow, photo crops, state labels and modal actions. Browser keyboard, screen-reader, focus and native-dialog checks belong to the later working frontend. The screen pack and state boards are approved visual references, with the outlined-danger correction applied. They are not implemented application pages; static fixtures never override API values or interaction rules.
+The screen pack consists of editable SVG sources and rendered PNG studies. It is a visual reference, not application code; static fixtures never override API values or interaction rules. For an explicitly assigned visual change, inspect desktop/mobile composition, text overflow, photo crops, state labels, modal actions, keyboard behavior, focus, accessible names and native-dialog behavior in the actual frontend.
 
 ## Responsive implementation targets
 
@@ -103,6 +107,6 @@ The screen pack consists of editable SVG sources and rendered PNG studies. Inspe
 
 - Inter: `docs/mockups/assets/fonts/Inter.ttf`, `InterSemiBold.ttf`, `InterBold.ttf`, with `OFL.txt` and `SOURCES.md` in that folder.
 - Sport photography: `docs/mockups/assets/tennis.jpg`, `basketball.jpg`, `padel.jpg`; attribution/provenance is in `docs/mockups/assets/SOURCES.md`.
-- D4 copies the needed images into frontend assets. Match a small case-insensitive trimmed sport-name map (Tennis, Basketball, Padel); unknown free-text values, including the current seeded Futsal, use the committed `docs/mockups/assets/sport-neutral.svg` fallback and retain the actual sport text. The fallback is a #E5F0F5 10:7 surface with the blue Courtly court mark and no photograph. Do not relabel Futsal as Padel or hardcode court IDs to a sport photograph.
+- The completed D4.1 delivery copied the needed images into frontend assets. Match a small case-insensitive trimmed sport-name map (Tennis, Basketball, Padel); unknown free-text values, including seeded Futsal, use `frontend/src/assets/courts/sport-neutral.svg` and retain the actual sport text. The fallback is a #E5F0F5 10:7 surface with the blue Courtly court mark and no photograph. Do not relabel Futsal as Padel or hardcode court IDs to a sport photograph.
 - Court photo assets are decorative illustrations of the sport, not verified facility photos. Use empty alt when adjacent visible text already conveys the court/sport; do not put essential booking data only in an image.
 - The gallery is `docs/mockups/aguinha/index.html`; local PNGs/SVGs and its REVIEW.md work without a running gallery server. Old rejected alternatives are not implementation references.

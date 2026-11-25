@@ -1,15 +1,15 @@
 # Frontend implementation plan
 
-This is the frontend entry point for a fresh chat, agent or coding tool. It is self-contained with the repository documents linked below: no earlier conversation, Aguinha checkout, local gallery server or unavailable screenshot is required. PR #11 adopted the design system; the current implementation sequence begins with D4.1.
+This is the frontend architecture, design and historical delivery reference for a fresh chat, agent or coding tool. It is self-contained with the repository documents linked below: no earlier conversation, Aguinha checkout, local gallery server or unavailable screenshot is required. D4.1–D4.3, D5 and D6 have been implemented and merged (PRs #13–#24). Nothing in this plan authorizes those deliveries to be started again or chooses a next implementation task.
 
 ## Current state and authority
 
-- D1–D3 and design PR #11 are implemented and merged, including the administrator report and approved frontend design system. The React frontend remains a bootstrap placeholder with Vite, Tailwind and Storybook tooling.
-- D1 already initialized the React/Vite/Tailwind/Storybook workspace. D4.1 finishes that existing foundation with Courtly's local design system and presentational views; it must not scaffold a second frontend or replace the approved tooling.
+- D1–D3 and design PR #11 are implemented and merged, including the administrator report and approved frontend design system. D4.1–D4.3, D5 and D6 have also been implemented and merged. The current React application contains authentication, court browsing and administration, weekly availability, booking review/creation, personal bookings/cancellation, and the administrator daily report.
+- The React/Vite/Tailwind/Storybook workspace initialized in D1 is now the implemented application. Its current routes and integrations are in `frontend/src/app/AppRoutes.tsx` and `frontend/src/features/**/pages/`; presentational components and fixtures remain colocated with feature views.
 - The user approved the complete Aguinha-derived mockup pack, with one correction: danger actions have white backgrounds, red text and red borders. The complete local copy is [design-system.md](design-system.md); root [DESIGN.md](../DESIGN.md) points to it.
-- Design documentation was merged in PR #11. This D4 breakdown is under review in PR #12; start D4.1 only after the user merges PR #12. The three dependent deliveries let the design foundation, authentication screens and courts screen be reviewed separately.
+- Design documentation and the D4 breakdown were merged in PRs #11 and #12. PRs #13–#16 delivered D4, PRs #17–#21 delivered D5, and PRs #22–#24 delivered D6. These identifiers record history, not pending dependencies.
 - Read [AGENTS.md](../AGENTS.md), [challenge.md](challenge.md), [decisions.md](decisions.md), [architecture.md](architecture.md), [api-contracts.md](api-contracts.md), [ui-flows.md](ui-flows.md), [execution-plan.md](execution-plan.md) and [task-briefs.md](task-briefs.md). These are all committed project context. The challenge owns mandatory scope, approved decisions own choices, API contracts own JSON, UI flows own behavior, and the DS/mockups own appearance. Do not invent features from an illustrative image.
-- Only the user merges. Use one PR for each D4.1, D4.2, D4.3, D5 and D6 delivery, each based on the user's merge of its dependency. Do not implement later screens before their prior delivery is merged. Inspect git/PR state to resume existing work without recreating it.
+- Only the user merges. For a future, separately authorized frontend change, inspect the current branch, code and PR state first, then use a scoped feature branch and PR. Do not infer authorization or a next task from the historical D4–D6 order. Do not recreate already merged screens.
 
 ## Implementation choices
 
@@ -34,9 +34,9 @@ Names may follow existing conventions, but these responsibilities are fixed. Pag
 
 The full [gallery index](mockups/aguinha/REVIEW.md) links 35 local PNG/SVG studies. Its HTML gallery is optional convenience; implementing the app never requires the mockup renderer or a running gallery server.
 
-Use `docs/mockups/assets/fonts/Inter*.ttf` and the accompanying OFL license as the source for local frontend fonts. Copy into `frontend/src/assets/fonts/` during D4.1. Copy the approved sport photos and their credits into frontend assets during D4.1. Match Tennis/Basketball/Padel by trimmed, case-insensitive sport text; unknown sports use the committed `docs/mockups/assets/sport-neutral.svg` (light blue 10:7 surface and blue generic court mark, no photograph) without pretending to be another sport. The actual seed includes Futsal, not Padel. Display actual API names, hours and prices; mockup fixture values are not seed requirements. Do not add photo upload, court-image API fields, filters or ratings.
+The approved local font sources and OFL license are in `docs/mockups/assets/fonts/`; the delivered frontend copies are in `frontend/src/assets/fonts/`. D4.1 also copied the approved sport photos, credits and neutral fallback into `frontend/src/assets/courts/`. Match Tennis/Basketball/Padel by trimmed, case-insensitive sport text; unknown sports use the frontend's committed neutral fallback without pretending to be another sport. The actual seed includes Futsal, not Padel. Display actual API names, hours and prices; mockup fixture values are not seed requirements. Do not add photo upload, court-image API fields, filters or ratings.
 
-Implement all token values, radii, shadows, outline-danger variants and responsive behavior from [design-system.md](design-system.md). A regular form Cancel is secondary navigation; Cancel booking is a destructive action. Use one small consistent outline icon set, or the existing authored SVG geometry, never Unicode stand-ins. Do not install an icon dependency unless needed and justified.
+The delivered implementation uses the tokens, radii, shadows, outlined-danger variant and responsive guidance in [design-system.md](design-system.md). A regular form Cancel is secondary navigation; Cancel booking is a destructive action. Preserve one small consistent outline icon set or existing authored SVG geometry, never Unicode stand-ins. Do not install an icon dependency unless a separately authorized change needs and justifies it.
 
 ## API transport and environment
 
@@ -60,7 +60,9 @@ Store only the token in sessionStorage; keep user/role in auth state. Login retu
 
 Never automatically retry a mutation. Disable repeat submit while pending. For ambiguous booking-creation connection failure, do not claim success or failure of persistence; offer checking My bookings before another attempt. Use AbortController or an equivalent simple latest-result guard for changing availability/preview reads; the latest selection alone may populate the UI. Do not abort an already-submitted mutation and then assume it was undone.
 
-## Routes and delivery ownership
+## Historical D4–D6 scope and acceptance references
+
+All milestones in this section are complete and merged. The original ownership, scope and acceptance text is retained so later maintainers can understand implementation choices and review history. It is not an active work queue or authorization. Any new frontend implementation needs an explicit task with current ownership and acceptance criteria.
 
 ### D4.1 — Frontend visual foundation
 
@@ -84,7 +86,7 @@ Acceptance: direct `/courts` load and refresh restore auth and request courts; b
 
 ### D4 completion
 
-D4 is complete only after D4.1, D4.2 and D4.3 have each passed review and been merged by the user. D5 depends on merged D4.3. Do not combine these PRs or implement booking/admin screens early.
+D4.1–D4.3 were reviewed and merged in PRs #13–#16. D5 and D6 were subsequently delivered and merged in PRs #17–#24. This paragraph is retained only to explain the original dependency order; it is not an active gate or authorization.
 
 ### D5 — booking-interface
 

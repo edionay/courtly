@@ -1,6 +1,6 @@
-# Application foundation
+# Application foundation: D1 snapshot
 
-This note records the D1 implementation setup. Product endpoints and booking flows are delivered in later increments.
+This is a historical snapshot of the D1 setup, not a description of the current application's feature set or security posture. At that checkpoint the only API endpoint was `GET /api/health`; authentication, courts, availability, booking, cancellation and reports were added in later merged deliveries. Use the current source, `docs/execution-plan.md` status, and the relevant PR history for present behavior. The dependency audit and test counts below are also historical checkpoint evidence, not current verification.
 
 ## Workspace versions
 
@@ -17,7 +17,7 @@ The frontend plugin's declared peer range includes Vite 8; Storybook's React/Vit
 
 `npm run generate:api --workspace backend` runs tsoa routes and OpenAPI generation. Backend dev watches controller source and regenerates before restarting. Backend typecheck and build also regenerate routes/spec and the Prisma client. Docker builds use the same build command. Never edit `backend/generated` by hand; it is ignored build output.
 
-The bootstrap exposes only `GET /api/health`. Swagger UI is available at `/api/docs`, and the generated OpenAPI document at `/api/openapi.json`.
+At the D1 bootstrap checkpoint, the API exposed only `GET /api/health`. Swagger UI was available at `/api/docs`, and the generated OpenAPI document at `/api/openapi.json`. The current API includes the later delivered contracts documented in `docs/api-contracts.md`.
 
 Compose's default host URLs are `http://localhost:4174` for the frontend, `http://localhost:3100` for the API, and `http://localhost:3100/api/docs` for Swagger UI. Override `COURTLY_API_PORT` or `COURTLY_WEB_PORT` if those host ports are occupied.
 
@@ -25,11 +25,11 @@ Compose's default host URLs are `http://localhost:4174` for the frontend, `http:
 
 The [upstream tsoa 7 upgrade notes](https://tsoa-community.github.io/docs/upgrading-to-v7.html) describe unbounded work in array and buffer validation fixed after the 6.x line. D1's only tsoa input has no query, path, or body fields, so this finding is not exercised by the bootstrap route. Approved application request bodies use scalar fields and do not accept arrays or buffers. This is an applicability assessment, not a claim that tsoa 6.6.0 contains the fix. Reassess before adding any array or buffer request contract; do not accept those inputs with tsoa 6.6.0 unless a stable compatible resolution is approved.
 
-The registry audit for this exact pin set reports 10 transitive advisories (7 moderate and 3 high). In particular, Prisma 7.10.1's `@prisma/config` pins `effect` 3.20.0, which is in the reported ReDoS range, and tsoa 6.6.0's CLI dependencies are in reported moderate ranges. The audit's suggested Prisma 6 and tsoa 7 release candidate conflict with approved pins and the stable-only rule; neither was substituted. These findings remain for review before broader API implementation.
+The D1 registry audit of its then-current lockfile reported 10 transitive advisories (7 moderate and 3 high), including advisories in the Prisma and tsoa dependency trees. This historical audit is not a current advisory count or review of the present lockfile. Do not use it to infer that findings remain unresolved or that current dependencies are free of advisories; inspect current package metadata and audit evidence for a separately authorized dependency/security task.
 
 ## PostgreSQL overlap evidence
 
-This records the historical D1 check. The later D3.3a learning stage removed the constraint through a forward migration and was reviewed/merged. D3.3b restores it through another migration; the current-branch verification is recorded below (see execution-plan.md for review/merge acceptance).
+This records historical D1 and D3.3 verification. The reviewed D3.3a learning stage temporarily removed the constraint through a forward migration. D3.3b restored it through another migration and was reviewed and merged; the following concurrency evidence describes the final delivered behavior.
 
 The real PostgreSQL integration check confirmed that `btree_gist` and `bookings_no_confirmed_overlap` exist, an overlapping confirmed interval fails, and an adjacent interval is accepted. With Prisma 7.10.1 and `@prisma/adapter-pg` 7.10.1, the observed overlap is a `PrismaClientKnownRequestError` with code `P2039`, `meta.modelName: "Booking"`, and `meta.driverAdapterError.cause` containing PostgreSQL code `23P01` and a message naming `bookings_no_confirmed_overlap`. Map conflicts by the observed driver code and constraint identity; do not classify every `P2039` as a booking conflict. The D3.3b simultaneous-insert experiment additionally observed `P2034` with `cause.originalCode: "40P01"` (deadlock rollback). The approved recovery repeats only that autocommit INSERT once; it does not map deadlock directly to overlap or retry ambiguous outcomes. See decisions.md for the bounded policy.
 
@@ -41,7 +41,7 @@ The migration chain is preserved: initial constraint creation, the educational r
 
 Actual simultaneous INSERTs also exposed a deadlock rollback. The repository permits one retry only for observed Prisma P2034 / driver 40P01, using the same values. A named exclusion violation becomes BOOKING_CONFLICT; deadlock itself does not. The second deadlock or unrelated failure propagates. Network/timeout/ambiguous-commit errors are never retried. Thus the constraint provides integrity, while the bounded retry recovers one known-aborted operation.
 
-At this checkpoint, 49 unit tests and two real-PostgreSQL integration tests passed. A direct HTTP pair from two authenticated users returned 201 and 409, with one stored confirmed booking and the winning user's UTC interval/cent total verified. Docker build used Node 24.22.3; the isolated database used PostgreSQL 17.12. Verification did not apply migrations or modify data in the main application database. If an application database contains overlaps created during D3.3a, restoration must stop for explicit data review rather than delete or cancel records automatically.
+At the D3.3b verification checkpoint, 49 unit tests and two real-PostgreSQL integration tests passed. A direct HTTP pair from two authenticated users returned 201 and 409, with one stored confirmed booking and the winning user's UTC interval/cent total verified. Docker build used Node 24.22.3; the isolated database used PostgreSQL 17.12. Verification did not apply migrations or modify data in the main application database. If an application database contains overlaps created during D3.3a, restoration must stop for explicit data review rather than delete or cancel records automatically. These are historical results from the merged delivery, not a claim that this documentation update reran them.
 
 ## Seeded demonstration data
 

@@ -1,13 +1,29 @@
 # Courtly execution plan
 
-Status: approved consolidated specification, maintained during incremental implementation through independently reviewed feature PRs. This plan authorizes no automatic merge or challenge submission. The candidate must author the root README. Approved product decisions are closed; delivery acceptance depends on executed checks and review evidence, not on this plan alone.
+Status: implementation milestones D1–D6 and the separately approved performance exercise P1–P5 are complete and merged. The table below records that history; each delivery section remains the original scope and acceptance specification, not a live task queue. Merged status is not a fresh rerun of every historical check. No implementation is currently authorized by this document. The candidate must author the root README before final handoff, and the project must not be described as challenge-ready until that candidate-owned requirement and final acceptance review are complete. Agents do not merge PRs or submit the challenge.
+
+## Current delivery status
+
+| Workstream | Status | Merged delivery history |
+| --- | --- | --- |
+| D0 planning | Complete | PR #1 |
+| D1 application foundation | Complete | PR #2 |
+| D2 authentication and courts API | Complete | PR #3 |
+| D3.1–D3.6 availability, booking and daily-report API | Complete | PRs #4–#10; D3.3 learning/remediation stages are #6/#7 |
+| Design system and frontend delivery plan | Complete | PRs #11/#12 |
+| D4.1–D4.3 visual foundation, authentication and courts UI | Complete | PRs #13–#16 |
+| D5 booking UI | Complete | PRs #17–#21 |
+| D6 court administration and daily-report UI | Complete | PRs #22–#24 |
+| Performance P1 dataset/isolation, P2 k6 runtime, P3 scenarios, P4 measurements, P5 decision | Complete | PRs #25–#29 |
+
+All D1–D6 and P1–P5 specifications below are retained for rationale, traceability and review. Their original acceptance criteria describe those historical deliveries; they are not current implementation instructions. A future change needs an explicit task with defined ownership, scope and review. Do not infer a “next” delivery from the sequence or this table. The root candidate `README.md` is not written by agents and remains part of final candidate handoff.
 
 ## Start here in another chat
 
 1. Read root AGENTS.md, PRODUCT.md and DESIGN.md; then this plan, challenge.md, decisions.md, api-contracts.md, ui-flows.md, architecture.md and the relevant ADRs. For frontend work also read frontend-plan.md, design-system.md, frontend-handoff.md and mockups/aguinha/REVIEW.md; the high-fidelity pack supersedes low-fidelity styling. All paths in this document are relative to docs/ unless explicitly root-relative. All are repository files; no chat transcript is required.
 2. Treat challenge.md as the mandatory requirement reference, decisions.md as approved project choices, api-contracts.md as normative wire contracts, and ui-flows.md plus canonical SVG/PNG as approved interaction/layout. ADRs explain consequences, not competing contracts. If they conflict, resolve against the latest approved consolidated choice and brief before implementation; do not infer an extra feature from an older image.
-3. Establish current repository state with git status, branch, and PR inspection. The historical main bootstrap at c8ce1f8 was a one-time exception. D0–D3 and design/handoff PR #11 are merged. The D4 breakdown is in PR #12; verify that the user has merged it before starting D4.1. Future work uses its own feature branch and PR. Preserve unrelated local drafts, installed skill folders, and candidate work. Never merge on behalf of the user.
-4. Start application delivery only after the planning PR is reviewed and merged by the user. Each dependent delivery starts from the merged base. Use the configured programador and revisor roles with Luna; verify availability and give them the applicable brief in task-briefs.md. Do not silently substitute a model.
+3. Establish current repository state with git status, branch, and PR inspection. The historical main bootstrap at c8ce1f8 was a one-time exception. All deliveries listed in the status table are merged. Preserve unrelated local drafts, installed skill folders, and candidate work. Only the user merges PRs.
+4. Do not restart an already completed delivery from this plan. For a new explicitly authorized task, determine the current base and give the configured programador and revisor roles the applicable brief in task-briefs.md. Verify their availability; do not silently substitute a model. Each feature PR is reviewed and merged only by the user.
 5. Keep every delivery small and reviewable. Prefer happy-path implementation; discuss additional edge behavior before adding it. Routine pending dependency pins are delegated: latest stable compatible releases, exact versions/lockfile, no prereleases. Already-approved exact pins are in decisions.md.
 
 ## Mandatory outcome
@@ -160,7 +176,7 @@ Real migrated PostgreSQL is authoritative. Restore migration validation must sto
 
 Do not pre-implement this follow-up migration or conflict mapper in D3.3a. Use fresh isolated fixtures for the demonstration. If an application database acquired overlapping rows during D3.3a, restoration requires review of those rows before adding the constraint; never silently delete, cancel or reset application bookings to make the migration pass.
 
-D3.3b has been verified, reviewed and merged as PR #7, completing the creation/concurrency milestone. D3.4 and D3.5 have also been reviewed and merged as PRs #8 and #9. D3.6 daily-booking-report has been reviewed and merged as PR #10, completing D3. The high-fidelity visual screen pack is now authorized; D4 application implementation remains a later delivery.
+D3.3a is a historical learning stage: its forward migration temporarily removed the overlap constraint to demonstrate that two prechecks could race. D3.3b restored the named database constraint and the final one-success/one-conflict guarantee. Both stages are preserved in migration history. D3.4–D3.6 completed the own-bookings, cancellation and daily-report API. D3 is complete in PRs #7–#10. The design pack and D4 frontend work were subsequently completed in PRs #11–#16; the historical stage note does not describe current database protection as absent.
 
 #### D3.4 — Own bookings
 
@@ -193,13 +209,13 @@ Acceptance:
 - Verify actual auth, 200/403/404/409/422 cases, response, idempotent repeat and OpenAPI/docs through direct HTTP against ephemeral PostgreSQL 17.12 courtly_test. Use gh CLI for the PR; no browser/Swagger automation. Run focused existing/new tests, typecheck/build, preserve the main database/stack and clean only owned temporary resources. Record actual commands/results and runtime versions.
 
 
-#### D3.6 — Daily booking report
+#### D3.6 — Daily booking report (complete; PR #10)
 
-Branch: daily-booking-report. Depends on merged D3.5 (PR #9). This delivery is authorized; D3 remains incomplete until its review and user merge. Implement only admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Focused date/revenue/role checks and direct HTTP and OpenAPI verification.
+Historical delivery brief: `daily-booking-report`, dependent on D3.5 (PR #9). It implemented admin GET /api/reports/daily-bookings. Omitted date defaults to the current Facility-local day; supplied exact YYYY-MM-DD uses local midnight-to-next-midnight UTC bounds. Include all courts/inactive courts and confirmed/cancelled rows, ordered by start. Sum stored confirmed totals only and use approved presentation without timezone/display.status. Its acceptance and verification belong to PR #10; this text is not authorization to reimplement the endpoint.
 
-D3 is complete only after all six feature deliveries, including both D3.3 review stages, have been reviewed and merged by the user. Each PR reports its own acceptance and does not claim future subdelivery tests passed. Preserve model-driven Swagger, manual composition and simple focused validation throughout. D4 continues to depend on completion of the full D3 milestone.
+D3 completed after all six feature deliveries, including both D3.3 review stages, were reviewed and merged by the user. Each PR's own evidence remains in its review history. Preserve model-driven Swagger, manual composition and focused validation for any explicitly authorized future API change.
 
-### D4 — Frontend foundation, authentication and court grid
+### D4 — Frontend foundation, authentication and court grid (complete; PRs #13–#16)
 
 The user approved the complete high-fidelity pack with outlined-danger buttons. Use root DESIGN.md, design-system.md, frontend-plan.md and the local mockups/aguinha/REVIEW.md. The implementation tool is existing web Tailwind, not Mantine. The complete frontend dispatch/transport/assets/ownership/manual-check contract is in frontend-plan.md. PR #11 is merged; deliver D4 as three dependent PRs below. Add routes with the screen/integration being developed, not all future screens up front.
 
@@ -221,9 +237,9 @@ Branch: `court-browsing`. Depends on user's merge of D4.2. Add the courts collec
 
 Acceptance: direct `/courts` load and refresh restore auth and fetch the correct role-aware data; API failures are recoverable; inactive courts are not bookable. Do not show an active-court booking link until its D5 destination exists. Shell and grid states have Storybook fixture stories; builds, keyboard/focus and 390/1440px layouts are verified manually. No automated frontend tests.
 
-D4 completes only after the user has reviewed and merged all three PRs. D5 depends on merged D4.3. Do not combine the dependent deliveries or implement booking/admin screens early.
+D4.1–D4.3 were reviewed and merged in PRs #13–#16. D5 and D6 have since been completed; this historical sequencing rule does not authorize new implementation.
 
-### D5 — User booking flow and own bookings
+### D5 — User booking flow and own bookings (complete; PRs #17–#21)
 
 Branch: booking-interface. Depends on D4.3. Own frontend selection/review/result dialogs/own-booking/cancellation containers, hooks, views, API functions, stories and associated docs.
 
@@ -234,7 +250,7 @@ Acceptance:
 - Own bookings render server order/labels and use canCancel, native confirmation and inline cancellation success. Closed-window conflict explains/refreshes without retry.
 - Storybook demonstrates relevant states. Manually walk book one/two hours, occupied conflict, refresh session, return/reselect, cancellation and history; inspect focus/keyboard/dialog dismissal. No need to automate frontend tests.
 
-### D6 — Administrator interface and final acceptance
+### D6 — Administrator interface and final acceptance (complete; PRs #22–#24)
 
 Branch: court-administration. Depends on D5. Own frontend admin court forms/actions and daily report, related stories, minimal integration fixes and delivery evidence. Backend changes only if needed to resolve a demonstrated contract mismatch and reviewed in the same PR; avoid unplanned refactors.
 
@@ -249,7 +265,7 @@ Acceptance:
 
 ## Command and startup contract
 
-These scripts and startup files already exist. Read their current manifests/Compose values and record actual verification for each delivery; documentation alone is not a passing check:
+These scripts and startup files exist in the merged application. Their historical per-delivery checks belong to the relevant PRs; this plan does not claim they were rerun during documentation consolidation. For any future authorized change, inspect current manifests/Compose values and report only the checks actually run:
 
 - Root npm ci with the committed lockfile; root npm run build and npm run typecheck cover both workspaces.
 - Root npm run test:unit and npm run test:integration delegate to backend. Unit command never requires a DB; integration command prepares only courtly_test and runs Vitest against PostgreSQL.
@@ -260,6 +276,6 @@ These scripts and startup files already exist. Read their current manifests/Comp
 
 ## Acceptance evidence and handoff
 
-Each PR body names the concrete delivered behavior, affected contract/spec sections, commands actually run/results, HTTP/OpenAPI and applicable UI/manual checks, and material unresolved limitations. No AI attribution/signatures/co-author trailers in PRs or commits. Review actual changed files and diff, not merely a developer summary. Recheck after fixes. Only the user merges, then start the next dependent branch from merged main.
+Each implementation PR body records its concrete delivered behavior, affected contract/spec sections, commands actually run/results, HTTP/OpenAPI and applicable UI/manual checks, and material unresolved limitations. No AI attribution/signatures/co-author trailers in PRs or commits. Review actual changed files and diff, not merely a developer summary. Recheck after fixes. Agents do not merge; only the user merges.
 
-The root candidate README, package-install/runtime compatibility, noted tsoa applicability review and executed test/manual evidence remain visible delivery checkpoints. Visual tokens and web Tailwind are now approved in design-system.md. Existing wireframes are approved structure, not proof of a running accessible app. Deferred feature improvements are in decisions.md and ADRs; do not implement them as acceptance extras.
+The remaining candidate-owned final handoff is the root README, covering startup/credentials, the requested stack trade-offs, the exact database concurrency protection, and improvements with more time. The orchestrator may discuss and review the candidate's draft but does not write it. Do not describe the repository as challenge-ready until the candidate-authored README and final acceptance review are complete. Historical checks and evidence remain in merged PRs; wireframes and mockups are design/flow references, not proof of current application behavior. Deferred improvements are listed in decisions.md and ADRs and are not implementation acceptance extras.
