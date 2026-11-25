@@ -158,3 +158,12 @@ export default function (tokens) {
   measureEndpoint("busy_daily_report", `/api/reports/daily-bookings?date=${encodeURIComponent(manifest.busyReportDate)}`, tokens.adminToken, validateBusyReport);
   measureEndpoint("empty_daily_report", `/api/reports/daily-bookings?date=${encodeURIComponent(manifest.emptyReportDate)}`, tokens.adminToken, validateEmptyReport);
 }
+
+export function handleSummary(data) {
+  delete data.setup_data;
+  const summaryJson = `${JSON.stringify(data, null, 2)}\n`;
+  const summaryPath = __ENV.K6_SUMMARY_PATH;
+
+  if (!summaryPath) return { stdout: summaryJson };
+  return { [summaryPath]: summaryJson };
+}
