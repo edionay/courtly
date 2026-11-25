@@ -127,4 +127,16 @@ export const bookingApi = {
     );
     return response.items;
   },
+
+  async cancelBooking(
+    bookingId: string,
+    signal?: AbortSignal,
+  ): Promise<BookingResponse> {
+    const encodedId = encodeURIComponent(bookingId);
+    return httpClient.patch<BookingResponse>(
+      `/api/bookings/${encodedId}`,
+      { status: "cancelled" },
+      { signal },
+    );
+  },
 };
