@@ -81,4 +81,4 @@ The runner verifies the fixed Compose project, database name and exact row count
 USER_EMAIL=alex@courtly.test USER_PASSWORD="$COURTLY_USER_PASSWORD" ADMIN_EMAIL=admin@courtly.test ADMIN_PASSWORD="$COURTLY_ADMIN_PASSWORD" DATASET_COUNT=12000 BASE_URL=http://127.0.0.1:3121 node docs/performance/capture-response-bytes.mjs
 ```
 
-Review the full result table, limitations, actual Prisma SQL and parameters, query counts, and `EXPLAIN (ANALYZE, BUFFERS)` evidence in [measurements.md](measurements.md). The HTTP measurements call the backend directly and do not measure SQL alone. No optimization was made in P4.
+Review the full result table, limitations, actual Prisma SQL and parameters, query counts, and `EXPLAIN (ANALYZE, BUFFERS)` evidence in [measurements.md](measurements.md). The HTTP measurements call the backend directly and do not measure SQL alone. The P5 decision keeps the current queries and schema; see [ADR 006](../adr/006-performance-measurement-and-no-change.md).

@@ -163,4 +163,4 @@ These references support technical mechanisms; they do not replace the challenge
 
 ## Performance measurement tooling
 
-- On November 25, 2026, the user approved Grafana k6 instead of a custom HTTP measurement runner for the separately approved performance bonus. Follow performance-plan.md for isolated fixtures, filtered warmup/authentication metrics, endpoint scenarios, SQL plans and reproducible evidence. Additional observability services are deferred unless a concrete diagnostic need justifies revisiting the scope.
+- On November 25, 2026, the user approved Grafana k6 instead of a custom HTTP measurement runner for the separately approved performance bonus. The completed exercise keeps the current availability and daily-report queries and indexes; the local warm-cache results do not establish a production bottleneck or justify an optimization. See [ADR 006](adr/006-performance-measurement-and-no-change.md) for the decision and [the measurements report](performance/measurements.md) for evidence and limitations. Additional observability services remain deferred unless a concrete diagnostic need justifies revisiting the scope.
