@@ -55,8 +55,16 @@ the direct API at `http://localhost:3100`, Swagger UI at
 to `http://backend:3000`; the Vite development proxy defaults to the direct
 API's host port and can be adjusted through `COURTLY_API_PORT`. Run Storybook
 with `npm run storybook --workspace frontend`; its configured host port is
-`6006`. Performance Compose uses the separate host ports 3121 and 4191 and is
-documented in `docs/performance/README.md`.
+`6006`. It can also run as the opt-in Compose service with
+`docker compose --profile storybook up --build storybook`; set
+`COURTLY_STORYBOOK_PORT` if host port 6006 is busy. The default Compose startup
+does not start Storybook. Performance Compose uses the separate host ports
+3121 and 4191 and is documented in `docs/performance/README.md`.
+
+Compose service logs print the mapped localhost URLs when each service's HTTP
+server is listening. The backend lists API, health, Swagger and OpenAPI; the
+frontend lists the web app; Storybook's own ready output lists its URL when the
+optional profile is active. Host port overrides are reflected in these URLs.
 
 Seeded demo accounts: admin `admin@courtly.test` / `CourtlyAdmin2026!`;
 users `alex@courtly.test` and `jordan@courtly.test` / `CourtlyUser2026!`.
