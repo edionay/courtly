@@ -11,7 +11,9 @@
     "start": "node dist/src/server.js",
     "typecheck": "npm run generate:api && npm run db:generate && tsc --noEmit -p tsconfig.json",
     "test:unit": "vitest run --project unit",
-    "test:integration": "tsx scripts/prepare-test-database.ts && vitest run --project integration"
+    "test:integration": "tsx scripts/prepare-test-database.ts && vitest run --project integration",
+    "performance:prepare": "tsx scripts/prepare-performance-database.ts",
+    "performance:generate": "tsx scripts/performance-dataset.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",
