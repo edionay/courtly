@@ -20,6 +20,7 @@ services:
     environment:
       DATABASE_URL: postgresql://courtly:courtly-local@database:5432/courtly?schema=public
       PORT: 3000
+      COURTLY_API_HOST_PORT: ${COURTLY_API_PORT:-3100}
       JWT_SECRET: ${COURTLY_JWT_SECRET:-courtly-local-development-secret-key-at-least-32}
     depends_on:
       database:
@@ -33,6 +34,7 @@ services:
       dockerfile: frontend/Dockerfile
     environment:
       API_PROXY_TARGET: http://backend:3000
+      COURTLY_WEB_HOST_PORT: ${COURTLY_WEB_PORT:-4174}
     depends_on:
       - backend
     ports:
@@ -53,8 +55,10 @@ services:
       - --ci
       - --no-open
       - --exact-port
+      - --port
+      - ${COURTLY_STORYBOOK_PORT:-6006}
     ports:
-      - "${COURTLY_STORYBOOK_PORT:-6006}:6006"
+      - "${COURTLY_STORYBOOK_PORT:-6006}:${COURTLY_STORYBOOK_PORT:-6006}"
 
 volumes:
   postgres-data:
