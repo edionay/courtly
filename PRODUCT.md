@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The backend has been implemented incrementally; the frontend still contains its foundation placeholder. Approved planning is consolidated in docs/execution-plan.md. The approved local DS is recorded in DESIGN.md and docs/design-system.md and will use the existing web Tailwind integration; the Mantine proposal is superseded.
+React with Tailwind CSS, a separate Express API with tsoa, and PostgreSQL accessed through Prisma. Application code uses strict TypeScript. The backend API and React frontend are implemented. The frontend uses the approved local design system in DESIGN.md and docs/design-system.md, implemented with the existing web Tailwind integration. Mantine is superseded.
 
 ## Users
 
@@ -43,6 +43,10 @@ The booking flow has separate court selection, a combined date/hour-selection sc
 - `docs/ui-flows.md`: consolidated approved interaction behavior.
 - The user supplied a weekly-date-strip reference, requesting its structural idea without time-of-day groups or duration toggles. It does not establish the final palette or typography.
 
+## Current implementation status
+
+The backend and frontend feature milestones D1–D6 are implemented and merged. The optional performance exercise P1–P5 is also complete on its separate feature history. `docs/execution-plan.md` records milestone/PR status and retains the original delivery specifications as historical acceptance references. No application-code milestone is currently authorized. The candidate-authored root `README.md` remains a final handoff requirement; this status does not claim the challenge is ready for submission.
+
 ## Product Principles
 
 - Prefer the smallest maintainable implementation that meets the brief.
@@ -56,4 +60,4 @@ Prefer native forms and controls with custom styling: radio inputs for choosing 
 
 ## Open Design Decisions
 
-The user approved the complete Aguinha-derived mockup pack with outlined-danger buttons. DESIGN.md and docs/design-system.md record the local Tailwind DS, Inter typography, rounded white surfaces, subtle shadows and coherent light navigation. PNGs, editable SVGs, fonts and image credits are committed locally; no Aguinha checkout or running gallery server is required. docs/frontend-plan.md and docs/frontend-handoff.md contain the implementation entry point and portable prompt. Low-fidelity artifacts retain value as flow evidence.
+The user approved the complete Aguinha-derived mockup pack with outlined-danger buttons. DESIGN.md and docs/design-system.md record the local Tailwind DS, Inter typography, rounded white surfaces, subtle shadows and coherent light navigation. PNGs, editable SVGs, fonts and image credits are present in the repository; no Aguinha checkout or running gallery server is required. The implementation status and historical delivery specifications are in docs/frontend-plan.md. docs/frontend-handoff.md is a context prompt for a future explicitly assigned frontend task; it does not authorize D4, D5 or D6 again. Low-fidelity artifacts retain value as flow evidence.
