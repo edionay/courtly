@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { PrismaClient } from "../generated/prisma/client";
+import { DateTime } from "luxon";
 
 const expectedDatabase = "courtly_performance";
 const facilityId = "10000000-0000-4000-8000-000000000001";
@@ -45,7 +46,7 @@ async function generate(): Promise<void> {
     })));
     await prisma.booking.deleteMany();
     await prisma.court.updateMany({ where: { facilityId: { not: facility.id } }, data: { isActive: false } });
-    const base = Date.parse(`${anchorDate}T10:00:00Z`);
+    const base = Date.parse(`${anchorDate}T00:00:00Z`);
     const middleDay = Math.floor(Math.ceil(requestedCount / (courts.length * 7)) / 2);
     const rows = Array.from({ length: requestedCount }, (_, index) => {
       const offset = Math.floor(index / courts.length);
@@ -57,6 +58,8 @@ async function generate(): Promise<void> {
       return { id: idFor("booking", index), courtId: court.id, userId: users[index % 2].id, startsAt, endsAt: new Date(startsAt.getTime() + durationHours * 3600000), status: index % 10 === 0 ? "cancelled" as const : "confirmed" as const, totalPriceCents: court.hourlyPriceCents * durationHours };
     });
     for (let offset = 0; offset < rows.length; offset += chunkSize) await prisma.booking.createMany({ data: rows.slice(offset, offset + chunkSize) });
+    const generatedBookings = await prisma.booking.findMany({ where: { court: { facilityId: facility.id } }, select: { startsAt: true, endsAt: true } });
+    validateSchedules(generatedBookings, facility.timezone);
     const grouped = await prisma.booking.groupBy({ where: { court: { facilityId: facility.id } }, by: ["status"], _count: { _all: true } });
     const byCourt = await prisma.booking.groupBy({ where: { court: { facilityId: facility.id } }, by: ["courtId"], _count: { _all: true } });
     const busyStart = new Date(`${anchorDate}T03:00:00Z`);
@@ -66,6 +69,9 @@ async function generate(): Promise<void> {
     const emptyBookings = await prisma.booking.count({ where: { court: { facilityId: facility.id }, startsAt: { gte: emptyStart, lt: new Date(emptyStart.getTime() + 86400000) } } });
     const statusCounts = Object.fromEntries(grouped.map(({ status, _count }) => [status, _count._all]));
     const total = await prisma.booking.count();
+    if (total !== requestedCount || busyBookings !== 140 || emptyBookings !== 0 || courts.length !== 20) {
+      throw new Error(`Dataset acceptance failed: total=${total}, busyDay=${busyBookings}, emptyDay=${emptyBookings}, courts=${courts.length}`);
+    }
     const manifest = {
       totalDatabaseBookingCount: total,
       seed: "courtly-performance-v1", anchorDate, timezone: facility.timezone, bookingCount: requestedCount,
@@ -75,11 +81,22 @@ async function generate(): Promise<void> {
       busyReportDate: anchorDate, emptyReportDate: addDays(anchorDate, Math.ceil(requestedCount / 140) + 2),
       deterministicIds: true,
     };
-    await mkdir(path.resolve("docs/performance/manifests"), { recursive: true });
-    await writeFile(path.resolve(`docs/performance/manifests/${requestedCount}.json`), `${JSON.stringify(manifest, null, 2)}\n`);
+    await mkdir(path.resolve(process.cwd(), "../docs/performance/manifests"), { recursive: true });
+    await writeFile(path.resolve(process.cwd(), `../docs/performance/manifests/${requestedCount}.json`), `${JSON.stringify(manifest, null, 2)}\n`);
     console.log(JSON.stringify(manifest, null, 2));
   } finally {
     await prisma.$disconnect();
+  }
+}
+
+function validateSchedules(bookings: Array<{ startsAt: Date; endsAt: Date }>, timezone: string): void {
+  for (const booking of bookings) {
+    const startsAt = DateTime.fromJSDate(booking.startsAt, { zone: "utc" }).setZone(timezone);
+    const endsAt = DateTime.fromJSDate(booking.endsAt, { zone: "utc" }).setZone(timezone);
+    const durationHours = endsAt.diff(startsAt, "hours").hours;
+    if (!startsAt.isValid || !endsAt.isValid || startsAt.minute !== 0 || endsAt.minute !== 0 || startsAt.second !== 0 || endsAt.second !== 0 || durationHours < 1 || durationHours > 2 || !Number.isInteger(durationHours) || startsAt.hour < 7 || endsAt.hour > 22 || startsAt.toISODate() !== endsAt.toISODate()) {
+      throw new Error(`Generated booking is outside opening hours or has an invalid duration: ${booking.startsAt.toISOString()}`);
+    }
   }
 }
 

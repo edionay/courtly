@@ -1,0 +1,44 @@
+{
+  "totalDatabaseBookingCount": 12000,
+  "seed": "courtly-performance-v1",
+  "anchorDate": "2026-11-29",
+  "timezone": "America/Sao_Paulo",
+  "bookingCount": 12000,
+  "courtCount": 20,
+  "userCount": 3,
+  "statusCounts": {
+    "confirmed": 10800,
+    "cancelled": 1200
+  },
+  "bookingsByCourt": {
+    "07ff1002-bc61-40f0-8fd1-2fd66cc8ad90": 600,
+    "0887eae9-ad79-4650-8740-a1d9cdcb8b5d": 600,
+    "115f62a0-d985-4c14-8bc3-0245779910fe": 600,
+    "1442c09e-0a0c-46e6-8b37-1521f8b0f964": 600,
+    "2e03fa96-8fd2-4dc4-8153-efb305bf4cdb": 600,
+    "450a4424-5d61-4675-833f-261523da9f42": 600,
+    "4658aa17-4229-4e7d-8778-6d94b586b3b7": 600,
+    "4bf77034-a334-4164-83de-6226d34507fd": 600,
+    "79250672-d8fb-4121-872c-3c38242cceff": 600,
+    "7ff775b0-3e45-42c1-846e-3832179bf579": 600,
+    "86f5ff72-1ae4-4fbb-8ad0-bc9e46a69b3f": 600,
+    "880077a7-ca05-4e8d-883b-802753399707": 600,
+    "978743a7-e1e3-4036-8dc9-2e41b2149f9e": 600,
+    "98d38640-2044-428e-8f24-f105cac05f35": 600,
+    "9904a2e5-d945-437b-8d6c-46f335dd9a54": 600,
+    "a61ef291-202b-420a-8a4d-60769bd2f6ae": 600,
+    "ac088782-c61e-4054-8811-6f09c658faa5": 600,
+    "bb4f9cca-72fc-4149-854a-57767183d19a": 600,
+    "c6c214e5-b12e-42fa-839a-11f1cac78369": 600,
+    "efafdb25-aea5-40da-8235-5eaf603a3775": 600
+  },
+  "busyDayBookingCount": 140,
+  "emptyDayBookingCount": 0,
+  "busyAvailability": {
+    "courtId": "2e03fa96-8fd2-4dc4-8153-efb305bf4cdb",
+    "weekStart": "2026-11-29"
+  },
+  "busyReportDate": "2026-11-29",
+  "emptyReportDate": "2027-02-25",
+  "deterministicIds": true
+}
