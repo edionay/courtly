@@ -55,6 +55,10 @@ export function CourtsPage() {
     navigate("/login", { replace: true });
   };
 
+  const handleViewAvailability = (court: CourtCardData) => {
+    navigate(`/courts/${court.id}/booking/slots`);
+  };
+
   const isAdmin = user?.role === "admin";
   const isScreenLoading = isAuthLoading || isLoadingCourts;
 
@@ -66,6 +70,7 @@ export function CourtsPage() {
       onRetry={loadCourts}
       isAdmin={isAdmin}
       onSignOut={handleSignOut}
+      onViewAvailability={handleViewAvailability}
     />
   );
 }
