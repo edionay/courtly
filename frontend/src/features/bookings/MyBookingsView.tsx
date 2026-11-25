@@ -1,13 +1,19 @@
 import { ApplicationShell } from "../../shared/ui/ApplicationShell";
 import { Button } from "../../shared/ui/Button";
 import type { BookingResponse } from "./bookingApi";
+import { CancelBookingDialog } from "./BookingResultDialogs";
 
 export type MyBookingsViewProps = {
   bookings: BookingResponse[];
   isLoading?: boolean;
+  isCancelling?: boolean;
+  cancellingBooking?: BookingResponse | null;
+  cancellationNotice?: string | null;
   errorMessage?: string | null;
   onRetry?: () => void;
   onCancelBooking?: (booking: BookingResponse) => void;
+  onCloseCancelDialog?: () => void;
+  onConfirmCancel?: () => void;
   onSignOut?: () => void;
   isAdmin?: boolean;
 };
@@ -83,9 +89,14 @@ function BookingCard({
 export function MyBookingsView({
   bookings,
   isLoading = false,
+  isCancelling = false,
+  cancellingBooking,
+  cancellationNotice,
   errorMessage,
   onRetry,
   onCancelBooking,
+  onCloseCancelDialog,
+  onConfirmCancel,
   onSignOut,
   isAdmin = false,
 }: MyBookingsViewProps) {
@@ -115,6 +126,16 @@ export function MyBookingsView({
         <p className="mt-2 text-sm md:text-base text-muted-foreground m-0">
           View and manage your bookings. Cancellations are permitted up to 2 hours before start.
         </p>
+
+        {cancellationNotice && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-6 p-4 bg-[#E8F3F8] border border-primary/20 rounded-card flex items-center justify-between text-primary font-semibold text-sm"
+          >
+            <span>{cancellationNotice}</span>
+          </div>
+        )}
 
         {isLoading && (
           <div
@@ -167,6 +188,17 @@ export function MyBookingsView({
             ))}
           </ul>
         )}
+
+        <CancelBookingDialog
+          isOpen={Boolean(cancellingBooking)}
+          courtName={cancellingBooking?.court.name}
+          dateLabel={cancellingBooking?.display.date}
+          startsAt={cancellingBooking?.display.startsAt}
+          endsAt={cancellingBooking?.display.endsAt}
+          isCancelling={isCancelling}
+          onClose={onCloseCancelDialog ?? (() => undefined)}
+          onConfirmCancel={onConfirmCancel ?? (() => undefined)}
+        />
       </div>
     </ApplicationShell>
   );

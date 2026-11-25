@@ -9,6 +9,8 @@ const meta = {
   args: {
     bookings: mockBookings,
     onCancelBooking: () => undefined,
+    onCloseCancelDialog: () => undefined,
+    onConfirmCancel: () => undefined,
     onSignOut: () => undefined,
     onRetry: () => undefined,
   },
@@ -18,6 +20,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const CancelModalOpen: Story = {
+  args: {
+    cancellingBooking: mockBookings[0],
+  },
+};
+
+export const Cancelling: Story = {
+  args: {
+    cancellingBooking: mockBookings[0],
+    isCancelling: true,
+  },
+};
+
+export const CancelledNotice: Story = {
+  args: {
+    cancellationNotice:
+      "Booking for Court 1 on Tuesday, December 1, 2026 has been cancelled.",
+  },
+};
 
 export const Administrator: Story = {
   args: {
