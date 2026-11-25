@@ -8,7 +8,7 @@ Start with [execution-plan.md](execution-plan.md). The challenge source is [chal
 
 ## Scope and ownership
 
-- Deliver the mandatory challenge only: seeded authentication, court browsing and management, hourly availability, creation/cancellation, own booking history, and administrator daily bookings with expected revenue. No optional challenge bonuses.
+- Deliver the mandatory challenge only: seeded authentication, court browsing and management, hourly availability, creation/cancellation, own booking history, and administrator daily bookings with expected revenue. The performance bonus was subsequently approved on November 25, 2026, as a separate branch; see performance-plan.md. Other bonuses remain excluded.
 - One seeded internal Facility has id, name, and IANA timezone America/Sao_Paulo. Courts reference it; no facility endpoint, selector, CRUD, or timezone editing.
 - sportType is required free text. No sport entity, enum, or catalog API.
 - Use English for code, UI copy, and repository documentation. Prefer small self-explanatory functions and minimal comments. Recheck the challenge whenever requirements/scope are questioned. Discuss extra edge-case behavior before implementing it.

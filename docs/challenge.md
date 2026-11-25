@@ -91,7 +91,7 @@ A complete mandatory implementation is preferred to an incomplete implementation
 - A booking waitlist that automatically promotes a waiting user after cancellation.
 - A performance exercise with more than 10,000 seeded bookings and measured availability and administrator day-view query performance.
 
-The approved project scope excludes all bonuses.
+The original approved scope excluded all bonuses. On November 25, 2026, the user approved only the performance exercise on a separate branch; see `performance-plan.md`. This is a project scope decision, not a mandatory challenge requirement.
 
 ## Evaluation
 
