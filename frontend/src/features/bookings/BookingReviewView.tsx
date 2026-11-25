@@ -25,7 +25,6 @@ export type BookingReviewViewProps = {
   conflictMessage?: string | null;
   isSuccessDialogOpen?: boolean;
   isConflictDialogOpen?: boolean;
-  onCloseSuccessDialog?: () => void;
   onGoToBookings?: () => void;
   onCloseConflictDialog?: () => void;
   onChooseAnotherTime?: () => void;
@@ -171,7 +170,6 @@ export function BookingReviewView({
   conflictMessage,
   isSuccessDialogOpen = false,
   isConflictDialogOpen = false,
-  onCloseSuccessDialog,
   onGoToBookings,
   onCloseConflictDialog,
   onChooseAnotherTime,
@@ -293,7 +291,6 @@ export function BookingReviewView({
 
         <BookingConfirmedDialog
           isOpen={isSuccessDialogOpen}
-          onClose={onCloseSuccessDialog ?? (() => undefined)}
           onGoToBookings={onGoToBookings ?? (() => undefined)}
         />
 

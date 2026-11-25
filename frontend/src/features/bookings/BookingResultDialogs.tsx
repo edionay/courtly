@@ -3,7 +3,6 @@ import { Button } from "../../shared/ui/Button";
 
 export type BookingConfirmedDialogProps = {
   isOpen: boolean;
-  onClose: () => void;
   onGoToBookings: () => void;
 };
 
@@ -16,10 +15,32 @@ export type TimeUnavailableDialogProps = {
 
 export function BookingConfirmedDialog({
   isOpen,
-  onClose,
   onGoToBookings,
 }: BookingConfirmedDialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) {
+      return;
+    }
+
+    const preventDismissal = (event: Event) => {
+      event.preventDefault();
+    };
+    const preventEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+      }
+    };
+
+    dialog.addEventListener("cancel", preventDismissal);
+    dialog.addEventListener("keydown", preventEscape, true);
+    return () => {
+      dialog.removeEventListener("cancel", preventDismissal);
+      dialog.removeEventListener("keydown", preventEscape, true);
+    };
+  }, []);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -42,37 +63,12 @@ export function BookingConfirmedDialog({
       ref={dialogRef}
       aria-labelledby="confirmed-dialog-title"
       aria-describedby="confirmed-dialog-desc"
-      onCancel={(event) => {
-        event.preventDefault();
-        onClose();
-      }}
       className="m-auto p-6 md:p-8 bg-surface rounded-card shadow-card max-w-[480px] w-[calc(100%-32px)] border-0 text-foreground backdrop:bg-[#0B2436]/55"
     >
       <div className="relative">
-        <button
-          type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="absolute -top-2 -right-2 p-1 text-muted-foreground hover:text-foreground cursor-pointer rounded-lg border-0 bg-transparent"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
         <h2
           id="confirmed-dialog-title"
-          className="text-xl md:text-2xl font-bold text-foreground m-0 pr-8"
+          className="text-xl md:text-2xl font-bold text-foreground m-0"
         >
           Booking confirmed
         </h2>

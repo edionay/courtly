@@ -71,7 +71,7 @@ Read api-contracts.md for complete schemas, examples, all error codes, and displ
 
 Use ui-flows.md and wireframes/README.md for complete route/layout and accessible behavior. Fixtures in images are historical illustrative data, not hardcoded dates.
 
-- Native styled controls, semantic lists/tables, keyboard/focus/associated errors, no color-only states. Separate start/end labels: spaced dash visual, hidden until for assistive technology without duplicate announcements. Native dialog showModal()/close(), inert background, naming/focus and Escape dismissal.
+- Native styled controls, semantic lists/tables, keyboard/focus/associated errors, no color-only states. Separate start/end labels: spaced dash visual, hidden until for assistive technology without duplicate announcements. Native dialog showModal()/close(), inert background, naming/focus and Escape dismissal, except booking success stays open until its explicit Go to my bookings action.
 - Login → /courts after success for either role. JWT sessionStorage survives reload; /api/auth/me restores user while loading. No token normally shows login; invalid/expired session or protected 401 opens /authentication-error with explicit Go to login, not automatic login redirection. Logout clears local state, no backend call. One-hour JWT, no refresh/revocation.
 - Courts grid → weekly day/slot selection → separate review. Day radios, hour checkboxes allow one/two consecutive available slots. Booked stays disabled/labeled, past hidden, previous past days disabled. Earliest non-past day selected even when fully booked. Follow backend week links; no Sunday arithmetic or free-day scan in browser.
 - Store court/date/week reference in selection URL; review also carries encoded raw startsAt and duration to reconstruct preview on reload. Going back/Change retains court/date/week, reloads availability, and leaves hours unselected. Slot restoration/stale-selection recovery is deferred.
@@ -246,7 +246,7 @@ Branch: booking-interface. Depends on D4.3. Own frontend selection/review/result
 Acceptance:
 
 - Week links drive API requests and URL state; changing day uses loaded slots. Show Sunday-first strip, earliest non-past day, disabled booked and hidden past slots. One/two adjacent checkboxes, request raw startsAt unchanged, preview price/result ignores stale responses.
-- Direct review reload reconstructs preview; return to selection retains court/date/week but clears hours. Confirm once; success/conflict dialogs and ambiguous network behavior match ui-flows.md. Buttons and breadcrumb positions match canonical layout.
+- Direct review reload reconstructs preview; return to selection retains court/date/week but clears hours. Confirm once; booking success remains open on Escape until Go to my bookings, conflict remains dismissible, and ambiguous network behavior matches ui-flows.md. Buttons and breadcrumb positions match canonical layout.
 - Own bookings render server order/labels and use canCancel, native confirmation and inline cancellation success. Closed-window conflict explains/refreshes without retry.
 - Storybook demonstrates relevant states. Manually walk book one/two hours, occupied conflict, refresh session, return/reselect, cancellation and history; inspect focus/keyboard/dialog dismissal. No need to automate frontend tests.
 
