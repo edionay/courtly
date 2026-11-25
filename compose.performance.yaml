@@ -8,12 +8,8 @@ services:
   backend:
     environment:
       DATABASE_URL: postgresql://courtly:courtly-local@database:5432/courtly_performance?schema=public
-    ports:
-      - "${COURTLY_PERFORMANCE_API_PORT:-3120}:3000"
 
   frontend:
-    ports:
-      - "${COURTLY_PERFORMANCE_WEB_PORT:-4188}:4173"
 
 volumes:
   performance-data:

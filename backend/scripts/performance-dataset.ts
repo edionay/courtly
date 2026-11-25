@@ -34,33 +34,45 @@ async function generate(): Promise<void> {
   const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl }) });
   try {
     const facility = await prisma.facility.upsert({ where: { id: facilityId }, update: { timezone: "America/Sao_Paulo" }, create: { id: facilityId, name: "Performance Test Facility", timezone: "America/Sao_Paulo" } });
-    const users = await Promise.all([0, 1, 2].map((index) => prisma.user.upsert({
-      where: { email: `performance-${index}@courtly.test` }, update: {},
-      create: { id: idFor("user", index), name: `Performance User ${index}`, email: `performance-${index}@courtly.test`, passwordHash: "not-for-login", role: index === 2 ? "admin" : "user" },
-    })));
+    const users = await Promise.all(["alex@courtly.test", "jordan@courtly.test", "admin@courtly.test"].map(async (email) => {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) throw new Error(`Required seeded performance account is missing: ${email}`);
+      return user;
+    }));
     const courts = await Promise.all(Array.from({ length: 20 }, (_, index) => prisma.court.upsert({
       where: { facilityId_name: { facilityId: facility.id, name: courtName(index) } }, update: {},
       create: { id: idFor("court", index), facilityId: facility.id, name: courtName(index), sportType: "Tennis", hourlyPriceCents: 5000 + index * 100, opensAt: new Date("1970-01-01T07:00:00Z"), closesAt: new Date("1970-01-01T22:00:00Z") },
     })));
-    await prisma.booking.deleteMany({ where: { court: { facilityId: facility.id } } });
+    await prisma.booking.deleteMany();
+    await prisma.court.updateMany({ where: { facilityId: { not: facility.id } }, data: { isActive: false } });
     const base = Date.parse(`${anchorDate}T10:00:00Z`);
+    const middleDay = Math.floor(Math.ceil(requestedCount / (courts.length * 7)) / 2);
     const rows = Array.from({ length: requestedCount }, (_, index) => {
       const offset = Math.floor(index / courts.length);
       const court = courts[index % courts.length];
-      const day = Math.floor(offset / 7);
+      const day = Math.floor(offset / 7) - middleDay;
       const localHour = 7 + (offset % 7) * 2;
       const startsAt = new Date(base + day * 86400000 + (localHour + 3) * 3600000);
       const durationHours = index % 3 === 0 ? 2 : 1;
       return { id: idFor("booking", index), courtId: court.id, userId: users[index % 2].id, startsAt, endsAt: new Date(startsAt.getTime() + durationHours * 3600000), status: index % 10 === 0 ? "cancelled" as const : "confirmed" as const, totalPriceCents: court.hourlyPriceCents * durationHours };
     });
     for (let offset = 0; offset < rows.length; offset += chunkSize) await prisma.booking.createMany({ data: rows.slice(offset, offset + chunkSize) });
-    const grouped = await prisma.booking.groupBy({ by: ["status"], _count: { _all: true } });
+    const grouped = await prisma.booking.groupBy({ where: { court: { facilityId: facility.id } }, by: ["status"], _count: { _all: true } });
+    const byCourt = await prisma.booking.groupBy({ where: { court: { facilityId: facility.id } }, by: ["courtId"], _count: { _all: true } });
+    const busyStart = new Date(`${anchorDate}T03:00:00Z`);
+    const busyEnd = new Date(busyStart.getTime() + 86400000);
+    const busyBookings = await prisma.booking.count({ where: { court: { facilityId: facility.id }, startsAt: { gte: busyStart, lt: busyEnd } } });
+    const emptyStart = new Date(`${addDays(anchorDate, Math.ceil(requestedCount / 140) + 2)}T03:00:00Z`);
+    const emptyBookings = await prisma.booking.count({ where: { court: { facilityId: facility.id }, startsAt: { gte: emptyStart, lt: new Date(emptyStart.getTime() + 86400000) } } });
     const statusCounts = Object.fromEntries(grouped.map(({ status, _count }) => [status, _count._all]));
+    const total = await prisma.booking.count();
     const manifest = {
+      totalDatabaseBookingCount: total,
       seed: "courtly-performance-v1", anchorDate, timezone: facility.timezone, bookingCount: requestedCount,
       courtCount: courts.length, userCount: users.length,
-      statusCounts, busyAvailability: { courtId: courts[0].id, weekStart: anchorDate },
-      busyReportDate: anchorDate, emptyReportDate: addDays(anchorDate, Math.ceil(requestedCount / 140) + 1),
+      statusCounts, bookingsByCourt: Object.fromEntries(byCourt.map(({ courtId, _count }) => [courtId, _count._all])),
+      busyDayBookingCount: busyBookings, emptyDayBookingCount: emptyBookings, busyAvailability: { courtId: courts[0].id, weekStart: anchorDate },
+      busyReportDate: anchorDate, emptyReportDate: addDays(anchorDate, Math.ceil(requestedCount / 140) + 2),
       deterministicIds: true,
     };
     await mkdir(path.resolve("docs/performance/manifests"), { recursive: true });
@@ -74,4 +86,7 @@ async function generate(): Promise<void> {
 function courtName(index: number): string { return `Performance Court ${String(index + 1).padStart(2, "0")}`; }
 function addDays(date: string, days: number): string { const result = new Date(`${date}T00:00:00Z`); result.setUTCDate(result.getUTCDate() + days); return result.toISOString().slice(0, 10); }
 
-await generate();
+generate().catch((error: unknown) => {
+  console.error("Performance dataset generation failed", error);
+  process.exitCode = 1;
+});
