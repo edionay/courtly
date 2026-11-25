@@ -10,6 +10,7 @@ const meta = {
     courts: courtFixtures,
     onSignOut: () => undefined,
     onRetry: () => undefined,
+    onCreateCourt: () => undefined,
   },
 } satisfies Meta<typeof CourtsView>;
 

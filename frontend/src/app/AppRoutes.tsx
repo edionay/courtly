@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { AuthenticationErrorPage } from "../features/auth/pages/AuthenticationErrorPage";
 import { CourtsPage } from "../features/courts/pages/CourtsPage";
+import { CourtCreatePage } from "../features/courts/pages/CourtCreatePage";
 import { BookingSlotsPage } from "../features/bookings/pages/BookingSlotsPage";
 import { BookingReviewPage } from "../features/bookings/pages/BookingReviewPage";
 import { MyBookingsPage } from "../features/bookings/pages/MyBookingsPage";
@@ -12,6 +13,7 @@ export function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/authentication-error" element={<AuthenticationErrorPage />} />
       <Route path="/courts" element={<CourtsPage />} />
+      <Route path="/courts/new" element={<CourtCreatePage />} />
       <Route path="/courts/:courtId/booking/slots" element={<BookingSlotsPage />} />
       <Route path="/courts/:courtId/booking/review" element={<BookingReviewPage />} />
       <Route path="/bookings" element={<MyBookingsPage />} />

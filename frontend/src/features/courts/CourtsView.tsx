@@ -11,6 +11,7 @@ export type CourtsViewProps = {
   isAdmin?: boolean;
   onSignOut?: () => void;
   onViewAvailability?: (court: CourtCardData) => void;
+  onCreateCourt?: () => void;
 };
 
 function CourtsContent({
@@ -20,7 +21,7 @@ function CourtsContent({
   onRetry,
   isAdmin,
   onViewAvailability,
-}: Omit<CourtsViewProps, "onSignOut">) {
+}: Omit<CourtsViewProps, "onSignOut" | "onCreateCourt">) {
   if (isLoading) {
     return (
       <div
@@ -80,20 +81,49 @@ export function CourtsView({
   isAdmin = false,
   onSignOut,
   onViewAvailability,
+  onCreateCourt,
 }: CourtsViewProps) {
+  const navigation = isAdmin
+    ? [
+        { label: "Courts", href: "/courts" },
+        { label: "My bookings", href: "/bookings" },
+        { label: "Daily bookings", href: "/reports/daily-bookings" },
+      ]
+    : [
+        { label: "Courts", href: "/courts" },
+        { label: "My bookings", href: "/bookings" },
+      ];
+
+  const subtitle = isAdmin
+    ? "Manage courts and availability."
+    : "Choose a court to see its availability.";
+
   return (
     <ApplicationShell
-      navigation={[{ label: "Courts", href: "/courts" }]}
+      navigation={navigation}
       activeHref="/courts"
       onSignOut={onSignOut}
     >
       <div>
-        <h1 className="text-[28px] md:text-[34px] font-bold tracking-tight text-foreground m-0 leading-tight">
-          Courts
-        </h1>
-        <p className="mt-2 text-base text-muted-foreground leading-normal">
-          Choose a court to see its availability.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-[28px] md:text-[34px] font-bold tracking-tight text-foreground m-0 leading-tight">
+              Courts
+            </h1>
+            <p className="mt-2 text-base text-muted-foreground leading-normal">
+              {subtitle}
+            </p>
+          </div>
+          {isAdmin && onCreateCourt && (
+            <Button
+              variant="primary"
+              onClick={onCreateCourt}
+              className="rounded-full px-6 h-12 w-full sm:w-auto"
+            >
+              Create court
+            </Button>
+          )}
+        </div>
 
         <CourtsContent
           courts={courts}

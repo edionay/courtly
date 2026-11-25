@@ -59,6 +59,10 @@ export function CourtsPage() {
     navigate(`/courts/${court.id}/booking/slots`);
   };
 
+  const handleCreateCourt = () => {
+    navigate("/courts/new");
+  };
+
   const isAdmin = user?.role === "admin";
   const isScreenLoading = isAuthLoading || isLoadingCourts;
 
@@ -71,6 +75,7 @@ export function CourtsPage() {
       isAdmin={isAdmin}
       onSignOut={handleSignOut}
       onViewAvailability={handleViewAvailability}
+      onCreateCourt={handleCreateCourt}
     />
   );
 }
