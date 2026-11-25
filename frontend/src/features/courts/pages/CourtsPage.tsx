@@ -31,9 +31,9 @@ export function CourtsPage() {
         return;
       }
 
-      const message =
-        err instanceof Error ? err.message : "Could not load courts.";
-      setErrorMessage(message);
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      }
     } finally {
       setIsLoadingCourts(false);
     }

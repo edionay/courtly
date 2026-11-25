@@ -124,11 +124,9 @@ export function BookingSlotsPage() {
         return;
       }
 
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Could not load court availability.";
-      setErrorMessage(message);
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -181,11 +179,10 @@ export function BookingSlotsPage() {
         if (isAborted) {
           return;
         }
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Unable to calculate price.";
-        setPreviewError(message);
+
+        if (error instanceof Error) {
+          setPreviewError(error.message);
+        }
       })
       .finally(() => {
         const isCurrentRequest = !abortController.signal.aborted;
