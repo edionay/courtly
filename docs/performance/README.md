@@ -35,3 +35,15 @@ COURTLY_API_PORT=3121 COURTLY_WEB_PORT=4191 docker compose -p courtly-performanc
 ```
 
 Do not run these commands with another project name or against the normal project. This P1 creates and validates the dataset; k6 measurements and query-plan evidence belong to P2.
+
+## k6 runtime smoke
+
+The optional Compose `performance` profile pins the official `grafana/k6:2.4.0` image ([official image tags](https://hub.docker.com/r/grafana/k6/tags), verified June 2026). It does not start during ordinary Compose startup. Script files are mounted read-only and `docs/performance/results` is a host-visible output directory. This configuration slice verifies only the k6 runtime; it does not yet define endpoint requests or measure application performance.
+
+Run the no-network smoke check after starting the isolated services:
+
+```sh
+COURTLY_API_PORT=3121 COURTLY_WEB_PORT=4191 docker compose -p courtly-performance -f compose.yaml -f compose.performance.yaml --profile performance run --rm k6 run --summary-export=/results/k6-smoke.json /scripts/smoke.js
+```
+
+Check that the command exits successfully and that `docs/performance/results/k6-smoke.json` is created. The smoke script fails its k6 threshold if its runtime check fails. Endpoint scenarios and measurements are delivered in later PRs.
