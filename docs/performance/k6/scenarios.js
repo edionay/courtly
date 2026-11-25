@@ -1,5 +1,6 @@
 import http from "k6/http";
 import { check, group } from "k6";
+import { Trend } from "k6/metrics";
 
 const baseUrl = __ENV.BASE_URL ?? "http://backend:3000";
 const datasetCount = __ENV.DATASET_COUNT ?? "12000";
@@ -7,6 +8,12 @@ const manifest = JSON.parse(open(`/manifests/${datasetCount}.json`));
 const warmupRequests = Number(__ENV.WARMUP_REQUESTS ?? 10);
 const measuredRequests = Number(__ENV.MEASURED_REQUESTS ?? 100);
 const requestTimeout = "30s";
+const expectedBusyBookings = Number(__ENV.EXPECTED_BUSY_BOOKINGS ?? manifest.busyDayBookingCount);
+const measuredLatency = {
+  weekly_availability: new Trend("weekly_availability_duration", true),
+  busy_daily_report: new Trend("busy_daily_report_duration", true),
+  empty_daily_report: new Trend("empty_daily_report_duration", true),
+};
 
 if (!Number.isInteger(warmupRequests) || warmupRequests < 0) {
   throw new Error("WARMUP_REQUESTS must be a non-negative integer");
@@ -19,6 +26,7 @@ if (!["1000", "12000"].includes(datasetCount) || manifest.bookingCount !== Numbe
 }
 
 export const options = {
+  summaryTrendStats: ["med", "p(95)"],
   scenarios: {
     performanceQueries: {
       executor: "shared-iterations",
@@ -80,31 +88,67 @@ function measureEndpoint(name, path, token, validateResponse) {
     }
     for (let index = 0; index < measuredRequests; index += 1) {
       const { response, body } = getJson(path, token, { endpoint: name, phase: "measured" });
+      measuredLatency[name].add(response.timings.duration, { endpoint: name, phase: "measured" });
       check(response, { [`${name} returns a valid response`]: (result) => result.status === 200 && validateResponse(body) });
     }
   });
 }
 
 function validateAvailability(body) {
-  if (!body || body.courtId !== manifest.busyAvailability.courtId || body.weekStart !== manifest.busyAvailability.weekStart || !Array.isArray(body.days) || body.days.length !== 7) return false;
+  if (!hasExpectedAvailabilityWeek(body)) return false;
   const anchorDay = body.days.find((day) => day.date === manifest.busyReportDate);
-  if (!anchorDay || !Array.isArray(anchorDay.slots) || anchorDay.slots.length !== 15) return false;
-  const bookedSlots = anchorDay.slots.filter((slot) => slot.status === "booked").length;
-  const availableSlots = anchorDay.slots.filter((slot) => slot.status === "available").length;
-  return bookedSlots > 0 && availableSlots > 0 && anchorDay.slots.every((slot) => ["available", "booked", "past"].includes(slot.status) && slot.display?.startsAt && slot.display?.endsAt);
+  if (!hasExpectedSlots(anchorDay)) return false;
+
+  const bookedSlots = countSlotsWithStatus(anchorDay.slots, "booked");
+  const availableSlots = countSlotsWithStatus(anchorDay.slots, "available");
+  return bookedSlots > 0 && availableSlots > 0 && anchorDay.slots.every(hasSlotPresentation);
+}
+
+function hasExpectedAvailabilityWeek(body) {
+  return body?.courtId === manifest.busyAvailability.courtId &&
+    body.weekStart === manifest.busyAvailability.weekStart &&
+    Array.isArray(body.days) && body.days.length === 7;
+}
+
+function hasExpectedSlots(day) {
+  return day && Array.isArray(day.slots) && day.slots.length === 15;
+}
+
+function countSlotsWithStatus(slots, status) {
+  return slots.filter((slot) => slot.status === status).length;
+}
+
+function hasSlotPresentation(slot) {
+  return ["available", "booked", "past"].includes(slot.status) &&
+    Boolean(slot.display?.startsAt) &&
+    Boolean(slot.display?.endsAt);
+}
+
+function isFormattedPrice(value) {
+  return typeof value === "string" && /^\$\d+\.\d{2}$/.test(value);
+}
+
+function isDailyBooking(booking) {
+  return Boolean(booking.court?.id && booking.user?.name) &&
+    ["confirmed", "cancelled"].includes(booking.status) &&
+    Boolean(booking.display?.startsAt) &&
+    Boolean(booking.display?.endsAt) &&
+    isFormattedPrice(booking.display?.totalPrice);
 }
 
 function validateBusyReport(body) {
-  return body?.date === manifest.busyReportDate &&
-    body.display?.date && /^\$\d+\.\d{2}$/.test(body.display.expectedRevenue) &&
-    Array.isArray(body.bookings) && body.bookings.length === manifest.busyDayBookingCount &&
-    body.bookings.every((booking) => booking.court?.id && booking.user?.name && ["confirmed", "cancelled"].includes(booking.status) && booking.display?.startsAt && booking.display?.endsAt && /^\$\d+\.\d{2}$/.test(booking.display.totalPrice));
+  if (body?.date !== manifest.busyReportDate) return false;
+  if (!body.display?.date || !isFormattedPrice(body.display.expectedRevenue)) return false;
+  if (!Array.isArray(body.bookings) || body.bookings.length !== expectedBusyBookings) return false;
+  return body.bookings.every(isDailyBooking);
 }
 
 function validateEmptyReport(body) {
   return body?.date === manifest.emptyReportDate &&
-    body.display?.date && body.display.expectedRevenue === "$0.00" &&
-    Array.isArray(body.bookings) && body.bookings.length === manifest.emptyDayBookingCount;
+    Boolean(body.display?.date) &&
+    body.display.expectedRevenue === "$0.00" &&
+    Array.isArray(body.bookings) &&
+    body.bookings.length === manifest.emptyDayBookingCount;
 }
 
 export default function (tokens) {

@@ -59,7 +59,7 @@ Pin an exact stable Grafana k6 image in the opt-in `performance` Compose profile
 
 ### P3 — Endpoint scenarios and response checks
 
-Add k6 scenarios for weekly availability, a busy-day administrator report, and an empty-day report, using the verified dataset manifests. Authenticate seeded user/admin accounts in setup, tag setup/warmup/measured phases and endpoints, validate response shape/counts and status, and configure thresholds so failed checks fail the run. Run only a short contract validation for this delivery; do not execute the full comparison or capture SQL plans yet.
+Add k6 scenarios for weekly availability, a busy-day administrator report, and an empty-day report, using the verified dataset manifests. Authenticate seeded user/admin accounts in setup, tag setup/warmup/measured phases and endpoints, validate response shape/counts and status, and configure thresholds so failed checks fail the run. Add one measured-only Trend per endpoint for duration so authentication/warmup are excluded from the endpoint latency summaries. Report median and p95, without an arbitrary latency SLO. Run only short contract validation for this delivery; do not execute the full comparison or capture SQL plans yet.
 
 ### P4 — Measurements and SQL evidence
 
