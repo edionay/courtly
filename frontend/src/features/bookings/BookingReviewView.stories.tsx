@@ -22,6 +22,35 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const Submitting: Story = {
+  args: {
+    isSubmitting: true,
+  },
+};
+
+export const SuccessModal: Story = {
+  args: {
+    isSuccessDialogOpen: true,
+    isConfirmed: true,
+  },
+};
+
+export const ConflictModal: Story = {
+  args: {
+    isConflictDialogOpen: true,
+    conflictMessage:
+      "This time slot is no longer available. Please choose another time.",
+  },
+};
+
+export const ConflictDismissed: Story = {
+  args: {
+    isConflictDialogOpen: false,
+    conflictMessage:
+      "This time slot is no longer available. Please choose another time.",
+  },
+};
+
 export const Administrator: Story = {
   args: {
     isAdmin: true,

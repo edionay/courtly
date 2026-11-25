@@ -34,6 +34,11 @@ export function BookingReviewPage() {
 
   const [review, setReview] = useState<BookingReviewData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isConflictDialogOpen, setIsConflictDialogOpen] = useState(false);
+  const [conflictMessage, setConflictMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loadPreview = useCallback(async () => {
@@ -117,6 +122,70 @@ export function BookingReviewPage() {
     navigate(destination);
   };
 
+  const handleConfirm = async () => {
+    const durationHours = Number(durationHoursParam);
+    const isReadyToSubmit =
+      Boolean(courtId) &&
+      Boolean(startsAt) &&
+      durationHours > 0 &&
+      !isSubmitting &&
+      !isConfirmed;
+
+    if (!isReadyToSubmit) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setConflictMessage(null);
+
+    try {
+      await bookingApi.createBooking({
+        courtId: courtId as string,
+        startsAt,
+        durationHours,
+      });
+
+      setIsConfirmed(true);
+      setIsSuccessDialogOpen(true);
+    } catch (err) {
+      const isApiClientError = err instanceof ApiClientError;
+      const isUnauthorized = isApiClientError && err.isUnauthorized;
+
+      if (isUnauthorized) {
+        clearSession();
+        navigate("/authentication-error");
+        return;
+      }
+
+      const isConflict = isApiClientError && err.code === "BOOKING_CONFLICT";
+      if (isConflict) {
+        setConflictMessage(err.message);
+        setIsConflictDialogOpen(true);
+        return;
+      }
+
+      if (err instanceof Error) {
+        setErrorMessage(err.message);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseSuccessDialog = () => {
+    setIsSuccessDialogOpen(false);
+  };
+
+  const handleGoToBookings = () => {
+    setIsSuccessDialogOpen(false);
+    navigate("/bookings");
+  };
+
+  const handleCloseConflictDialog = () => {
+    setIsConflictDialogOpen(false);
+  };
+
   const handleBackToCourts = () => {
     navigate("/courts");
   };
@@ -132,9 +201,19 @@ export function BookingReviewPage() {
     <BookingReviewView
       review={review}
       isLoading={isLoading || isAuthLoading}
+      isSubmitting={isSubmitting}
+      isConfirmed={isConfirmed}
       errorMessage={errorMessage}
+      conflictMessage={conflictMessage}
+      isSuccessDialogOpen={isSuccessDialogOpen}
+      isConflictDialogOpen={isConflictDialogOpen}
+      onCloseSuccessDialog={handleCloseSuccessDialog}
+      onGoToBookings={handleGoToBookings}
+      onCloseConflictDialog={handleCloseConflictDialog}
+      onChooseAnotherTime={handleChange}
       onRetry={loadPreview}
       onChange={handleChange}
+      onConfirm={handleConfirm}
       onBackToCourts={handleBackToCourts}
       onBackToCourtSlots={handleChange}
       onSignOut={handleSignOut}

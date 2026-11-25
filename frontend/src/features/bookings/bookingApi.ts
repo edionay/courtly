@@ -57,6 +57,30 @@ export type BookingPreviewResponse = {
   };
 };
 
+export type BookingCreationRequest = {
+  courtId: string;
+  startsAt: string;
+  durationHours: number;
+};
+
+export type BookingResponse = {
+  id: string;
+  court: {
+    id: string;
+    name: string;
+  };
+  status: "confirmed" | "cancelled";
+  canCancel: boolean;
+  display: {
+    date: string;
+    startsAt: string;
+    endsAt: string;
+    timezone: string;
+    status: "Confirmed" | "Cancelled";
+    totalPrice: string;
+  };
+};
+
 export const bookingApi = {
   async getAvailability(
     courtId: string,
@@ -81,5 +105,14 @@ export const bookingApi = {
       selection,
       { signal },
     );
+  },
+
+  async createBooking(
+    selection: BookingCreationRequest,
+    signal?: AbortSignal,
+  ): Promise<BookingResponse> {
+    return httpClient.post<BookingResponse>("/api/bookings", selection, {
+      signal,
+    });
   },
 };
