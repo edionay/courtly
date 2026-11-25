@@ -38,7 +38,7 @@ Do not run these commands with another project name or against the normal projec
 
 ## k6 runtime smoke
 
-The optional Compose `performance` profile pins the official `grafana/k6:2.4.0` image ([official image tags](https://hub.docker.com/r/grafana/k6/tags), verified June 2026). It does not start during ordinary Compose startup. Script files are mounted read-only and `docs/performance/results` is a host-visible output directory. This configuration slice verifies only the k6 runtime; it does not yet define endpoint requests or measure application performance.
+The optional Compose `performance` profile pins the official `grafana/k6:2.4.0` image ([official k6 v2.4.0 release](https://github.com/grafana/k6/releases/tag/v2.4.0), verified November 25, 2026). It does not start during ordinary Compose startup. Script files are mounted read-only and `docs/performance/results` is a host-visible output directory. This configuration slice verifies only the k6 runtime; it does not yet define endpoint requests or measure application performance.
 
 Run the no-network smoke check after starting the isolated services:
 
