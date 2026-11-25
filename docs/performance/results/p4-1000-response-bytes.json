@@ -1,0 +1,24 @@
+{
+  "datasetCount": 1000,
+  "results": [
+    {
+      "name": "weekly_availability",
+      "status": 200,
+      "responseBodyBytesUtf8": 11989,
+      "slotCountsByStatus": {
+        "booked": 30,
+        "available": 75
+      }
+    },
+    {
+      "name": "busy_daily_report",
+      "status": 200,
+      "responseBodyBytesUtf8": 35215
+    },
+    {
+      "name": "empty_daily_report",
+      "status": 200,
+      "responseBodyBytesUtf8": 94
+    }
+  ]
+}

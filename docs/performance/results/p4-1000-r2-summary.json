@@ -1,0 +1,169 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "weekly_availability": {
+                "name": "weekly_availability",
+                "path": "::weekly_availability",
+                "id": "20c1d8d4c5bf8aedf1f3c4bd43a32f3f",
+                "groups": {},
+                "checks": {
+                    "weekly_availability warmup returns a valid response": {
+                        "id": "159d0103eec1567d50e321a5f710309c",
+                        "passes": 10,
+                        "fails": 0,
+                        "name": "weekly_availability warmup returns a valid response",
+                        "path": "::weekly_availability::weekly_availability warmup returns a valid response"
+                    },
+                    "weekly_availability returns a valid response": {
+                        "path": "::weekly_availability::weekly_availability returns a valid response",
+                        "id": "138421867f73f2937122b4afcdb2be20",
+                        "passes": 100,
+                        "fails": 0,
+                        "name": "weekly_availability returns a valid response"
+                    }
+                }
+            },
+            "busy_daily_report": {
+                "name": "busy_daily_report",
+                "path": "::busy_daily_report",
+                "id": "8cfd35add66da90725ba9cb18cbb9241",
+                "groups": {},
+                "checks": {
+                    "busy_daily_report warmup returns a valid response": {
+                        "name": "busy_daily_report warmup returns a valid response",
+                        "path": "::busy_daily_report::busy_daily_report warmup returns a valid response",
+                        "id": "124980b41606e47fb94ca4c4f47fed50",
+                        "passes": 10,
+                        "fails": 0
+                    },
+                    "busy_daily_report returns a valid response": {
+                        "id": "36c66720ccb6a6845a461be6cbcc93c1",
+                        "passes": 100,
+                        "fails": 0,
+                        "name": "busy_daily_report returns a valid response",
+                        "path": "::busy_daily_report::busy_daily_report returns a valid response"
+                    }
+                }
+            },
+            "empty_daily_report": {
+                "name": "empty_daily_report",
+                "path": "::empty_daily_report",
+                "id": "2327a6f5ce93a58949820549e851649e",
+                "groups": {},
+                "checks": {
+                    "empty_daily_report warmup returns a valid response": {
+                        "name": "empty_daily_report warmup returns a valid response",
+                        "path": "::empty_daily_report::empty_daily_report warmup returns a valid response",
+                        "id": "777e215d517f1b3168ff07e4e01c19f9",
+                        "passes": 10,
+                        "fails": 0
+                    },
+                    "empty_daily_report returns a valid response": {
+                        "path": "::empty_daily_report::empty_daily_report returns a valid response",
+                        "id": "f92ac5cd57741665e6f80c07e845b2ed",
+                        "passes": 100,
+                        "fails": 0,
+                        "name": "empty_daily_report returns a valid response"
+                    }
+                }
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "data_sent": {
+            "count": 110940,
+            "rate": 64252.008688701724
+        },
+        "http_req_receiving": {
+            "med": 0.0606875,
+            "p(95)": 0.1368749999999999
+        },
+        "vus": {
+            "max": 1,
+            "value": 1,
+            "min": 1
+        },
+        "iteration_duration": {
+            "med": 1560.752876,
+            "p(95)": 1560.752876
+        },
+        "weekly_availability_duration": {
+            "med": 4.9911455,
+            "p(95)": 8.525183349999997
+        },
+        "http_req_duration{expected_response:true}": {
+            "med": 4.568667,
+            "p(95)": 7.621272949999994
+        },
+        "http_req_blocked": {
+            "med": 0.002417,
+            "p(95)": 0.0048435999999999965
+        },
+        "http_req_waiting": {
+            "med": 4.4779795,
+            "p(95)": 7.457758849999995
+        },
+        "empty_daily_report_duration": {
+            "med": 1.3420205,
+            "p(95)": 2.488699649999994
+        },
+        "busy_daily_report_duration": {
+            "p(95)": 8.190839899999999,
+            "med": 4.9002289999999995
+        },
+        "http_req_duration": {
+            "med": 4.568667,
+            "p(95)": 7.621272949999994
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "p(95)": 0
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "p(95)": 0
+        },
+        "data_received": {
+            "count": 5282503,
+            "rate": 3059414.355995069
+        },
+        "iterations": {
+            "count": 1,
+            "rate": 0.5791599845745603
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 332,
+            "value": 0
+        },
+        "group_duration": {
+            "med": 654.335917,
+            "p(95)": 713.9702167
+        },
+        "vus_max": {
+            "value": 1,
+            "min": 1,
+            "max": 1
+        },
+        "checks": {
+            "passes": 330,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_reqs": {
+            "count": 332,
+            "rate": 192.28111487875404
+        },
+        "http_req_sending": {
+            "med": 0.007563,
+            "p(95)": 0.017123099999999995
+        }
+    }
+}

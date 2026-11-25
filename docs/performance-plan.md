@@ -61,9 +61,9 @@ Pin an exact stable Grafana k6 image in the opt-in `performance` Compose profile
 
 Add k6 scenarios for weekly availability, a busy-day administrator report, and an empty-day report, using the verified dataset manifests. Authenticate seeded user/admin accounts in setup, tag setup/warmup/measured phases and endpoints, validate response shape/counts and status, and configure thresholds so failed checks fail the run. Add one measured-only Trend per endpoint for duration so authentication/warmup are excluded from the endpoint latency summaries. Report median and p95, without an arbitrary latency SLO. Run only short contract validation for this delivery; do not execute the full comparison or capture SQL plans yet.
 
-### P4 — Measurements and SQL evidence
+### P4 — Measurements and SQL evidence (complete)
 
-Execute all scenarios at both sizes under the agreed measurement protocol. Save raw exports, readable per-scenario medians/p95 and response-byte/error data under `docs/performance/`. Capture actual SQL and representative `EXPLAIN (ANALYZE, BUFFERS)` output. Include environment/provenance and identify a bottleneck, or record why no change is justified.
+Executed all three scenarios at both sizes with three rounds each under the agreed protocol. The final report, compressed raw exports, sanitized summaries, response bytes, captured Prisma SQL/parameters, query counts and representative plans are linked from `docs/performance/measurements.md`. The day report's busy-day read scans the booking table at both sizes; this is a candidate for a narrow P5 experiment, not a change made in P4. Availability is not a pure scaling comparison because the selected week's booked/available slot distribution differs between fixtures.
 
 ### P5 — Evidence-based change and demonstration
 
