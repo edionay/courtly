@@ -44,7 +44,7 @@ Use Inter with regular, semibold and bold weights and a sans-serif fallback. The
 
 Use the existing Tailwind CSS 4.3.5 and @tailwindcss/vite 4.3.5 with React 19.3.1 and Vite 8.3.8. Aguinha uses Tailwind through NativeWind and gluestack; Courtly uses web Tailwind and native HTML. The earlier Mantine proposal is superseded. Do not install Mantine, NativeWind, gluestack or React Native to reproduce this appearance.
 
-Define tokens once in `frontend/src/styles.css`, using Tailwind 4's CSS-first theme. The following is an implementation specification, not code already added to the frontend:
+Tokens are defined once in `frontend/src/styles.css` using Tailwind 4's CSS-first theme. The following declaration reflects the implemented theme:
 
 ```css
 @import "tailwindcss";
