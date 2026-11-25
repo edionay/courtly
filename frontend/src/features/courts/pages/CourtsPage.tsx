@@ -63,6 +63,10 @@ export function CourtsPage() {
     navigate("/courts/new");
   };
 
+  const handleEditCourt = (court: CourtCardData) => {
+    navigate(`/courts/${court.id}/edit`);
+  };
+
   const isAdmin = user?.role === "admin";
   const isScreenLoading = isAuthLoading || isLoadingCourts;
 
@@ -76,6 +80,7 @@ export function CourtsPage() {
       onSignOut={handleSignOut}
       onViewAvailability={handleViewAvailability}
       onCreateCourt={handleCreateCourt}
+      onEditCourt={handleEditCourt}
     />
   );
 }

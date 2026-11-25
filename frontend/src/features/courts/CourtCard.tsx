@@ -11,6 +11,7 @@ export type CourtCardData = {
   opensAt: string;
   closesAt: string;
   isActive?: boolean;
+  hourlyPriceCents?: number;
   display: {
     hourlyPrice: string;
   };
@@ -20,6 +21,7 @@ type CourtCardProps = {
   court: CourtCardData;
   isAdmin?: boolean;
   onViewAvailability?: (court: CourtCardData) => void;
+  onEditCourt?: (court: CourtCardData) => void;
 };
 
 const courtImages: Record<string, string> = {
@@ -60,13 +62,43 @@ function CourtStatusBadge({
 
 function CourtCardAction({
   court,
+  isAdmin,
   isCourtActive,
   onViewAvailability,
+  onEditCourt,
 }: {
   court: CourtCardData;
+  isAdmin: boolean;
   isCourtActive: boolean;
   onViewAvailability?: (court: CourtCardData) => void;
+  onEditCourt?: (court: CourtCardData) => void;
 }) {
+  if (isAdmin) {
+    return (
+      <div className="w-full mt-6 space-y-2">
+        {isCourtActive && (
+          <Button
+            className="w-full rounded-full"
+            aria-label={`View availability for ${court.name}`}
+            disabled={!onViewAvailability}
+            onClick={() => onViewAvailability?.(court)}
+          >
+            View availability
+          </Button>
+        )}
+        <Button
+          variant="secondary"
+          className="w-full rounded-full"
+          aria-label={`Edit ${court.name}`}
+          disabled={!onEditCourt}
+          onClick={() => onEditCourt?.(court)}
+        >
+          Edit court
+        </Button>
+      </div>
+    );
+  }
+
   if (!isCourtActive) {
     return (
       <div className="w-full mt-6 min-h-[44px] flex items-center justify-center rounded-full bg-gray-100 text-muted-foreground text-sm font-semibold">
@@ -91,6 +123,7 @@ export function CourtCard({
   court,
   isAdmin = false,
   onViewAvailability,
+  onEditCourt,
 }: CourtCardProps) {
   const image = getCourtImage(court.sportType);
   const isCourtActive = court.isActive !== false;
@@ -131,8 +164,10 @@ export function CourtCard({
         </p>
         <CourtCardAction
           court={court}
+          isAdmin={isAdmin}
           isCourtActive={isCourtActive}
           onViewAvailability={onViewAvailability}
+          onEditCourt={onEditCourt}
         />
       </div>
     </article>

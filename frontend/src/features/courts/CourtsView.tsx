@@ -12,6 +12,7 @@ export type CourtsViewProps = {
   onSignOut?: () => void;
   onViewAvailability?: (court: CourtCardData) => void;
   onCreateCourt?: () => void;
+  onEditCourt?: (court: CourtCardData) => void;
 };
 
 function CourtsContent({
@@ -21,6 +22,7 @@ function CourtsContent({
   onRetry,
   isAdmin,
   onViewAvailability,
+  onEditCourt,
 }: Omit<CourtsViewProps, "onSignOut" | "onCreateCourt">) {
   if (isLoading) {
     return (
@@ -69,6 +71,7 @@ function CourtsContent({
       courts={courts}
       isAdmin={isAdmin}
       onViewAvailability={onViewAvailability}
+      onEditCourt={onEditCourt}
     />
   );
 }
@@ -82,6 +85,7 @@ export function CourtsView({
   onSignOut,
   onViewAvailability,
   onCreateCourt,
+  onEditCourt,
 }: CourtsViewProps) {
   const navigation = isAdmin
     ? [
@@ -132,6 +136,7 @@ export function CourtsView({
           onRetry={onRetry}
           isAdmin={isAdmin}
           onViewAvailability={onViewAvailability}
+          onEditCourt={onEditCourt}
         />
       </div>
     </ApplicationShell>

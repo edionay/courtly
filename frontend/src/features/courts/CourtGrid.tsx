@@ -5,12 +5,14 @@ type CourtGridProps = {
   courts: CourtCardData[];
   isAdmin?: boolean;
   onViewAvailability?: (court: CourtCardData) => void;
+  onEditCourt?: (court: CourtCardData) => void;
 };
 
 export function CourtGrid({
   courts,
   isAdmin = false,
   onViewAvailability,
+  onEditCourt,
 }: CourtGridProps) {
   return (
     <ul
@@ -24,6 +26,7 @@ export function CourtGrid({
             court={court}
             isAdmin={isAdmin}
             onViewAvailability={onViewAvailability}
+            onEditCourt={onEditCourt}
           />
         </li>
       ))}
