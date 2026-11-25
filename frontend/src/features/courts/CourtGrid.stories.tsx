@@ -13,3 +13,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SportsAndFallback: Story = {};
+
+export const AdministratorView: Story = {
+  args: {
+    isAdmin: true,
+  },
+};

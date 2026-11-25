@@ -7,6 +7,7 @@ export const courtFixtures: CourtCardData[] = [
     sportType: "Tennis",
     opensAt: "08:00",
     closesAt: "22:00",
+    isActive: true,
     display: { hourlyPrice: "$50.00" },
   },
   {
@@ -15,6 +16,7 @@ export const courtFixtures: CourtCardData[] = [
     sportType: "Basketball",
     opensAt: "08:00",
     closesAt: "22:00",
+    isActive: true,
     display: { hourlyPrice: "$40.00" },
   },
   {
@@ -23,6 +25,7 @@ export const courtFixtures: CourtCardData[] = [
     sportType: "Padel",
     opensAt: "08:00",
     closesAt: "22:00",
+    isActive: true,
     display: { hourlyPrice: "$60.00" },
   },
   {
@@ -31,6 +34,7 @@ export const courtFixtures: CourtCardData[] = [
     sportType: "Futsal",
     opensAt: "08:00",
     closesAt: "22:00",
+    isActive: false,
     display: { hourlyPrice: "$40.00" },
   },
 ];

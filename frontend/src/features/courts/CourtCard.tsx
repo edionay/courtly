@@ -10,6 +10,7 @@ export type CourtCardData = {
   sportType: string;
   opensAt: string;
   closesAt: string;
+  isActive?: boolean;
   display: {
     hourlyPrice: string;
   };
@@ -17,6 +18,7 @@ export type CourtCardData = {
 
 type CourtCardProps = {
   court: CourtCardData;
+  isAdmin?: boolean;
   onViewAvailability?: (court: CourtCardData) => void;
 };
 
@@ -31,8 +33,67 @@ export function getCourtImage(sport: string) {
   return courtImages[normalizedSport] ?? neutralImage;
 }
 
-export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
+function CourtStatusBadge({
+  isAdmin,
+  isCourtActive,
+}: {
+  isAdmin: boolean;
+  isCourtActive: boolean;
+}) {
+  if (!isAdmin) {
+    return null;
+  }
+
+  const badgeStyle = isCourtActive
+    ? "text-primary bg-[#e5f0f5]"
+    : "text-muted-foreground bg-gray-100";
+  const badgeLabel = isCourtActive ? "Active" : "Inactive";
+
+  return (
+    <span
+      className={`inline-flex items-center min-h-[28px] px-3.5 rounded-full text-sm font-semibold ${badgeStyle}`}
+    >
+      {badgeLabel}
+    </span>
+  );
+}
+
+function CourtCardAction({
+  court,
+  isCourtActive,
+  onViewAvailability,
+}: {
+  court: CourtCardData;
+  isCourtActive: boolean;
+  onViewAvailability?: (court: CourtCardData) => void;
+}) {
+  if (!isCourtActive) {
+    return (
+      <div className="w-full mt-6 min-h-[44px] flex items-center justify-center rounded-full bg-gray-100 text-muted-foreground text-sm font-semibold">
+        Unavailable for bookings
+      </div>
+    );
+  }
+
+  return (
+    <Button
+      className="w-full mt-6 rounded-full"
+      aria-label={`View availability for ${court.name}`}
+      disabled={!onViewAvailability}
+      onClick={() => onViewAvailability?.(court)}
+    >
+      View availability
+    </Button>
+  );
+}
+
+export function CourtCard({
+  court,
+  isAdmin = false,
+  onViewAvailability,
+}: CourtCardProps) {
   const image = getCourtImage(court.sportType);
+  const isCourtActive = court.isActive !== false;
 
   return (
     <article className="min-w-0 p-3 bg-surface rounded-card shadow-card flex flex-col justify-between h-full">
@@ -45,9 +106,12 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
         <h2 className="mt-3.5 text-foreground text-xl font-bold leading-snug">
           {court.name}
         </h2>
-        <p className="inline-flex items-center min-h-[28px] mt-2 px-3.5 text-primary bg-[#e5f0f5] rounded-full text-sm font-semibold">
-          {court.sportType}
-        </p>
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          <span className="inline-flex items-center min-h-[28px] px-3.5 text-primary bg-[#e5f0f5] rounded-full text-sm font-semibold">
+            {court.sportType}
+          </span>
+          <CourtStatusBadge isAdmin={isAdmin} isCourtActive={isCourtActive} />
+        </div>
         <div className="mt-4.5">
           <span className="block text-muted-foreground text-sm">Opening hours</span>
           <span className="block mt-1 text-foreground text-base font-semibold tabular-nums whitespace-nowrap">
@@ -65,14 +129,11 @@ export function CourtCard({ court, onViewAvailability }: CourtCardProps) {
           </span>
           <span className="text-muted-foreground text-sm">/ hour</span>
         </p>
-        <Button
-          className="w-full mt-6 rounded-full"
-          aria-label={`View availability for ${court.name}`}
-          disabled={!onViewAvailability}
-          onClick={() => onViewAvailability?.(court)}
-        >
-          View availability
-        </Button>
+        <CourtCardAction
+          court={court}
+          isCourtActive={isCourtActive}
+          onViewAvailability={onViewAvailability}
+        />
       </div>
     </article>
   );
