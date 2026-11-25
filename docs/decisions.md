@@ -8,7 +8,7 @@ Start with [execution-plan.md](execution-plan.md). The challenge source is [chal
 
 ## Scope and ownership
 
-- Deliver the mandatory challenge only: seeded authentication, court browsing and management, hourly availability, creation/cancellation, own booking history, and administrator daily bookings with expected revenue. No optional challenge bonuses.
+- Deliver the mandatory challenge only: seeded authentication, court browsing and management, hourly availability, creation/cancellation, own booking history, and administrator daily bookings with expected revenue. The performance bonus was subsequently approved on November 25, 2026, as a separate branch; see performance-plan.md. Other bonuses remain excluded.
 - One seeded internal Facility has id, name, and IANA timezone America/Sao_Paulo. Courts reference it; no facility endpoint, selector, CRUD, or timezone editing.
 - sportType is required free text. No sport entity, enum, or catalog API.
 - Use English for code, UI copy, and repository documentation. Prefer small self-explanatory functions and minimal comments. Recheck the challenge whenever requirements/scope are questioned. Discuss extra edge-case behavior before implementing it.
@@ -160,3 +160,7 @@ These references support technical mechanisms; they do not replace the challenge
 - Approved PNGs, editable SVGs, Inter fonts/license and sport photographs/credits are committed locally. The pack is indexed by mockups/aguinha/REVIEW.md and does not require the original repositories or a live gallery server. Real API data overrides illustrative images.
 - frontend-plan.md closes the D4–D6 responsibility, route, transport/proxy, local-asset and verification contract; frontend-handoff.md supplies the portable start/resume prompt. Unknown free-text sports use a neutral image fallback; do not mislabel seeded Futsal.
 - D4 implements same-origin /api forwarding through both Vite dev and Compose-preview, using a server-only API_PROXY_TARGET; current setup has not implemented that proxy yet. No application code is authorized by this documentation task. Verify the design PR #11 is merged before dependent frontend work; only the user merges.
+
+## Performance measurement tooling
+
+- On November 25, 2026, the user approved Grafana k6 instead of a custom HTTP measurement runner for the separately approved performance bonus. Follow performance-plan.md for isolated fixtures, filtered warmup/authentication metrics, endpoint scenarios, SQL plans and reproducible evidence. Additional observability services are deferred unless a concrete diagnostic need justifies revisiting the scope.
