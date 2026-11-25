@@ -47,7 +47,7 @@ After successful creation, show Booking confirmed with Go to my bookings. Naviga
 
 For an occupied-slot conflict, show Time no longer available with the API message and Choose another time. Stay on review until this action is activated; then return to selection for the same court and date, reload weekly availability, and clear the previous slots. Do not retry automatically or classify every HTTP 409 as an occupied slot; use the error code.
 
-Implement both with native `<dialog>`, `showModal()`, and `close()`, an accessible name, appropriate focus handling, and an inert background. Escape closes only: it does not navigate or retry. After dismissing a conflict, keep its explanation and recovery action available. Static wireframe approval does not replace implementation accessibility checks.
+Implement both with native `<dialog>`, `showModal()`, and `close()`, an accessible name, appropriate focus handling, and an inert background. After booking success, keep the dialog open on Escape and provide only Go to my bookings; the completed state prevents another submission while the user leaves through that action. The conflict dialog remains dismissible with Escape and its close control; dismissing it does not navigate or retry, and its explanation and recovery action remain available. Static wireframe approval does not replace implementation accessibility checks.
 
 ## Court listing wireframe — approved
 
@@ -126,7 +126,7 @@ The Change action and review breadcrumb return to the same court/date/week but d
 ## Creation results and failures
 
 - While courts, availability, or preview load, prevent stale/incomplete submission and show/announce loading. Only the latest selection may populate the interface.
-- After HTTP 201, show Booking confirmed with Go to my bookings. Only this action navigates to /bookings. Dismissal retains a completed state and cannot re-enable creation.
+- After HTTP 201, show Booking confirmed with Go to my bookings. This is the only way to leave the success dialog and navigate to /bookings; Escape and a close control are unavailable. The completed state cannot re-enable creation.
 - BOOKING_CONFLICT opens Time no longer available with the API message and Choose another time. Stay on review until this action is used. It returns to the same court/date/week, reloads availability, and clears hours. Dismissal only closes the modal; keep the explanation and recovery action accessible. Do not treat every 409 as occupied.
 - Show field errors by inputs and request errors near their action. Protected-operation 401 uses the authentication-error page; login credential errors stay on the form. Administrative access failures show access denied; the backend remains authoritative.
 - On an ambiguous connection failure during creation, do not automatically resubmit, assert success, or assert that nothing was saved. Offer checking My bookings before another attempt. No idempotency system is added.
@@ -134,7 +134,7 @@ The Change action and review breadcrumb return to the same court/date/week but d
 
 ## Native dialog contract
 
-Use HTML dialog opened with showModal() and closed with close() or native mechanisms. Do not emulate modality with a div, only toggle the open attribute, or use non-modal show(). Supply a named title, associated explanation, appropriate initial focus, visible focus, and sensible restoration after closing. The rest of the document is inert while modal. Escape dismisses without navigation or submission. Do not force navigation through an inescapable dialog.
+Use HTML dialog opened with showModal() and closed with close() or native mechanisms. Do not emulate modality with a div, only toggle the open attribute, or use non-modal show(). Supply a named title, associated explanation, appropriate initial focus, visible focus, and sensible restoration after closing. The rest of the document is inert while modal. Escape dismisses dialogs without navigation or submission, except the booking success dialog, which stays open until Go to my bookings is activated. The success dialog has no close control. Do not force navigation through other inescapable dialogs.
 
 Court creation/editing success dialogs use Court created/Changes saved and Go to courts. Cancellation confirmation uses Keep booking/Cancel booking, submits only on explicit confirmation, then announces success in the list without another modal.
 

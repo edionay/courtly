@@ -173,10 +173,6 @@ export function BookingReviewPage() {
     }
   };
 
-  const handleCloseSuccessDialog = () => {
-    setIsSuccessDialogOpen(false);
-  };
-
   const handleGoToBookings = () => {
     setIsSuccessDialogOpen(false);
     navigate("/bookings");
@@ -207,7 +203,6 @@ export function BookingReviewPage() {
       conflictMessage={conflictMessage}
       isSuccessDialogOpen={isSuccessDialogOpen}
       isConflictDialogOpen={isConflictDialogOpen}
-      onCloseSuccessDialog={handleCloseSuccessDialog}
       onGoToBookings={handleGoToBookings}
       onCloseConflictDialog={handleCloseConflictDialog}
       onChooseAnotherTime={handleChange}
